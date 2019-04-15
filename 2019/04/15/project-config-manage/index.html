@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="背景我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-15T15:56:07.172Z">
+<meta property="og:updated_time" content="2019-04-15T16:30:02.329Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="协作开发的项目配置文件管理">
 <meta name="twitter:description" content="背景我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少">
@@ -99,7 +99,7 @@
 <h2 id="辅助脚本生成-更新配置文件"><a href="#辅助脚本生成-更新配置文件" class="headerlink" title="辅助脚本生成/更新配置文件"></a>辅助脚本生成/更新配置文件</h2><p>对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。<br>框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空；<br>编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中；<br>同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。</p>
 <h2 id="基于环境变量的配置管理"><a href="#基于环境变量的配置管理" class="headerlink" title="基于环境变量的配置管理"></a>基于环境变量的配置管理</h2><p>php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；</p>
 <h3 id="常见设置环境变量方法："><a href="#常见设置环境变量方法：" class="headerlink" title="常见设置环境变量方法："></a>常见设置环境变量方法：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#Apache</span><br><span class="line">SetEnv APPLICATION_ENV develop</span><br><span class="line"></span><br><span class="line">#nginx</span><br><span class="line">fastcgi_param APPLICATION_ENV develop;</span><br><span class="line"></span><br><span class="line">#php cli</span><br><span class="line">$ export APPLICATION_ENV=develop</span><br></pre></td></tr></table></figure>
-<p>那么框架就会自动加载对应的配置文件（默认位于 <code>application/develop.php</code>），根据配置加载优先级，该配置会覆盖默认的应用配置，应用配置文件是应用初始化的时候首先加载的公共配置文件，默认位于<code>application/config.php</code>。这样添加和修改公共配置的问题也解决了。<br>现在，我们再来处理一个细节问题，将环境变量的值设置到框架配置，把前面的操作结合到一起就可以完成，处理如下<br>1 在web服务环境中<a href="#常见设置环境变量方法：">设置环境变量</a><br>2 在项目入口处读取所设置的环境变量，并定义为常量<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$env = <span class="keyword">isset</span>($_SERVER[<span class="string">'APPLICATION_ENV'</span>]) ? $_SERVER[<span class="string">'APPLICATION_ENV'</span>] : <span class="string">'development'</span>; define(<span class="string">'APP_STATUS'</span>, $env);</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>那么框架就会自动加载对应的配置文件（默认位于 <code>application/develop.php</code>），根据配置加载优先级，该配置会覆盖默认的应用配置，应用配置文件是应用初始化的时候首先加载的公共配置文件，默认位于<code>application/config.php</code>。这样添加和修改公共配置的问题也解决了。<br>现在，我们再来处理一个细节问题，将环境变量的值设置到框架配置，把前面的操作结合到一起就可以完成，处理如下<br>1 在web服务环境中<a href="#常见设置环境变量方法：">设置环境变量</a><br>2 在项目入口处读取所设置的环境变量，并定义为常量<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$env = <span class="keyword">isset</span>($_SERVER[<span class="string">'APPLICATION_ENV'</span>]) ? $_SERVER[<span class="string">'APPLICATION_ENV'</span>] : <span class="string">'development'</span>;</span><br><span class="line">define(<span class="string">'APP_STATUS'</span>, $env);</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
 <p>3 把所定义的常量设置到配置文件config.php中<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'app_status'</span> =&gt; APP_STATUS</span><br></pre></td></tr></table></figure></p>
 <p>通过以上几步，基本完成了通过设置环境变量指定配置文件的功能。</p>
 <h2 id="使用-env-设置环境变量"><a href="#使用-env-设置环境变量" class="headerlink" title="使用 .env 设置环境变量"></a>使用 .env 设置环境变量</h2><p>前面的配置虽然实现了功能，但需要修改web服务器的配置添加额外配置，任何非标准配置都不利于系统的自动化运维，可能在部署过程中遗留导致服务部署异常，所以不一定是最好的方案；另外需要单独修改框架中非业务逻辑，好像也不是特别好；<br>在分析thinkphp配置文件的过程中，注意到很多配置项使用的是Env::get()方式设置的，其实就是thinkphp5.0支持的环境变量配置，在开发过程中，可以在应用根目录下面的<code>.env</code>来模拟环境变量配置，<code>.env</code>文件中的配置参数定义格式采用<code>ini</code>方式，所有我们可以在这里设置app_status配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[app]</span><br><span class="line">status = develop</span><br></pre></td></tr></table></figure></p>
@@ -113,7 +113,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/04/15/project-config-manage/" data-id="cjuiijwa50001egu2xgnnvlog" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/04/15/project-config-manage/" data-id="cjuim5e9u0003nsu22zpouzmv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li></ul>
@@ -127,7 +127,7 @@
   
     <a href="/2019/04/13/first-Hexo/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">&#39;first.Hexo&#39;</div>
+      <div class="article-nav-title">使用Hexo+github搭建博客（基础）</div>
     </a>
   
 </nav>
@@ -146,7 +146,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li></ul>
     </div>
   </div>
 
@@ -156,7 +156,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/php/" style="font-size: 10px;">php</a>
+      <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/php/" style="font-size: 10px;">php</a>
     </div>
   </div>
 
@@ -182,7 +182,7 @@
           </li>
         
           <li>
-            <a href="/2019/04/13/first-Hexo/">&#39;first.Hexo&#39;</a>
+            <a href="/2019/04/13/first-Hexo/">使用Hexo+github搭建博客（基础）</a>
           </li>
         
           <li>

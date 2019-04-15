@@ -5,16 +5,22 @@
   
 
   
-  <title>&#39;first.Hexo&#39; | Hexo</title>
+  <title>使用Hexo+github搭建博客（基础） | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
-<meta property="og:title" content="&#39;first.Hexo&#39;">
+  <meta name="description" content="前提 安装Node.js，配置node环境 安装和配置git 注册github账号，新建项目，项目名设定为：{username}.github.io，并且勾选Initialize this repository with a README  安装Hexo新建文件夹12mkdir blogcd blog 安装Hexo1npm install hexo -g 检查安装结果1hexo -v 初始化1he">
+<meta name="keywords" content="hexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Hexo+github搭建博客（基础）">
 <meta property="og:url" content="http://yoursite.com/2019/04/13/first-Hexo/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前提 安装Node.js，配置node环境 安装和配置git 注册github账号，新建项目，项目名设定为：{username}.github.io，并且勾选Initialize this repository with a README  安装Hexo新建文件夹12mkdir blogcd blog 安装Hexo1npm install hexo -g 检查安装结果1hexo -v 初始化1he">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-13T08:22:54.760Z">
+<meta property="og:image" content="https://images2017.cnblogs.com/blog/1108615/201710/1108615-20171021232413224-1288183746.png">
+<meta property="og:updated_time" content="2019-04-15T17:09:29.098Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="&#39;first.Hexo&#39;">
+<meta name="twitter:title" content="使用Hexo+github搭建博客（基础）">
+<meta name="twitter:description" content="前提 安装Node.js，配置node环境 安装和配置git 注册github账号，新建项目，项目名设定为：{username}.github.io，并且勾选Initialize this repository with a README  安装Hexo新建文件夹12mkdir blogcd blog 安装Hexo1npm install hexo -g 检查安装结果1hexo -v 初始化1he">
+<meta name="twitter:image" content="https://images2017.cnblogs.com/blog/1108615/201710/1108615-20171021232413224-1288183746.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -75,7 +81,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      &#39;first.Hexo&#39;
+      使用Hexo+github搭建博客（基础）
     </h1>
   
 
@@ -83,13 +89,36 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h1 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h1><ul>
+<li>安装Node.js，配置node环境</li>
+<li>安装和配置git</li>
+<li>注册github账号，新建项目，项目名设定为：{username}.github.io，并且勾选Initialize this repository with a README</li>
+</ul>
+<h1 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h1><p>新建文件夹<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir blog</span><br><span class="line"><span class="built_in">cd</span> blog</span><br></pre></td></tr></table></figure></p>
+<p>安装Hexo<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo -g</span><br></pre></td></tr></table></figure></p>
+<p>检查安装结果<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure></p>
+<p>初始化<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure></p>
+<p>安装所有依赖组件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure></p>
+<p>生成blog网站代码<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br></pre></td></tr></table></figure></p>
+<p>启动本地服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure></p>
+<p>如果启动成功，可访问<a href="http://localhost:4000" target="_blank" rel="noopener">http://localhost:4000</a> 进行预览<br>如果页面无法访问，可能是本地端口被占用，可使用以下命令更改端口启动服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server -p port</span><br></pre></td></tr></table></figure></p>
+<p>当出现如下界面表示服务启动成功<br><img src="https://images2017.cnblogs.com/blog/1108615/201710/1108615-20171021232413224-1288183746.png" alt></p>
+<h1 id="将hexo与github-page关联起来"><a href="#将hexo与github-page关联起来" class="headerlink" title="将hexo与github page关联起来"></a>将hexo与github page关联起来</h1><p>设置git的user和email<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">"you name"</span></span><br><span class="line">git config --global user.email <span class="string">"you email"</span></span><br></pre></td></tr></table></figure></p>
+<p>设置git免密信任授权，将本地<code>~/.ssh/id_rsa.pub</code> 文件的内容添加到github settings-&gt;SSH keys<br>测试ssh信任是否成功<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure></p>
+<p>配置Deployment，在文件夹中找到<code>_config.yml</code>配置文件，修改repo的值<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line"><span class="attr">  type:</span> <span class="string">git</span></span><br><span class="line"><span class="attr">  repository:</span> <span class="string">git@github.com:username/username.github.io.git</span></span><br><span class="line"><span class="attr">  branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure></p>
+<p>新建一篇博客<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new post <span class="string">"new.post.for.hexo"</span></span><br></pre></td></tr></table></figure></p>
+<p>这时候在_posts目录下会看到新创建的文件（new-post-for-hexo.md）<br>安装一个扩展，用于把新的文件部署到github<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
+<p>使用编辑器编写文章并保存<br>执行命令生成并发布文章<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d -g</span><br></pre></td></tr></table></figure></p>
+<p>部署成功后，就可以访问github的地址，<a href="http://username.github.io" target="_blank" rel="noopener">http://username.github.io</a> ，即可看到新生成的文章<br>至此，博客的基本搭建就完成了。</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/04/13/first-Hexo/" data-id="cjuiijwa50002egu2wi07posa" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/04/13/first-Hexo/" data-id="cjuim5e9h0000nsu2thc7vdgd" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/">hexo</a></li></ul>
+
     </footer>
   </div>
   
@@ -127,7 +156,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/">php</a></li></ul>
     </div>
   </div>
 
@@ -137,7 +166,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/php/" style="font-size: 10px;">php</a>
+      <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/php/" style="font-size: 10px;">php</a>
     </div>
   </div>
 
@@ -163,7 +192,7 @@
           </li>
         
           <li>
-            <a href="/2019/04/13/first-Hexo/">&#39;first.Hexo&#39;</a>
+            <a href="/2019/04/13/first-Hexo/">使用Hexo+github搭建博客（基础）</a>
           </li>
         
           <li>
