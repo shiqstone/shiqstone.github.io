@@ -5,17 +5,17 @@
   
 
   
-  <title>笨石亦攻玉</title>
+  <title>他山笨石</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="笨石亦攻玉">
+<meta property="og:title" content="他山笨石">
 <meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="笨石亦攻玉">
+<meta property="og:site_name" content="他山笨石">
 <meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="笨石亦攻玉">
+<meta name="twitter:title" content="他山笨石">
   
-    <link rel="alternate" href="/atom.xml" title="笨石亦攻玉" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="他山笨石" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -34,7 +34,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">笨石亦攻玉</a>
+        <a href="/" id="logo">他山笨石</a>
       </h1>
       
     </div>
@@ -85,7 +85,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git add .</span><br><span class="line">fatal: CRLF would be replaced by LF ...</span><br></pre></td></tr></table></figure>
-<p><img src="http://wx1.sinaimg.cn/mw690/c3c88275ly1fdsav3d6yjj20hs0d5afx.jpg" alt></p>
+<p><img src="https://wx1.sinaimg.cn/mw690/c3c88275ly1fdsav3d6yjj20hs0d5afx.jpg" alt></p>
 <p><strong>文本文件所使用的换行符，在不同的系统平台上是不一样的</strong>。UNIX/Linux 使用的是 <code>0x0A（LF）</code>，早期的 Mac OS 使用的是 <code>0x0D（CR）</code>，后来的 OS X 在更换内核后与 UNIX 保持一致了。但 DOS/Windows 一直使用 <code>0x0D0A（CRLF）</code> 作为换行符。</p>
 <p>跨平台协作开发是常有的，不统一的换行符确实对跨平台的文件交换带来了麻烦。最大的问题是，在不同平台上，换行符发生改变时，Git 会认为整个文件被修改，这就造成我们没法 <code>diff</code>，不能正确反映本次的修改。还好 Git 在设计时就考虑了这一点，其提供了一个 <code>autocrlf</code> 的配置项，用于在提交和检出时自动转换换行符，该配置有三个可选项：</p>
 <ul>
@@ -147,7 +147,7 @@
 <p><a href="https://camo.githubusercontent.com/6ffa4da0e063d96bd53efa07156b4322db46f483/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f313233313335392f3937343136332f31666261353632302d303634632d313165332d396438612d6236653665653764333761322e706e67" target="_blank" rel="noopener"><img src="https://camo.githubusercontent.com/6ffa4da0e063d96bd53efa07156b4322db46f483/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f313233313335392f3937343136332f31666261353632302d303634632d313165332d396438612d6236653665653764333761322e706e67" alt="first-trap-on-github-autocrlf-gitconfig"></a></p>
 <p>事实上上面介绍的所有命令行或图形界面的配置方法，最终效果都是一样的，因为本质上都是在修改这个配置文件。</p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料:"></a><strong>参考资料:</strong></h2><ul>
-<li><a href="http://toub.es/2012/05/28/fatal-crlf-would-be-replaced-lf" target="_blank" rel="noopener">http://toub.es/2012/05/28/fatal-crlf-would-be-replaced-lf</a></li>
+<li><a href="https://toub.es/2012/05/28/fatal-crlf-would-be-replaced-lf" target="_blank" rel="noopener">https://toub.es/2012/05/28/fatal-crlf-would-be-replaced-lf</a></li>
 <li><a href="https://github.com/cssmagic/blog/issues/22" target="_blank" rel="noopener">https://github.com/cssmagic/blog/issues/22</a></li>
 </ul>
 
