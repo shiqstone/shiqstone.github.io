@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="1 基本命令使用ffmpeg截取视频生成图片，原始命令为1ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装1234567891011121314151617181920package main                    import (  &quot;bytes&quot;         &quot;fmt&quot;  &quot;os/exec&quot;">
+<meta name="description" content="1 基本命令使用ffmpeg截取视频生成图片，原始命令为 ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg  2 简单封装package main  import (   &amp;quot;bytes&amp;quot;          &amp;quot;fmt&amp;quot;   &amp;quot;os/exec&amp;quot;      ) func mai">
 <meta property="og:type" content="article">
 <meta property="og:title" content="尝试使用Go截取视频生成缩略图">
 <meta property="og:url" content="https://shiqstone.github.io/2020/01/31/try-golang-snapshot-video-thumb/index.html">
 <meta property="og:site_name" content="他山笨石">
-<meta property="og:description" content="1 基本命令使用ffmpeg截取视频生成图片，原始命令为1ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装1234567891011121314151617181920package main                    import (  &quot;bytes&quot;         &quot;fmt&quot;  &quot;os/exec&quot;">
+<meta property="og:description" content="1 基本命令使用ffmpeg截取视频生成图片，原始命令为 ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg  2 简单封装package main  import (   &amp;quot;bytes&amp;quot;          &amp;quot;fmt&amp;quot;   &amp;quot;os/exec&amp;quot;      ) func mai">
 <meta property="og:locale" content="default">
 <meta property="og:updated_time" content="2020-02-04T11:36:08.717Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="尝试使用Go截取视频生成缩略图">
-<meta name="twitter:description" content="1 基本命令使用ffmpeg截取视频生成图片，原始命令为1ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装1234567891011121314151617181920package main                    import (  &quot;bytes&quot;         &quot;fmt&quot;  &quot;os/exec&quot;">
+<meta name="twitter:description" content="1 基本命令使用ffmpeg截取视频生成图片，原始命令为 ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg  2 简单封装package main  import (   &amp;quot;bytes&amp;quot;          &amp;quot;fmt&amp;quot;   &amp;quot;os/exec&amp;quot;      ) func mai">
 
 
 
@@ -299,14 +299,672 @@
       
 
       
-        <h3 id="1-基本命令"><a href="#1-基本命令" class="headerlink" title="1 基本命令"></a>1 基本命令</h3><p>使用ffmpeg截取视频生成图片，原始命令为<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg</span><br></pre></td></tr></table></figure></p>
-<h3 id="2-简单封装"><a href="#2-简单封装" class="headerlink" title="2 简单封装"></a>2 简单封装</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line">                    </span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"bytes"</span>       </span><br><span class="line">  <span class="string">"fmt"</span></span><br><span class="line">  <span class="string">"os/exec"</span>     </span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;     </span><br><span class="line">  filename := <span class="string">"test.mp4"</span></span><br><span class="line">  width := <span class="number">288</span>  </span><br><span class="line">  height := <span class="number">512</span> </span><br><span class="line">  output := <span class="string">"output.jpg"</span>   </span><br><span class="line">  cmd := exec.Command(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, filename, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-s"</span>, fmt.Sprintf(<span class="string">"%dx%d"</span>, width, height), <span class="string">"-f"</span>, <span class="string">"singlejpeg"</span>, output)</span><br><span class="line">  <span class="keyword">var</span> buffer bytes.Buffer</span><br><span class="line">  cmd.Stdout = &amp;buffer </span><br><span class="line">  <span class="keyword">if</span> cmd.Run() != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="built_in">panic</span>(<span class="string">"could not generate frame"</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-查询数据库"><a href="#3-查询数据库" class="headerlink" title="3 查询数据库"></a>3 查询数据库</h3><p>增加从mysql数据库读取视频路径<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"bytes"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"path"</span></span><br><span class="line">    <span class="string">"path/filepath"</span></span><br><span class="line">    <span class="string">"strings"</span></span><br><span class="line">    <span class="string">"os/exec"</span></span><br><span class="line">    <span class="string">"database/sql"</span></span><br><span class="line">    _ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//user:password@tcp(localhost:5555)/dbname?charset=utf8</span></span><br><span class="line">    db, err := sql.Open(<span class="string">"mysql"</span>, <span class="string">"root@tcp(localhost:3306)/dsp?charset=utf8"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//查询数据</span></span><br><span class="line">    rows, err := db.Query(<span class="string">"SELECT video_s3_url FROM material_video"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> video_s3_url <span class="keyword">string</span></span><br><span class="line">        err = rows.Scan(&amp;video_s3_url)</span><br><span class="line">        checkErr(err)</span><br><span class="line"></span><br><span class="line">        fullpath := video_s3_url</span><br><span class="line">        <span class="comment">//width := 288</span></span><br><span class="line">        <span class="comment">//height := 512</span></span><br><span class="line">        fileName := filepath.Base(fullpath)</span><br><span class="line">        fileSuffix := path.Ext(fileName)</span><br><span class="line">        output := strings.TrimSuffix(fileName, fileSuffix) + <span class="string">".png"</span> </span><br><span class="line">        <span class="comment">//fmt.Println(output)</span></span><br><span class="line">        cmd := exec.Command(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">        <span class="keyword">var</span> buffer bytes.Buffer</span><br><span class="line">        cmd.Stdout = &amp;buffer</span><br><span class="line">        <span class="keyword">if</span> cmd.Run() != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(<span class="string">"could not generate frame"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//break;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkErr</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="4-更新数据库"><a href="#4-更新数据库" class="headerlink" title="4 更新数据库"></a>4 更新数据库</h3><p>将生成图片路径更新到数据库<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"bytes"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"path"</span></span><br><span class="line">    <span class="string">"path/filepath"</span></span><br><span class="line">    <span class="string">"strings"</span></span><br><span class="line">    <span class="string">"os/exec"</span></span><br><span class="line">    <span class="string">"database/sql"</span></span><br><span class="line">    _ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//user:password@tcp(localhost:5555)/dbname?charset=utf8</span></span><br><span class="line">    db, err := sql.Open(<span class="string">"mysql"</span>, <span class="string">"root@tcp(localhost:3306)/dsp?charset=utf8"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//查询数据</span></span><br><span class="line">    rows, err := db.Query(<span class="string">"SELECT id, video_s3_url FROM material_video"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    cnt := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> id <span class="keyword">int</span></span><br><span class="line">        <span class="keyword">var</span> video_s3_url <span class="keyword">string</span></span><br><span class="line">        err = rows.Scan(&amp;id, &amp;video_s3_url)</span><br><span class="line">        checkErr(err)</span><br><span class="line"></span><br><span class="line">        fullpath := video_s3_url</span><br><span class="line">        fileName := filepath.Base(fullpath)</span><br><span class="line">        fileSuffix := path.Ext(fileName)</span><br><span class="line">        output := strings.TrimSuffix(fileName, fileSuffix) + <span class="string">".png"</span> </span><br><span class="line">        cmd := exec.Command(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">        <span class="keyword">var</span> buffer bytes.Buffer</span><br><span class="line">        cmd.Stdout = &amp;buffer</span><br><span class="line">        <span class="keyword">if</span> cmd.Run() != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(<span class="string">"could not generate frame"</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//更新数据</span></span><br><span class="line">        stmt, err := db.Prepare(<span class="string">"update material_video set video_thumb_url=? where id=?"</span>)</span><br><span class="line">        checkErr(err)</span><br><span class="line">        res, err := stmt.Exec(output, id)</span><br><span class="line">        checkErr(err)</span><br><span class="line">        affect, err := res.RowsAffected()</span><br><span class="line">        checkErr(err)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(affect&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            cnt++</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(cnt)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkErr</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="5-文件上传共享"><a href="#5-文件上传共享" class="headerlink" title="5 文件上传共享"></a>5 文件上传共享</h3><p>考虑本地存储文件的局限性，改为将生成文件上传到S3服务器上，便于后续共享访问<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"bytes"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"path"</span></span><br><span class="line">    <span class="string">"path/filepath"</span></span><br><span class="line">    <span class="string">"strings"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">    <span class="string">"os/exec"</span></span><br><span class="line">    <span class="string">"database/sql"</span></span><br><span class="line">    _ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/credentials"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/session"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/service/s3"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//user:password@tcp(localhost:5555)/dbname?charset=utf8</span></span><br><span class="line">    db, err := sql.Open(<span class="string">"mysql"</span>, <span class="string">"root@tcp(localhost:3306)/dsp?charset=utf8"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//query date</span></span><br><span class="line">    rows, err := db.Query(<span class="string">"SELECT id, video_s3_url FROM material_video where video_thumb_url is null"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    access_key := <span class="string">"access_key_str"</span></span><br><span class="line">    secret_key := <span class="string">"secret_key_str"</span></span><br><span class="line">    end_point := <span class="string">"http://test.s3.amazon.cn"</span></span><br><span class="line">    bucket := <span class="string">"bucket_str"</span> </span><br><span class="line">    <span class="comment">// Configure to use S3 Server</span></span><br><span class="line">    s, err := session.NewSession(&amp;aws.Config&#123;</span><br><span class="line">        Region: aws.String(<span class="string">"us-west-2"</span>),</span><br><span class="line">        Credentials: credentials.NewStaticCredentials( access_key, secret_key, <span class="string">""</span>),  <span class="comment">// token can be left blank for now</span></span><br><span class="line">        Endpoint:         aws.String(end_point),</span><br><span class="line">        DisableSSL:       aws.Bool(<span class="literal">true</span>),</span><br><span class="line">        S3ForcePathStyle: aws.Bool(<span class="literal">true</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cnt := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> id <span class="keyword">int</span></span><br><span class="line">        <span class="keyword">var</span> video_s3_url <span class="keyword">string</span></span><br><span class="line">        err = rows.Scan(&amp;id, &amp;video_s3_url)</span><br><span class="line">        checkErr(err)</span><br><span class="line"></span><br><span class="line">        fullpath := video_s3_url</span><br><span class="line">        fileName := filepath.Base(fullpath)</span><br><span class="line">        fileSuffix := path.Ext(fileName)</span><br><span class="line">        fileSingleName := strings.TrimSuffix(fileName, fileSuffix)</span><br><span class="line">        output := fileSingleName + <span class="string">".png"</span> </span><br><span class="line">        fmt.Println(output)</span><br><span class="line"></span><br><span class="line">        <span class="comment">//delete exist file</span></span><br><span class="line">        err = os.Remove(output);</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            fmt.Println(err);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        fmt.Println(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">        cmd := exec.Command(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">        <span class="keyword">var</span> buffer bytes.Buffer</span><br><span class="line">        cmd.Stdout = &amp;buffer</span><br><span class="line">        <span class="keyword">if</span> cmd.Run() != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="built_in">panic</span>(<span class="string">"could not generate frame"</span>)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Upload</span></span><br><span class="line">        err = AddFileToS3(s, bucket, output)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            checkErr(err)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        thumb_url := end_point + <span class="string">"/"</span> + bucket + <span class="string">"/"</span> + output</span><br><span class="line"></span><br><span class="line">        <span class="comment">//update db</span></span><br><span class="line">        stmt, err := db.Prepare(<span class="string">"update material_video set video_thumb_url=? where id=?"</span>)</span><br><span class="line">        checkErr(err)</span><br><span class="line">        res, err := stmt.Exec(thumb_url, id)</span><br><span class="line">        checkErr(err)</span><br><span class="line">        affect, err := res.RowsAffected()</span><br><span class="line">        checkErr(err)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(affect&gt;<span class="number">0</span>) &#123;</span><br><span class="line">            cnt++</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(cnt&gt;<span class="number">10</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(cnt)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkErr</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddFileToS3</span><span class="params">(s *session.Session, bucket <span class="keyword">string</span>, fileDir <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Open the file for use</span></span><br><span class="line">    file, err := os.Open(fileDir)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get file size and read the file content into a buffer</span></span><br><span class="line">    fileInfo, _ := file.Stat()</span><br><span class="line">    <span class="keyword">var</span> size <span class="keyword">int64</span> = fileInfo.Size()</span><br><span class="line">    buffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, size)</span><br><span class="line">    file.Read(buffer)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Config settings: this is where you choose the bucket, filename, content-type etc.</span></span><br><span class="line">    <span class="comment">// of the file you're uploading.</span></span><br><span class="line">    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput&#123;</span><br><span class="line">        Bucket:               aws.String(bucket),</span><br><span class="line">        Key:                  aws.String(fileDir),</span><br><span class="line">        <span class="comment">//ACL:                  aws.String("private"),</span></span><br><span class="line">        Body:                 bytes.NewReader(buffer),</span><br><span class="line">        ContentLength:        aws.Int64(size),</span><br><span class="line">        ContentType:          aws.String(http.DetectContentType(buffer)),</span><br><span class="line">        ContentDisposition:   aws.String(<span class="string">"attachment"</span>),</span><br><span class="line">        ServerSideEncryption: aws.String(<span class="string">"AES256"</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="6-敏感信息配置"><a href="#6-敏感信息配置" class="headerlink" title="6 敏感信息配置"></a>6 敏感信息配置</h3><p>基本功能实现了，但是直接把数据库账号密码等配置的信息写在代码里的方式不够好，改为把数据库和S3配置使用配置文件方式<br>conf/conf.yaml<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">db:</span></span><br><span class="line">    <span class="string">dialect</span> <span class="string">:</span> <span class="string">mysql</span></span><br><span class="line">    <span class="string">user</span> <span class="string">:</span> <span class="string">root</span></span><br><span class="line">    <span class="string">password</span> <span class="string">:</span></span><br><span class="line">    <span class="string">host</span> <span class="string">:</span> <span class="string">localhost</span></span><br><span class="line">    <span class="string">port</span> <span class="string">:</span> <span class="number">3306</span></span><br><span class="line">    <span class="string">database</span> <span class="string">:</span> <span class="string">dsp</span></span><br><span class="line">    <span class="string">charset</span> <span class="string">:</span> <span class="string">utf8</span></span><br><span class="line"><span class="attr">s3:</span></span><br><span class="line">    <span class="string">access_key</span> <span class="string">:</span> <span class="string">access_key_str</span></span><br><span class="line">    <span class="string">secret_key</span> <span class="string">:</span> <span class="string">secret_key_str</span></span><br><span class="line">    <span class="string">end_point</span> <span class="string">:</span> <span class="attr">http://test.s3.amazon.cn</span></span><br><span class="line">    <span class="string">bucket</span> <span class="string">:</span> <span class="string">bucket_str</span></span><br></pre></td></tr></table></figure></p>
-<p>snapshot.go<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"io/ioutil"</span></span><br><span class="line">    yaml <span class="string">"gopkg.in/yaml.v2"</span></span><br><span class="line">    <span class="string">"bytes"</span></span><br><span class="line">    <span class="comment">//"fmt"</span></span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"path"</span></span><br><span class="line">    <span class="string">"path/filepath"</span></span><br><span class="line">    <span class="string">"strings"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">    <span class="string">"os/exec"</span></span><br><span class="line">    <span class="string">"database/sql"</span></span><br><span class="line">    _ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/credentials"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/session"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/service/s3"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="keyword">var</span> s *session.Session</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        Config Config</span><br><span class="line">    )</span><br><span class="line">    data, err := ioutil.ReadFile(<span class="string">"conf/conf.yaml"</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line">    err = yaml.Unmarshal(data, &amp;Config)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//user:password@tcp(localhost:5555)/dbname?charset=utf8</span></span><br><span class="line">    db, err = sql.Open(Config.Db.Dialect, Config.Db.User + <span class="string">"@tcp("</span> + Config.Db.Host + <span class="string">":"</span> + Config.Db.Port + <span class="string">")/"</span> + Config.Db.Database + <span class="string">"?charset="</span> + Config.Db.Charset)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//query date</span></span><br><span class="line">    rows, err := db.Query(<span class="string">"SELECT id, video_s3_url FROM material_video where video_thumb_url is null"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    access_key := Config.S3.AccessKey</span><br><span class="line">    secret_key := Config.S3.SecretKey</span><br><span class="line">    end_point := Config.S3.EndPoint</span><br><span class="line">    bucket := Config.S3.Bucket</span><br><span class="line">    <span class="comment">// Configure to use S3 Server</span></span><br><span class="line">    s, err = session.NewSession(&amp;aws.Config&#123;</span><br><span class="line">        Region: aws.String(<span class="string">"us-west-2"</span>),</span><br><span class="line">        Credentials: credentials.NewStaticCredentials( access_key, secret_key, <span class="string">""</span>),  <span class="comment">// token can be left blank for now</span></span><br><span class="line">        Endpoint:         aws.String(end_point),</span><br><span class="line">        DisableSSL:       aws.Bool(<span class="literal">true</span>),</span><br><span class="line">        S3ForcePathStyle: aws.Bool(<span class="literal">true</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cnt := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> id <span class="keyword">int</span></span><br><span class="line">        <span class="keyword">var</span> video_s3_url <span class="keyword">string</span></span><br><span class="line">        err = rows.Scan(&amp;id, &amp;video_s3_url)</span><br><span class="line">        checkErr(err)</span><br><span class="line">         process(id, video_s3_url, bucket, end_point)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(cnt&gt;<span class="number">10</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">        cnt++</span><br><span class="line">    &#125;</span><br><span class="line">    log.Println(cnt)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(id <span class="keyword">int</span>, video_s3_url <span class="keyword">string</span>, bucket <span class="keyword">string</span>, end_point <span class="keyword">string</span>)</span> <span class="title">int64</span></span> &#123;</span><br><span class="line">    fullpath := video_s3_url</span><br><span class="line">    fileName := filepath.Base(fullpath)</span><br><span class="line">    fileSuffix := path.Ext(fileName)</span><br><span class="line">    fileSingleName := strings.TrimSuffix(fileName, fileSuffix)</span><br><span class="line">    output := fileSingleName + <span class="string">".png"</span> </span><br><span class="line">    log.Println(output)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//delete exist file</span></span><br><span class="line">    _ = os.Remove(output);</span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">    cmd := exec.Command(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">    <span class="keyword">var</span> buffer bytes.Buffer</span><br><span class="line">    cmd.Stdout = &amp;buffer</span><br><span class="line">    <span class="keyword">if</span> cmd.Run() != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">//panic("could not generate frame")</span></span><br><span class="line">        log.Println(<span class="string">"could not generate frame"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Upload</span></span><br><span class="line">    err := AddFileToS3(bucket, output)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(<span class="string">"could not update to s3"</span>)</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line">    log.Println(output, <span class="string">"update to s3"</span>)</span><br><span class="line"></span><br><span class="line">    thumb_url := end_point + <span class="string">"/"</span> + bucket + <span class="string">"/"</span> + output</span><br><span class="line"></span><br><span class="line">    <span class="comment">//update db</span></span><br><span class="line">    timeStr := time.Now().Format(<span class="string">"2006-01-02 15:04:05"</span>)</span><br><span class="line">    log.Println(<span class="string">"update material_video set video_thumb_url='"</span>, thumb_url, <span class="string">"', update_time='"</span>, timeStr, <span class="string">"' where id="</span>, id)</span><br><span class="line">    stmt, err := db.Prepare(<span class="string">"update material_video set video_thumb_url=?, update_time=? where id=?"</span>)</span><br><span class="line">    <span class="keyword">defer</span> stmt.Close()</span><br><span class="line">    checkErr(err)</span><br><span class="line">    res, err := stmt.Exec(thumb_url, timeStr, id)</span><br><span class="line">    log.Println(<span class="string">"res"</span>, res)</span><br><span class="line">    checkErr(err)</span><br><span class="line">    affect, err := res.RowsAffected()</span><br><span class="line">    checkErr(err)</span><br><span class="line">    <span class="keyword">return</span> affect</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkErr</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">    log.Println(err)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddFileToS3</span><span class="params">(bucket <span class="keyword">string</span>, fileDir <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Open the file for use</span></span><br><span class="line">    file, err := os.Open(fileDir)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get file size and read the file content into a buffer</span></span><br><span class="line">    fileInfo, _ := file.Stat()</span><br><span class="line">    <span class="keyword">var</span> size <span class="keyword">int64</span> = fileInfo.Size()</span><br><span class="line">    buffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, size)</span><br><span class="line">    file.Read(buffer)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Config settings: this is where you choose the bucket, filename, content-type etc.</span></span><br><span class="line">    <span class="comment">// of the file you're uploading.</span></span><br><span class="line">    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput&#123;</span><br><span class="line">        Bucket:               aws.String(bucket),</span><br><span class="line">        Key:                  aws.String(fileDir),</span><br><span class="line">        <span class="comment">//ACL:                  aws.String("private"),</span></span><br><span class="line">        Body:                 bytes.NewReader(buffer),</span><br><span class="line">        ContentLength:        aws.Int64(size),</span><br><span class="line">        ContentType:          aws.String(http.DetectContentType(buffer)),</span><br><span class="line">        ContentDisposition:   aws.String(<span class="string">"attachment"</span>),</span><br><span class="line">        ServerSideEncryption: aws.String(<span class="string">"AES256"</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">    Db DBConfigInfo</span><br><span class="line">    S3 S3ConfigInfo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> DBConfigInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    Dialect  <span class="keyword">string</span> <span class="string">`yaml:"dialect"`</span></span><br><span class="line">    User     <span class="keyword">string</span> <span class="string">`yaml:"user"`</span></span><br><span class="line">    Password <span class="keyword">string</span> <span class="string">`yaml:"password"`</span></span><br><span class="line">    Host     <span class="keyword">string</span> <span class="string">`yaml:"host"`</span></span><br><span class="line">    Port     <span class="keyword">string</span> <span class="string">`yaml:"port"`</span></span><br><span class="line">    Database <span class="keyword">string</span> <span class="string">`yaml:"database"`</span></span><br><span class="line">    Charset  <span class="keyword">string</span> <span class="string">`yaml:"charset"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> S3ConfigInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    AccessKey     <span class="keyword">string</span> <span class="string">`yaml:"access_key"`</span></span><br><span class="line">    SecretKey     <span class="keyword">string</span> <span class="string">`yaml:"secret_key"`</span></span><br><span class="line">    EndPoint      <span class="keyword">string</span> <span class="string">`yaml:"end_point"`</span></span><br><span class="line">    Bucket        <span class="keyword">string</span> <span class="string">`yaml:"bucket"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="7-重构为并行处理"><a href="#7-重构为并行处理" class="headerlink" title="7 重构为并行处理"></a>7 重构为并行处理</h3><p>单条处理耗时较久，尝试使用goroutine重构，提升性能<br>snapshot.go<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"io/ioutil"</span></span><br><span class="line">    yaml <span class="string">"gopkg.in/yaml.v2"</span></span><br><span class="line">    <span class="string">"bytes"</span></span><br><span class="line">    <span class="comment">//"fmt"</span></span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"path"</span></span><br><span class="line">    <span class="string">"path/filepath"</span></span><br><span class="line">    <span class="string">"strings"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">    <span class="string">"os/exec"</span></span><br><span class="line">    <span class="string">"database/sql"</span></span><br><span class="line">    _ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/credentials"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/session"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/service/s3"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="keyword">var</span> s *session.Session</span><br><span class="line"><span class="keyword">var</span> quit = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int64</span>, <span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        Config Config</span><br><span class="line">    )</span><br><span class="line">    data, err := ioutil.ReadFile(<span class="string">"conf/conf.yaml"</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line">    err = yaml.Unmarshal(data, &amp;Config)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//user:password@tcp(localhost:5555)/dbname?charset=utf8</span></span><br><span class="line">    db, err = sql.Open(Config.Db.Dialect, Config.Db.User + <span class="string">"@tcp("</span> + Config.Db.Host + <span class="string">":"</span> + Config.Db.Port + <span class="string">")/"</span> + Config.Db.Database + <span class="string">"?charset="</span> + Config.Db.Charset)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//query date</span></span><br><span class="line">    rows, err := db.Query(<span class="string">"SELECT id, video_s3_url FROM material_video where video_thumb_url is null"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    access_key := Config.S3.AccessKey</span><br><span class="line">    secret_key := Config.S3.SecretKey</span><br><span class="line">    end_point := Config.S3.EndPoint</span><br><span class="line">    bucket := Config.S3.Bucket</span><br><span class="line">    <span class="comment">// Configure to use S3 Server</span></span><br><span class="line">    s, err = session.NewSession(&amp;aws.Config&#123;</span><br><span class="line">        Region: aws.String(<span class="string">"us-west-2"</span>),</span><br><span class="line">        Credentials: credentials.NewStaticCredentials( access_key, secret_key, <span class="string">""</span>),  <span class="comment">// token can be left blank for now</span></span><br><span class="line">        Endpoint:         aws.String(end_point),</span><br><span class="line">        DisableSSL:       aws.Bool(<span class="literal">true</span>),</span><br><span class="line">        S3ForcePathStyle: aws.Bool(<span class="literal">true</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    quit = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int64</span>)</span><br><span class="line">    cnt := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> id <span class="keyword">int</span></span><br><span class="line">        <span class="keyword">var</span> video_s3_url <span class="keyword">string</span></span><br><span class="line">        err = rows.Scan(&amp;id, &amp;video_s3_url)</span><br><span class="line">        checkErr(err)</span><br><span class="line">        <span class="keyword">go</span> process(id, video_s3_url, bucket, end_point)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> cnt % <span class="number">100</span> == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> i := cnt; i &gt; <span class="number">0</span>; i-- &#123;</span><br><span class="line">                &lt;- quit</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cnt++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//log.Println(cnt)</span></span><br><span class="line">    <span class="keyword">for</span> i := cnt; i &gt; <span class="number">0</span>; i-- &#123;</span><br><span class="line">        &lt;- quit</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(id <span class="keyword">int</span>, video_s3_url <span class="keyword">string</span>, bucket <span class="keyword">string</span>, end_point <span class="keyword">string</span>)</span> <span class="title">int64</span></span> &#123;</span><br><span class="line">    fullpath := video_s3_url</span><br><span class="line">    fileSuffix := path.Ext(fileName)</span><br><span class="line">    fileSingleName := strings.TrimSuffix(fileName, fileSuffix)</span><br><span class="line">    output := fileSingleName + <span class="string">".png"</span> </span><br><span class="line">    log.Println(output)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//delete exist file</span></span><br><span class="line">    <span class="comment">//_ = os.Remove(output);</span></span><br><span class="line">    <span class="comment">//if err != nil &#123;</span></span><br><span class="line">    <span class="comment">//    log.Println(err)</span></span><br><span class="line">    <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">    cmd := exec.Command(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">    <span class="keyword">var</span> buffer bytes.Buffer</span><br><span class="line">    cmd.Stdout = &amp;buffer</span><br><span class="line">    <span class="keyword">if</span> cmd.Run() != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">//panic("could not generate frame")</span></span><br><span class="line">        log.Println(<span class="string">"could not generate frame"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Upload</span></span><br><span class="line">    err := AddFileToS3(bucket, output)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(<span class="string">"could not update to s3"</span>)</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line">    log.Println(output, <span class="string">"update to s3"</span>)</span><br><span class="line"></span><br><span class="line">    thumb_url := end_point + <span class="string">"/"</span> + bucket + <span class="string">"/"</span> + output</span><br><span class="line"></span><br><span class="line">    <span class="comment">//update db</span></span><br><span class="line">    timeStr := time.Now().Format(<span class="string">"2006-01-02 15:04:05"</span>)</span><br><span class="line">    log.Println(<span class="string">"update material_video set video_thumb_url='"</span>, thumb_url, <span class="string">"', update_time='"</span>, timeStr, <span class="string">"' where id="</span>, id)</span><br><span class="line">    stmt, err := db.Prepare(<span class="string">"update material_video set video_thumb_url=?, update_time=? where id=?"</span>)</span><br><span class="line">    <span class="keyword">defer</span> stmt.Close()</span><br><span class="line">    checkErr(err)</span><br><span class="line">    res, err := stmt.Exec(thumb_url, timeStr, id)</span><br><span class="line">    <span class="comment">//log.Println("res", res)</span></span><br><span class="line">    checkErr(err)</span><br><span class="line">    affect, err := res.RowsAffected()</span><br><span class="line">    checkErr(err)</span><br><span class="line">    _ = os.Remove(output);</span><br><span class="line">    quit &lt;- affect</span><br><span class="line">    <span class="keyword">return</span> affect</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkErr</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(err)</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddFileToS3</span><span class="params">(bucket <span class="keyword">string</span>, fileDir <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Open the file for use</span></span><br><span class="line">    file, err := os.Open(fileDir)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(err)</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get file size and read the file content into a buffer</span></span><br><span class="line">    fileInfo, _ := file.Stat()</span><br><span class="line">    <span class="keyword">var</span> size <span class="keyword">int64</span> = fileInfo.Size()</span><br><span class="line">    buffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, size)</span><br><span class="line">    file.Read(buffer)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Config settings: this is where you choose the bucket, filename, content-type etc.</span></span><br><span class="line">    <span class="comment">// of the file you're uploading.</span></span><br><span class="line">    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput&#123;</span><br><span class="line">        Bucket:               aws.String(bucket),</span><br><span class="line">        Key:                  aws.String(fileDir),</span><br><span class="line">        <span class="comment">//ACL:                  aws.String("private"),</span></span><br><span class="line">        Body:                 bytes.NewReader(buffer),</span><br><span class="line">        ContentLength:        aws.Int64(size),</span><br><span class="line">        ContentType:          aws.String(http.DetectContentType(buffer)),</span><br><span class="line">        ContentDisposition:   aws.String(<span class="string">"attachment"</span>),</span><br><span class="line">        ServerSideEncryption: aws.String(<span class="string">"AES256"</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">    Db DBConfigInfo</span><br><span class="line">    S3 S3ConfigInfo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> DBConfigInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    Dialect  <span class="keyword">string</span> <span class="string">`yaml:"dialect"`</span></span><br><span class="line">    User     <span class="keyword">string</span> <span class="string">`yaml:"user"`</span></span><br><span class="line">    Password <span class="keyword">string</span> <span class="string">`yaml:"password"`</span></span><br><span class="line">    Host     <span class="keyword">string</span> <span class="string">`yaml:"host"`</span></span><br><span class="line">    Port     <span class="keyword">string</span> <span class="string">`yaml:"port"`</span></span><br><span class="line">    Database <span class="keyword">string</span> <span class="string">`yaml:"database"`</span></span><br><span class="line">    Charset  <span class="keyword">string</span> <span class="string">`yaml:"charset"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> S3ConfigInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    AccessKey     <span class="keyword">string</span> <span class="string">`yaml:"access_key"`</span></span><br><span class="line">    SecretKey     <span class="keyword">string</span> <span class="string">`yaml:"secret_key"`</span></span><br><span class="line">    EndPoint      <span class="keyword">string</span> <span class="string">`yaml:"end_point"`</span></span><br><span class="line">    Bucket        <span class="keyword">string</span> <span class="string">`yaml:"bucket"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <h3 id="1-基本命令"><a href="#1-基本命令" class="headerlink" title="1 基本命令"></a>1 基本命令</h3><p>使用ffmpeg截取视频生成图片，原始命令为</p>
+<pre><code class="bash">ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg
+</code></pre>
+<h3 id="2-简单封装"><a href="#2-简单封装" class="headerlink" title="2 简单封装"></a>2 简单封装</h3><pre><code class="go">package main
+
+import (
+  &quot;bytes&quot;       
+  &quot;fmt&quot;
+  &quot;os/exec&quot;     
+)
+func main() {     
+  filename := &quot;test.mp4&quot;
+  width := 288  
+  height := 512 
+  output := &quot;output.jpg&quot;   
+  cmd := exec.Command(&quot;ffmpeg&quot;, &quot;-i&quot;, filename, &quot;-vframes&quot;, &quot;1&quot;, &quot;-s&quot;, fmt.Sprintf(&quot;%dx%d&quot;, width, height), &quot;-f&quot;, &quot;singlejpeg&quot;, output)
+  var buffer bytes.Buffer
+  cmd.Stdout = &amp;buffer 
+  if cmd.Run() != nil {
+      panic(&quot;could not generate frame&quot;)
+  }
+
+}
+</code></pre>
+<h3 id="3-查询数据库"><a href="#3-查询数据库" class="headerlink" title="3 查询数据库"></a>3 查询数据库</h3><p>增加从mysql数据库读取视频路径</p>
+<pre><code class="go">package main
+
+import (
+    &quot;bytes&quot;
+    &quot;fmt&quot;
+    &quot;path&quot;
+    &quot;path/filepath&quot;
+    &quot;strings&quot;
+    &quot;os/exec&quot;
+    &quot;database/sql&quot;
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+)
+func main() {
+    //user:password@tcp(localhost:5555)/dbname?charset=utf8
+    db, err := sql.Open(&quot;mysql&quot;, &quot;root@tcp(localhost:3306)/dsp?charset=utf8&quot;)
+    checkErr(err)
+
+    //查询数据
+    rows, err := db.Query(&quot;SELECT video_s3_url FROM material_video&quot;)
+    checkErr(err)
+
+    for rows.Next() {
+        var video_s3_url string
+        err = rows.Scan(&amp;video_s3_url)
+        checkErr(err)
+
+        fullpath := video_s3_url
+        //width := 288
+        //height := 512
+        fileName := filepath.Base(fullpath)
+        fileSuffix := path.Ext(fileName)
+        output := strings.TrimSuffix(fileName, fileSuffix) + &quot;.png&quot; 
+        //fmt.Println(output)
+        cmd := exec.Command(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+        var buffer bytes.Buffer
+        cmd.Stdout = &amp;buffer
+        if cmd.Run() != nil {
+            panic(&quot;could not generate frame&quot;)
+        }
+        //break;
+    }
+}
+
+func checkErr(err error) {
+    if err != nil {
+        panic(err)
+    }
+}
+</code></pre>
+<h3 id="4-更新数据库"><a href="#4-更新数据库" class="headerlink" title="4 更新数据库"></a>4 更新数据库</h3><p>将生成图片路径更新到数据库</p>
+<pre><code class="go">package main
+
+import (
+    &quot;bytes&quot;
+    &quot;fmt&quot;
+    &quot;path&quot;
+    &quot;path/filepath&quot;
+    &quot;strings&quot;
+    &quot;os/exec&quot;
+    &quot;database/sql&quot;
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+)
+func main() {
+    //user:password@tcp(localhost:5555)/dbname?charset=utf8
+    db, err := sql.Open(&quot;mysql&quot;, &quot;root@tcp(localhost:3306)/dsp?charset=utf8&quot;)
+    checkErr(err)
+
+    //查询数据
+    rows, err := db.Query(&quot;SELECT id, video_s3_url FROM material_video&quot;)
+    checkErr(err)
+
+    cnt := 0
+    for rows.Next() {
+        var id int
+        var video_s3_url string
+        err = rows.Scan(&amp;id, &amp;video_s3_url)
+        checkErr(err)
+
+        fullpath := video_s3_url
+        fileName := filepath.Base(fullpath)
+        fileSuffix := path.Ext(fileName)
+        output := strings.TrimSuffix(fileName, fileSuffix) + &quot;.png&quot; 
+        cmd := exec.Command(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+        var buffer bytes.Buffer
+        cmd.Stdout = &amp;buffer
+        if cmd.Run() != nil {
+            panic(&quot;could not generate frame&quot;)
+        }
+
+        //更新数据
+        stmt, err := db.Prepare(&quot;update material_video set video_thumb_url=? where id=?&quot;)
+        checkErr(err)
+        res, err := stmt.Exec(output, id)
+        checkErr(err)
+        affect, err := res.RowsAffected()
+        checkErr(err)
+
+        if(affect&gt;0) {
+            cnt++
+        }
+    }
+    fmt.Println(cnt)
+}
+
+func checkErr(err error) {
+    if err != nil {
+        panic(err)
+    }
+}
+</code></pre>
+<h3 id="5-文件上传共享"><a href="#5-文件上传共享" class="headerlink" title="5 文件上传共享"></a>5 文件上传共享</h3><p>考虑本地存储文件的局限性，改为将生成文件上传到S3服务器上，便于后续共享访问</p>
+<pre><code class="go">package main
+
+import (
+    &quot;bytes&quot;
+    &quot;fmt&quot;
+    &quot;path&quot;
+    &quot;path/filepath&quot;
+    &quot;strings&quot;
+    &quot;os&quot;
+    &quot;os/exec&quot;
+    &quot;database/sql&quot;
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+
+    &quot;net/http&quot;
+    &quot;github.com/aws/aws-sdk-go/aws&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/credentials&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/session&quot;
+    &quot;github.com/aws/aws-sdk-go/service/s3&quot;
+)
+func main() {
+    //user:password@tcp(localhost:5555)/dbname?charset=utf8
+    db, err := sql.Open(&quot;mysql&quot;, &quot;root@tcp(localhost:3306)/dsp?charset=utf8&quot;)
+    checkErr(err)
+
+    //query date
+    rows, err := db.Query(&quot;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&quot;)
+    checkErr(err)
+
+    access_key := &quot;access_key_str&quot;
+    secret_key := &quot;secret_key_str&quot;
+    end_point := &quot;http://test.s3.amazon.cn&quot;
+    bucket := &quot;bucket_str&quot; 
+    // Configure to use S3 Server
+    s, err := session.NewSession(&amp;aws.Config{
+        Region: aws.String(&quot;us-west-2&quot;),
+        Credentials: credentials.NewStaticCredentials( access_key, secret_key, &quot;&quot;),  // token can be left blank for now
+        Endpoint:         aws.String(end_point),
+        DisableSSL:       aws.Bool(true),
+        S3ForcePathStyle: aws.Bool(true),
+    })
+    if err != nil {
+        checkErr(err)
+    }
+
+    cnt := 0
+    for rows.Next() {
+        var id int
+        var video_s3_url string
+        err = rows.Scan(&amp;id, &amp;video_s3_url)
+        checkErr(err)
+
+        fullpath := video_s3_url
+        fileName := filepath.Base(fullpath)
+        fileSuffix := path.Ext(fileName)
+        fileSingleName := strings.TrimSuffix(fileName, fileSuffix)
+        output := fileSingleName + &quot;.png&quot; 
+        fmt.Println(output)
+
+        //delete exist file
+        err = os.Remove(output);
+        if err != nil {
+            fmt.Println(err);
+        }
+
+        fmt.Println(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+        cmd := exec.Command(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+        var buffer bytes.Buffer
+        cmd.Stdout = &amp;buffer
+        if cmd.Run() != nil {
+            panic(&quot;could not generate frame&quot;)
+        }
+
+        // Upload
+        err = AddFileToS3(s, bucket, output)
+        if err != nil {
+            checkErr(err)
+        }
+
+        thumb_url := end_point + &quot;/&quot; + bucket + &quot;/&quot; + output
+
+        //update db
+        stmt, err := db.Prepare(&quot;update material_video set video_thumb_url=? where id=?&quot;)
+        checkErr(err)
+        res, err := stmt.Exec(thumb_url, id)
+        checkErr(err)
+        affect, err := res.RowsAffected()
+        checkErr(err)
+
+        if(affect&gt;0) {
+            cnt++
+        }
+
+        if(cnt&gt;10) {
+            break;
+        }
+    }
+    fmt.Println(cnt)
+}
+
+func checkErr(err error) {
+    if err != nil {
+        panic(err)
+    }
+}
+
+func AddFileToS3(s *session.Session, bucket string, fileDir string) error {
+
+    // Open the file for use
+    file, err := os.Open(fileDir)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    // Get file size and read the file content into a buffer
+    fileInfo, _ := file.Stat()
+    var size int64 = fileInfo.Size()
+    buffer := make([]byte, size)
+    file.Read(buffer)
+
+    // Config settings: this is where you choose the bucket, filename, content-type etc.
+    // of the file you&#39;re uploading.
+    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput{
+        Bucket:               aws.String(bucket),
+        Key:                  aws.String(fileDir),
+        //ACL:                  aws.String(&quot;private&quot;),
+        Body:                 bytes.NewReader(buffer),
+        ContentLength:        aws.Int64(size),
+        ContentType:          aws.String(http.DetectContentType(buffer)),
+        ContentDisposition:   aws.String(&quot;attachment&quot;),
+        ServerSideEncryption: aws.String(&quot;AES256&quot;),
+    })
+    return err
+}
+</code></pre>
+<h3 id="6-敏感信息配置"><a href="#6-敏感信息配置" class="headerlink" title="6 敏感信息配置"></a>6 敏感信息配置</h3><p>基本功能实现了，但是直接把数据库账号密码等配置的信息写在代码里的方式不够好，改为把数据库和S3配置使用配置文件方式<br>conf/conf.yaml</p>
+<pre><code class="yaml">db:
+    dialect : mysql
+    user : root
+    password :
+    host : localhost
+    port : 3306
+    database : dsp
+    charset : utf8
+s3:
+    access_key : access_key_str
+    secret_key : secret_key_str
+    end_point : http://test.s3.amazon.cn
+    bucket : bucket_str
+</code></pre>
+<p>snapshot.go</p>
+<pre><code class="go">package main
+
+import (
+    &quot;io/ioutil&quot;
+    yaml &quot;gopkg.in/yaml.v2&quot;
+    &quot;bytes&quot;
+    //&quot;fmt&quot;
+    &quot;log&quot;
+    &quot;path&quot;
+    &quot;path/filepath&quot;
+    &quot;strings&quot;
+    &quot;os&quot;
+    &quot;os/exec&quot;
+    &quot;database/sql&quot;
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+    &quot;time&quot;
+
+    &quot;net/http&quot;
+    &quot;github.com/aws/aws-sdk-go/aws&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/credentials&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/session&quot;
+    &quot;github.com/aws/aws-sdk-go/service/s3&quot;
+)
+
+var db *sql.DB
+var s *session.Session
+
+func main() {
+    var (
+        Config Config
+    )
+    data, err := ioutil.ReadFile(&quot;conf/conf.yaml&quot;)
+    if err != nil {
+        checkErr(err)
+    }
+    err = yaml.Unmarshal(data, &amp;Config)
+    if err != nil {
+        checkErr(err)
+    }
+
+    //user:password@tcp(localhost:5555)/dbname?charset=utf8
+    db, err = sql.Open(Config.Db.Dialect, Config.Db.User + &quot;@tcp(&quot; + Config.Db.Host + &quot;:&quot; + Config.Db.Port + &quot;)/&quot; + Config.Db.Database + &quot;?charset=&quot; + Config.Db.Charset)
+    checkErr(err)
+
+    //query date
+    rows, err := db.Query(&quot;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&quot;)
+    checkErr(err)
+
+    access_key := Config.S3.AccessKey
+    secret_key := Config.S3.SecretKey
+    end_point := Config.S3.EndPoint
+    bucket := Config.S3.Bucket
+    // Configure to use S3 Server
+    s, err = session.NewSession(&amp;aws.Config{
+        Region: aws.String(&quot;us-west-2&quot;),
+        Credentials: credentials.NewStaticCredentials( access_key, secret_key, &quot;&quot;),  // token can be left blank for now
+        Endpoint:         aws.String(end_point),
+        DisableSSL:       aws.Bool(true),
+        S3ForcePathStyle: aws.Bool(true),
+    })
+    if err != nil {
+        checkErr(err)
+    }
+
+    cnt := 0
+    for rows.Next() {
+        var id int
+        var video_s3_url string
+        err = rows.Scan(&amp;id, &amp;video_s3_url)
+        checkErr(err)
+         process(id, video_s3_url, bucket, end_point)
+
+        if(cnt&gt;10) {
+            break
+        }
+        cnt++
+    }
+    log.Println(cnt)
+}
+
+func process(id int, video_s3_url string, bucket string, end_point string) int64 {
+    fullpath := video_s3_url
+    fileName := filepath.Base(fullpath)
+    fileSuffix := path.Ext(fileName)
+    fileSingleName := strings.TrimSuffix(fileName, fileSuffix)
+    output := fileSingleName + &quot;.png&quot; 
+    log.Println(output)
+
+    //delete exist file
+    _ = os.Remove(output);
+
+    log.Println(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+    cmd := exec.Command(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+    var buffer bytes.Buffer
+    cmd.Stdout = &amp;buffer
+    if cmd.Run() != nil {
+        //panic(&quot;could not generate frame&quot;)
+        log.Println(&quot;could not generate frame&quot;)
+    }
+
+    // Upload
+    err := AddFileToS3(bucket, output)
+    if err != nil {
+        log.Println(&quot;could not update to s3&quot;)
+        checkErr(err)
+    }
+    log.Println(output, &quot;update to s3&quot;)
+
+    thumb_url := end_point + &quot;/&quot; + bucket + &quot;/&quot; + output
+
+    //update db
+    timeStr := time.Now().Format(&quot;2006-01-02 15:04:05&quot;)
+    log.Println(&quot;update material_video set video_thumb_url=&#39;&quot;, thumb_url, &quot;&#39;, update_time=&#39;&quot;, timeStr, &quot;&#39; where id=&quot;, id)
+    stmt, err := db.Prepare(&quot;update material_video set video_thumb_url=?, update_time=? where id=?&quot;)
+    defer stmt.Close()
+    checkErr(err)
+    res, err := stmt.Exec(thumb_url, timeStr, id)
+    log.Println(&quot;res&quot;, res)
+    checkErr(err)
+    affect, err := res.RowsAffected()
+    checkErr(err)
+    return affect
+}
+
+func checkErr(err error) {
+    log.Println(err)
+    if err != nil {
+        panic(err)
+    }
+}
+
+func AddFileToS3(bucket string, fileDir string) error {
+
+    // Open the file for use
+    file, err := os.Open(fileDir)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    // Get file size and read the file content into a buffer
+    fileInfo, _ := file.Stat()
+    var size int64 = fileInfo.Size()
+    buffer := make([]byte, size)
+    file.Read(buffer)
+
+    // Config settings: this is where you choose the bucket, filename, content-type etc.
+    // of the file you&#39;re uploading.
+    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput{
+        Bucket:               aws.String(bucket),
+        Key:                  aws.String(fileDir),
+        //ACL:                  aws.String(&quot;private&quot;),
+        Body:                 bytes.NewReader(buffer),
+        ContentLength:        aws.Int64(size),
+        ContentType:          aws.String(http.DetectContentType(buffer)),
+        ContentDisposition:   aws.String(&quot;attachment&quot;),
+        ServerSideEncryption: aws.String(&quot;AES256&quot;),
+    })
+    return err
+}
+
+type Config struct {
+    Db DBConfigInfo
+    S3 S3ConfigInfo
+}
+
+type DBConfigInfo struct {
+    Dialect  string `yaml:&quot;dialect&quot;`
+    User     string `yaml:&quot;user&quot;`
+    Password string `yaml:&quot;password&quot;`
+    Host     string `yaml:&quot;host&quot;`
+    Port     string `yaml:&quot;port&quot;`
+    Database string `yaml:&quot;database&quot;`
+    Charset  string `yaml:&quot;charset&quot;`
+}
+
+type S3ConfigInfo struct {
+    AccessKey     string `yaml:&quot;access_key&quot;`
+    SecretKey     string `yaml:&quot;secret_key&quot;`
+    EndPoint      string `yaml:&quot;end_point&quot;`
+    Bucket        string `yaml:&quot;bucket&quot;`
+}
+</code></pre>
+<h3 id="7-重构为并行处理"><a href="#7-重构为并行处理" class="headerlink" title="7 重构为并行处理"></a>7 重构为并行处理</h3><p>单条处理耗时较久，尝试使用goroutine重构，提升性能<br>snapshot.go</p>
+<pre><code class="go">package main
+
+import (
+    &quot;io/ioutil&quot;
+    yaml &quot;gopkg.in/yaml.v2&quot;
+    &quot;bytes&quot;
+    //&quot;fmt&quot;
+    &quot;log&quot;
+    &quot;path&quot;
+    &quot;path/filepath&quot;
+    &quot;strings&quot;
+    &quot;os&quot;
+    &quot;os/exec&quot;
+    &quot;database/sql&quot;
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+    &quot;time&quot;
+
+    &quot;net/http&quot;
+    &quot;github.com/aws/aws-sdk-go/aws&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/credentials&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/session&quot;
+    &quot;github.com/aws/aws-sdk-go/service/s3&quot;
+)
+
+var db *sql.DB
+var s *session.Session
+var quit = make(chan int64, 100)
+
+func main() {
+    var (
+        Config Config
+    )
+    data, err := ioutil.ReadFile(&quot;conf/conf.yaml&quot;)
+    if err != nil {
+        checkErr(err)
+    }
+    err = yaml.Unmarshal(data, &amp;Config)
+    if err != nil {
+        checkErr(err)
+    }
+
+    //user:password@tcp(localhost:5555)/dbname?charset=utf8
+    db, err = sql.Open(Config.Db.Dialect, Config.Db.User + &quot;@tcp(&quot; + Config.Db.Host + &quot;:&quot; + Config.Db.Port + &quot;)/&quot; + Config.Db.Database + &quot;?charset=&quot; + Config.Db.Charset)
+    checkErr(err)
+
+    //query date
+    rows, err := db.Query(&quot;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&quot;)
+    checkErr(err)
+
+    access_key := Config.S3.AccessKey
+    secret_key := Config.S3.SecretKey
+    end_point := Config.S3.EndPoint
+    bucket := Config.S3.Bucket
+    // Configure to use S3 Server
+    s, err = session.NewSession(&amp;aws.Config{
+        Region: aws.String(&quot;us-west-2&quot;),
+        Credentials: credentials.NewStaticCredentials( access_key, secret_key, &quot;&quot;),  // token can be left blank for now
+        Endpoint:         aws.String(end_point),
+        DisableSSL:       aws.Bool(true),
+        S3ForcePathStyle: aws.Bool(true),
+    })
+    if err != nil {
+        checkErr(err)
+    }
+
+    quit = make(chan int64)
+    cnt := 0
+    for rows.Next() {
+        var id int
+        var video_s3_url string
+        err = rows.Scan(&amp;id, &amp;video_s3_url)
+        checkErr(err)
+        go process(id, video_s3_url, bucket, end_point)
+
+        if cnt % 100 == 0 {
+            for i := cnt; i &gt; 0; i-- {
+                &lt;- quit
+            }
+        }
+        cnt++
+    }
+    //log.Println(cnt)
+    for i := cnt; i &gt; 0; i-- {
+        &lt;- quit
+    }
+}
+
+func process(id int, video_s3_url string, bucket string, end_point string) int64 {
+    fullpath := video_s3_url
+    fileSuffix := path.Ext(fileName)
+    fileSingleName := strings.TrimSuffix(fileName, fileSuffix)
+    output := fileSingleName + &quot;.png&quot; 
+    log.Println(output)
+
+    //delete exist file
+    //_ = os.Remove(output);
+    //if err != nil {
+    //    log.Println(err)
+    //}
+
+    log.Println(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+    cmd := exec.Command(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+    var buffer bytes.Buffer
+    cmd.Stdout = &amp;buffer
+    if cmd.Run() != nil {
+        //panic(&quot;could not generate frame&quot;)
+        log.Println(&quot;could not generate frame&quot;)
+    }
+
+    // Upload
+    err := AddFileToS3(bucket, output)
+    if err != nil {
+        log.Println(&quot;could not update to s3&quot;)
+        checkErr(err)
+    }
+    log.Println(output, &quot;update to s3&quot;)
+
+    thumb_url := end_point + &quot;/&quot; + bucket + &quot;/&quot; + output
+
+    //update db
+    timeStr := time.Now().Format(&quot;2006-01-02 15:04:05&quot;)
+    log.Println(&quot;update material_video set video_thumb_url=&#39;&quot;, thumb_url, &quot;&#39;, update_time=&#39;&quot;, timeStr, &quot;&#39; where id=&quot;, id)
+    stmt, err := db.Prepare(&quot;update material_video set video_thumb_url=?, update_time=? where id=?&quot;)
+    defer stmt.Close()
+    checkErr(err)
+    res, err := stmt.Exec(thumb_url, timeStr, id)
+    //log.Println(&quot;res&quot;, res)
+    checkErr(err)
+    affect, err := res.RowsAffected()
+    checkErr(err)
+    _ = os.Remove(output);
+    quit &lt;- affect
+    return affect
+}
+
+func checkErr(err error) {
+    if err != nil {
+        log.Println(err)
+        panic(err)
+    }
+}
+
+func AddFileToS3(bucket string, fileDir string) error {
+
+    // Open the file for use
+    file, err := os.Open(fileDir)
+    if err != nil {
+        log.Println(err)
+        return err
+    }
+    defer file.Close()
+
+    // Get file size and read the file content into a buffer
+    fileInfo, _ := file.Stat()
+    var size int64 = fileInfo.Size()
+    buffer := make([]byte, size)
+    file.Read(buffer)
+
+    // Config settings: this is where you choose the bucket, filename, content-type etc.
+    // of the file you&#39;re uploading.
+    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput{
+        Bucket:               aws.String(bucket),
+        Key:                  aws.String(fileDir),
+        //ACL:                  aws.String(&quot;private&quot;),
+        Body:                 bytes.NewReader(buffer),
+        ContentLength:        aws.Int64(size),
+        ContentType:          aws.String(http.DetectContentType(buffer)),
+        ContentDisposition:   aws.String(&quot;attachment&quot;),
+        ServerSideEncryption: aws.String(&quot;AES256&quot;),
+    })
+    return err
+}
+
+type Config struct {
+    Db DBConfigInfo
+    S3 S3ConfigInfo
+}
+
+type DBConfigInfo struct {
+    Dialect  string `yaml:&quot;dialect&quot;`
+    User     string `yaml:&quot;user&quot;`
+    Password string `yaml:&quot;password&quot;`
+    Host     string `yaml:&quot;host&quot;`
+    Port     string `yaml:&quot;port&quot;`
+    Database string `yaml:&quot;database&quot;`
+    Charset  string `yaml:&quot;charset&quot;`
+}
+
+type S3ConfigInfo struct {
+    AccessKey     string `yaml:&quot;access_key&quot;`
+    SecretKey     string `yaml:&quot;secret_key&quot;`
+    EndPoint      string `yaml:&quot;end_point&quot;`
+    Bucket        string `yaml:&quot;bucket&quot;`
+}
+</code></pre>
 <p><strong>此处，对于新手需要注意：</strong></p>
 <p>在启动协程后，实际处理过程类似于在主线程中fork出子线程，由子线程完成实际的任务处理，但是，如果主线程没有等待协程处理完返回，特别是循环启动大批量协程的场景，则可能出现不是所有协程都被启动，或者协程处理没有正常返回等问题；<br>对于这种情况，golang中提供了四种方式实现goroutine与主线程同步</p>
 <ol>
@@ -315,7 +973,228 @@
 <li>使用context中cancel函数，这种模式是主线程去通知子线程结束。</li>
 <li>sync.WaitGroup模式，Add方法设置等待子goroutine的数量，使用Done方法设置等待子goroutine的数量减1，当等待的数量等于0时，Wait函数返回。</li>
 </ol>
-<h3 id="8-限制并发协程"><a href="#8-限制并发协程" class="headerlink" title="8 限制并发协程"></a>8 限制并发协程</h3><p>测试发现，使用goroutine并发，理论上可以快速处理批量任务，但是实际处理时，需要考虑数据库连接数及服务器CPU和内存等限制，考虑使用线程池的方式，限制同时处理任务的协程数<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"io/ioutil"</span></span><br><span class="line">    yaml <span class="string">"gopkg.in/yaml.v2"</span></span><br><span class="line">    <span class="string">"bytes"</span></span><br><span class="line">    <span class="comment">//"fmt"</span></span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"path"</span></span><br><span class="line">    <span class="string">"path/filepath"</span></span><br><span class="line">    <span class="string">"strings"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">    <span class="string">"os/exec"</span></span><br><span class="line">    <span class="string">"database/sql"</span></span><br><span class="line">    _ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/credentials"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/aws/session"</span></span><br><span class="line">    <span class="string">"github.com/aws/aws-sdk-go/service/s3"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"sync"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"github.com/panjf2000/ants"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> db *sql.DB</span><br><span class="line"><span class="keyword">var</span> s *session.Session</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        Config Config</span><br><span class="line">        goSync sync.WaitGroup</span><br><span class="line">    )</span><br><span class="line">    data, err := ioutil.ReadFile(<span class="string">"conf/conf.yaml"</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line">    err = yaml.Unmarshal(data, &amp;Config)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//user:password@tcp(localhost:5555)/dbname?charset=utf8</span></span><br><span class="line">    db, err = sql.Open(Config.Db.Dialect, Config.Db.User + <span class="string">"@tcp("</span> + Config.Db.Host + <span class="string">":"</span> + Config.Db.Port + <span class="string">")/"</span> + Config.Db.Database + <span class="string">"?charset="</span> + Config.Db.Charset)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//query date</span></span><br><span class="line">    rows, err := db.Query(<span class="string">"SELECT id, video_s3_url FROM material_video where video_thumb_url is null"</span>)</span><br><span class="line">    checkErr(err)</span><br><span class="line"></span><br><span class="line">    access_key := Config.S3.AccessKey</span><br><span class="line">    secret_key := Config.S3.SecretKey</span><br><span class="line">    end_point := Config.S3.EndPoint</span><br><span class="line">    bucket := Config.S3.Bucket</span><br><span class="line">    <span class="comment">// Configure to use S3 Server</span></span><br><span class="line">    s, err = session.NewSession(&amp;aws.Config&#123;</span><br><span class="line">        Region: aws.String(<span class="string">"us-west-2"</span>),</span><br><span class="line">        Credentials: credentials.NewStaticCredentials( access_key, secret_key, <span class="string">""</span>),  <span class="comment">// token can be left blank for now</span></span><br><span class="line">        Endpoint:         aws.String(end_point),</span><br><span class="line">        DisableSSL:       aws.Bool(<span class="literal">true</span>),</span><br><span class="line">        S3ForcePathStyle: aws.Bool(<span class="literal">true</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">defer</span> ants.Release()</span><br><span class="line">    p, _ := ants.NewPoolWithFunc(Config.Pool.MaxNum, <span class="function"><span class="keyword">func</span><span class="params">(params <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">        <span class="keyword">var</span> id <span class="keyword">int</span></span><br><span class="line">        <span class="keyword">var</span> video_s3_url <span class="keyword">string</span></span><br><span class="line">        <span class="keyword">for</span> k, v := <span class="keyword">range</span> params.(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)&#123;</span><br><span class="line">            <span class="keyword">if</span> k == <span class="string">"id"</span> &#123;</span><br><span class="line">                id = v.(<span class="keyword">int</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> k == <span class="string">"video_s3_url"</span> &#123;</span><br><span class="line">                video_s3_url = v.(<span class="keyword">string</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        process(id, video_s3_url, bucket, end_point)</span><br><span class="line">        goSync.Done()</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">defer</span> p.Release()</span><br><span class="line">    cnt := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">var</span> id <span class="keyword">int</span></span><br><span class="line">        <span class="keyword">var</span> video_s3_url <span class="keyword">string</span></span><br><span class="line">        err = rows.Scan(&amp;id, &amp;video_s3_url)</span><br><span class="line">        checkErr(err)</span><br><span class="line"></span><br><span class="line">        log.Println(id, video_s3_url, bucket, end_point)</span><br><span class="line">        params := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">        params[<span class="string">"id"</span>] = id</span><br><span class="line">        params[<span class="string">"video_s3_url"</span>] = video_s3_url</span><br><span class="line"></span><br><span class="line">        goSync.Add(<span class="number">1</span>)</span><br><span class="line">        _ = p.Invoke(params)</span><br><span class="line"></span><br><span class="line">        cnt++</span><br><span class="line">    &#125;</span><br><span class="line">    log.Println(cnt)</span><br><span class="line"></span><br><span class="line">    goSync.Wait()</span><br><span class="line">    <span class="comment">//log.Printf("running goroutines: %d\n", ants.Running())</span></span><br><span class="line">    log.Printf(<span class="string">"finish all tasks.\n"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">process</span><span class="params">(id <span class="keyword">int</span>, video_s3_url <span class="keyword">string</span>, bucket <span class="keyword">string</span>, end_point <span class="keyword">string</span>)</span> <span class="title">int64</span></span> &#123;</span><br><span class="line">    fullpath := video_s3_url</span><br><span class="line">    fileName := filepath.Base(fullpath)</span><br><span class="line">    fileSuffix := path.Ext(fileName)</span><br><span class="line">    fileSingleName := strings.TrimSuffix(fileName, fileSuffix)</span><br><span class="line">    output := fileSingleName + <span class="string">".png"</span> </span><br><span class="line">    log.Println(output)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//delete exist file</span></span><br><span class="line">    <span class="comment">//_ = os.Remove(output);</span></span><br><span class="line">    <span class="comment">//if err != nil &#123;</span></span><br><span class="line">    <span class="comment">//    log.Println(err)</span></span><br><span class="line">    <span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line">    log.Println(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">    cmd := exec.Command(<span class="string">"ffmpeg"</span>, <span class="string">"-i"</span>, fullpath, <span class="string">"-vframes"</span>, <span class="string">"1"</span>, <span class="string">"-ss"</span>, <span class="string">"3"</span>, <span class="string">"-t"</span>, <span class="string">"1"</span>, output)</span><br><span class="line">    <span class="keyword">var</span> buffer bytes.Buffer</span><br><span class="line">    cmd.Stdout = &amp;buffer</span><br><span class="line">    <span class="keyword">if</span> cmd.Run() != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">//panic("could not generate frame")</span></span><br><span class="line">        log.Println(<span class="string">"could not generate frame"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Upload</span></span><br><span class="line">    err := AddFileToS3(bucket, output)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(<span class="string">"could not update to s3"</span>)</span><br><span class="line">        checkErr(err)</span><br><span class="line">    &#125;</span><br><span class="line">    log.Println(output, <span class="string">"update to s3"</span>)</span><br><span class="line"></span><br><span class="line">    thumb_url := end_point + <span class="string">"/"</span> + bucket + <span class="string">"/"</span> + output</span><br><span class="line"></span><br><span class="line">    <span class="comment">//update db</span></span><br><span class="line">    timeStr := time.Now().Format(<span class="string">"2006-01-02 15:04:05"</span>)</span><br><span class="line">    log.Println(<span class="string">"update material_video set video_thumb_url='"</span>, thumb_url, <span class="string">"', update_time='"</span>, timeStr, <span class="string">"' where id="</span>, id)</span><br><span class="line">    stmt, err := db.Prepare(<span class="string">"update material_video set video_thumb_url=?, update_time=? where id=?"</span>)</span><br><span class="line">    <span class="keyword">defer</span> stmt.Close()</span><br><span class="line">    checkErr(err)</span><br><span class="line">    res, err := stmt.Exec(thumb_url, timeStr, id)</span><br><span class="line">    checkErr(err)</span><br><span class="line">    affect, err := res.RowsAffected()</span><br><span class="line">    checkErr(err)</span><br><span class="line">    _ = os.Remove(output);</span><br><span class="line">    <span class="keyword">return</span> affect</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkErr</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(err)</span><br><span class="line">        <span class="built_in">panic</span>(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddFileToS3</span><span class="params">(bucket <span class="keyword">string</span>, fileDir <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Open the file for use</span></span><br><span class="line">    file, err := os.Open(fileDir)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Println(err)</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get file size and read the file content into a buffer</span></span><br><span class="line">    fileInfo, _ := file.Stat()</span><br><span class="line">    <span class="keyword">var</span> size <span class="keyword">int64</span> = fileInfo.Size()</span><br><span class="line">    buffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, size)</span><br><span class="line">    file.Read(buffer)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Config settings: this is where you choose the bucket, filename, content-type etc.</span></span><br><span class="line">    <span class="comment">// of the file you're uploading.</span></span><br><span class="line">    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput&#123;</span><br><span class="line">        Bucket:               aws.String(bucket),</span><br><span class="line">        Key:                  aws.String(fileDir),</span><br><span class="line">        <span class="comment">//ACL:                  aws.String("private"),</span></span><br><span class="line">        Body:                 bytes.NewReader(buffer),</span><br><span class="line">        ContentLength:        aws.Int64(size),</span><br><span class="line">        ContentType:          aws.String(http.DetectContentType(buffer)),</span><br><span class="line">        ContentDisposition:   aws.String(<span class="string">"attachment"</span>),</span><br><span class="line">        ServerSideEncryption: aws.String(<span class="string">"AES256"</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">    Db   DBConfigInfo</span><br><span class="line">    S3   S3ConfigInfo</span><br><span class="line">    Pool GoroutinePoolInfo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> DBConfigInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    Dialect  <span class="keyword">string</span> <span class="string">`yaml:"dialect"`</span></span><br><span class="line">    User     <span class="keyword">string</span> <span class="string">`yaml:"user"`</span></span><br><span class="line">    Password <span class="keyword">string</span> <span class="string">`yaml:"password"`</span></span><br><span class="line">    Host     <span class="keyword">string</span> <span class="string">`yaml:"host"`</span></span><br><span class="line">    Port     <span class="keyword">string</span> <span class="string">`yaml:"port"`</span></span><br><span class="line">    Database <span class="keyword">string</span> <span class="string">`yaml:"database"`</span></span><br><span class="line">    Charset  <span class="keyword">string</span> <span class="string">`yaml:"charset"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> S3ConfigInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    AccessKey     <span class="keyword">string</span> <span class="string">`yaml:"access_key"`</span></span><br><span class="line">    SecretKey     <span class="keyword">string</span> <span class="string">`yaml:"secret_key"`</span></span><br><span class="line">    EndPoint      <span class="keyword">string</span> <span class="string">`yaml:"end_point"`</span></span><br><span class="line">    Bucket        <span class="keyword">string</span> <span class="string">`yaml:"bucket"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> GoroutinePoolInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    MaxNum <span class="keyword">string</span> <span class="string">`yaml:"max_num"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="8-限制并发协程"><a href="#8-限制并发协程" class="headerlink" title="8 限制并发协程"></a>8 限制并发协程</h3><p>测试发现，使用goroutine并发，理论上可以快速处理批量任务，但是实际处理时，需要考虑数据库连接数及服务器CPU和内存等限制，考虑使用线程池的方式，限制同时处理任务的协程数</p>
+<pre><code class="go">package main
+
+import (
+    &quot;io/ioutil&quot;
+    yaml &quot;gopkg.in/yaml.v2&quot;
+    &quot;bytes&quot;
+    //&quot;fmt&quot;
+    &quot;log&quot;
+    &quot;path&quot;
+    &quot;path/filepath&quot;
+    &quot;strings&quot;
+    &quot;os&quot;
+    &quot;os/exec&quot;
+    &quot;database/sql&quot;
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+    &quot;time&quot;
+
+    &quot;net/http&quot;
+    &quot;github.com/aws/aws-sdk-go/aws&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/credentials&quot;
+    &quot;github.com/aws/aws-sdk-go/aws/session&quot;
+    &quot;github.com/aws/aws-sdk-go/service/s3&quot;
+
+    &quot;sync&quot;
+
+    &quot;github.com/panjf2000/ants&quot;
+)
+
+var db *sql.DB
+var s *session.Session
+
+func main() {
+    var (
+        Config Config
+        goSync sync.WaitGroup
+    )
+    data, err := ioutil.ReadFile(&quot;conf/conf.yaml&quot;)
+    if err != nil {
+        checkErr(err)
+    }
+    err = yaml.Unmarshal(data, &amp;Config)
+    if err != nil {
+        checkErr(err)
+    }
+
+    //user:password@tcp(localhost:5555)/dbname?charset=utf8
+    db, err = sql.Open(Config.Db.Dialect, Config.Db.User + &quot;@tcp(&quot; + Config.Db.Host + &quot;:&quot; + Config.Db.Port + &quot;)/&quot; + Config.Db.Database + &quot;?charset=&quot; + Config.Db.Charset)
+    checkErr(err)
+
+    //query date
+    rows, err := db.Query(&quot;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&quot;)
+    checkErr(err)
+
+    access_key := Config.S3.AccessKey
+    secret_key := Config.S3.SecretKey
+    end_point := Config.S3.EndPoint
+    bucket := Config.S3.Bucket
+    // Configure to use S3 Server
+    s, err = session.NewSession(&amp;aws.Config{
+        Region: aws.String(&quot;us-west-2&quot;),
+        Credentials: credentials.NewStaticCredentials( access_key, secret_key, &quot;&quot;),  // token can be left blank for now
+        Endpoint:         aws.String(end_point),
+        DisableSSL:       aws.Bool(true),
+        S3ForcePathStyle: aws.Bool(true),
+    })
+    if err != nil {
+        checkErr(err)
+    }
+
+    defer ants.Release()
+    p, _ := ants.NewPoolWithFunc(Config.Pool.MaxNum, func(params interface{}) {
+        var id int
+        var video_s3_url string
+        for k, v := range params.(map[string]interface{}){
+            if k == &quot;id&quot; {
+                id = v.(int)
+            }
+            if k == &quot;video_s3_url&quot; {
+                video_s3_url = v.(string)
+            }
+        }
+        process(id, video_s3_url, bucket, end_point)
+        goSync.Done()
+    })
+    defer p.Release()
+    cnt := 0
+    for rows.Next() {
+        var id int
+        var video_s3_url string
+        err = rows.Scan(&amp;id, &amp;video_s3_url)
+        checkErr(err)
+
+        log.Println(id, video_s3_url, bucket, end_point)
+        params := make(map[string]interface{})
+        params[&quot;id&quot;] = id
+        params[&quot;video_s3_url&quot;] = video_s3_url
+
+        goSync.Add(1)
+        _ = p.Invoke(params)
+
+        cnt++
+    }
+    log.Println(cnt)
+
+    goSync.Wait()
+    //log.Printf(&quot;running goroutines: %d\n&quot;, ants.Running())
+    log.Printf(&quot;finish all tasks.\n&quot;)
+}
+
+func process(id int, video_s3_url string, bucket string, end_point string) int64 {
+    fullpath := video_s3_url
+    fileName := filepath.Base(fullpath)
+    fileSuffix := path.Ext(fileName)
+    fileSingleName := strings.TrimSuffix(fileName, fileSuffix)
+    output := fileSingleName + &quot;.png&quot; 
+    log.Println(output)
+
+    //delete exist file
+    //_ = os.Remove(output);
+    //if err != nil {
+    //    log.Println(err)
+    //}
+
+    log.Println(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+    cmd := exec.Command(&quot;ffmpeg&quot;, &quot;-i&quot;, fullpath, &quot;-vframes&quot;, &quot;1&quot;, &quot;-ss&quot;, &quot;3&quot;, &quot;-t&quot;, &quot;1&quot;, output)
+    var buffer bytes.Buffer
+    cmd.Stdout = &amp;buffer
+    if cmd.Run() != nil {
+        //panic(&quot;could not generate frame&quot;)
+        log.Println(&quot;could not generate frame&quot;)
+    }
+
+    // Upload
+    err := AddFileToS3(bucket, output)
+    if err != nil {
+        log.Println(&quot;could not update to s3&quot;)
+        checkErr(err)
+    }
+    log.Println(output, &quot;update to s3&quot;)
+
+    thumb_url := end_point + &quot;/&quot; + bucket + &quot;/&quot; + output
+
+    //update db
+    timeStr := time.Now().Format(&quot;2006-01-02 15:04:05&quot;)
+    log.Println(&quot;update material_video set video_thumb_url=&#39;&quot;, thumb_url, &quot;&#39;, update_time=&#39;&quot;, timeStr, &quot;&#39; where id=&quot;, id)
+    stmt, err := db.Prepare(&quot;update material_video set video_thumb_url=?, update_time=? where id=?&quot;)
+    defer stmt.Close()
+    checkErr(err)
+    res, err := stmt.Exec(thumb_url, timeStr, id)
+    checkErr(err)
+    affect, err := res.RowsAffected()
+    checkErr(err)
+    _ = os.Remove(output);
+    return affect
+}
+
+func checkErr(err error) {
+    if err != nil {
+        log.Println(err)
+        panic(err)
+    }
+}
+
+func AddFileToS3(bucket string, fileDir string) error {
+
+    // Open the file for use
+    file, err := os.Open(fileDir)
+    if err != nil {
+        log.Println(err)
+        return err
+    }
+    defer file.Close()
+
+    // Get file size and read the file content into a buffer
+    fileInfo, _ := file.Stat()
+    var size int64 = fileInfo.Size()
+    buffer := make([]byte, size)
+    file.Read(buffer)
+
+    // Config settings: this is where you choose the bucket, filename, content-type etc.
+    // of the file you&#39;re uploading.
+    _, err = s3.New(s).PutObject(&amp;s3.PutObjectInput{
+        Bucket:               aws.String(bucket),
+        Key:                  aws.String(fileDir),
+        //ACL:                  aws.String(&quot;private&quot;),
+        Body:                 bytes.NewReader(buffer),
+        ContentLength:        aws.Int64(size),
+        ContentType:          aws.String(http.DetectContentType(buffer)),
+        ContentDisposition:   aws.String(&quot;attachment&quot;),
+        ServerSideEncryption: aws.String(&quot;AES256&quot;),
+    })
+    return err
+}
+
+type Config struct {
+    Db   DBConfigInfo
+    S3   S3ConfigInfo
+    Pool GoroutinePoolInfo
+}
+
+type DBConfigInfo struct {
+    Dialect  string `yaml:&quot;dialect&quot;`
+    User     string `yaml:&quot;user&quot;`
+    Password string `yaml:&quot;password&quot;`
+    Host     string `yaml:&quot;host&quot;`
+    Port     string `yaml:&quot;port&quot;`
+    Database string `yaml:&quot;database&quot;`
+    Charset  string `yaml:&quot;charset&quot;`
+}
+
+type S3ConfigInfo struct {
+    AccessKey     string `yaml:&quot;access_key&quot;`
+    SecretKey     string `yaml:&quot;secret_key&quot;`
+    EndPoint      string `yaml:&quot;end_point&quot;`
+    Bucket        string `yaml:&quot;bucket&quot;`
+}
+
+type GoroutinePoolInfo struct {
+    MaxNum string `yaml:&quot;max_num&quot;`
+}
+</code></pre>
 <h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://stackoverflow.com/questions/35411585/first-frame-of-video" target="_blank" rel="noopener">https://stackoverflow.com/questions/35411585/first-frame-of-video</a><br><a href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/05.2.md" target="_blank" rel="noopener">https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/05.2.md</a><br><a href="http://www.hatlonely.com/2018/03/04/golang-aws-sdk-go-%E4%B9%8B-s3-%E6%9C%8D%E5%8A%A1/index.html" target="_blank" rel="noopener">http://www.hatlonely.com/2018/03/04/golang-aws-sdk-go-%E4%B9%8B-s3-%E6%9C%8D%E5%8A%A1/index.html</a><br><a href="https://mlog.club/article/293940" target="_blank" rel="noopener">https://mlog.club/article/293940</a><br><a href="https://colobu.com/2016/12/21/how-to-dump-goroutine-stack-traces/" target="_blank" rel="noopener">https://colobu.com/2016/12/21/how-to-dump-goroutine-stack-traces/</a><br><a href="https://mp.weixin.qq.com/s/aoWQSxrXXZUtJh48tmqMkA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/aoWQSxrXXZUtJh48tmqMkA</a><br><a href="https://www.cnblogs.com/node-js/p/8964171.html" target="_blank" rel="noopener">https://www.cnblogs.com/node-js/p/8964171.html</a><br><a href="https://www.cnblogs.com/williamjie/p/9267741.html" target="_blank" rel="noopener">https://www.cnblogs.com/williamjie/p/9267741.html</a><br><a href="https://github.com/panjf2000/ants" target="_blank" rel="noopener">https://github.com/panjf2000/ants</a></p>
 
       
@@ -430,7 +1309,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

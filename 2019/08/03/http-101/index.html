@@ -307,8 +307,9 @@
 <p>URL是URI的子集，也就是说每个URL都是URI，但不是每个URI都是URL。那么，怎样的URI不是URL呢？URI还包括一个子类叫作URN，它的全称为Universal Resource Name，即统一资源名称。URN只命名资源而不指定如何定位资源，比如urn:isbn:0451450523指定了一本书的ISBN，可以唯一标识这本书，但是没有指定到哪里定位这本书，这就是URN。</p>
 <p>但在目前互联网中，几乎所有的URI都是URL，长久以后，我们一般都把网页链接统称为URL。</p>
 <h2 id="2-URL完整格式"><a href="#2-URL完整格式" class="headerlink" title="2. URL完整格式"></a>2. URL完整格式</h2><p>在平常对前端同学的面试中，我都会让面试者解释他们对URL的了解，很多人都只能简单的说域名和请求路径两部分，但这明显是不完整的，也正因为对URL格式理解的不完整，导致在遇到一些特殊格式链接地址时手足无措。</p>
-<p>一个完整的URL链接格式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scheme://[username[:password]@]hostname[:port]/path/[;parameter]/[?query][#fragment]</span><br></pre></td></tr></table></figure></p>
-<p>各部分说明如下，其中括号部分为可选项</p>
+<p>一个完整的URL链接格式</p>
+<pre><code>scheme://[username[:password]@]hostname[:port]/path/[;parameter]/[?query][#fragment]
+</code></pre><p>各部分说明如下，其中括号部分为可选项</p>
 <table>
 <thead>
 <tr>
@@ -807,7 +808,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

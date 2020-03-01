@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="问题发现某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢 问题分析有问题的sql如下1234567mysql&amp;gt; select count(*) from test_tab where update_time&amp;gt;=&apos;2020-01-10&apos; an">
+<meta name="description" content="问题发现某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢 问题分析有问题的sql如下 mysql&amp;gt; select count(*) from test_tab where update_time&amp;gt;=&amp;#39;2020-01-10&amp;#39;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一次慢查询问题的排查">
 <meta property="og:url" content="https://shiqstone.github.io/2020/02/01/troubleshooting-a-slow-query/index.html">
 <meta property="og:site_name" content="他山笨石">
-<meta property="og:description" content="问题发现某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢 问题分析有问题的sql如下1234567mysql&amp;gt; select count(*) from test_tab where update_time&amp;gt;=&apos;2020-01-10&apos; an">
+<meta property="og:description" content="问题发现某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢 问题分析有问题的sql如下 mysql&amp;gt; select count(*) from test_tab where update_time&amp;gt;=&amp;#39;2020-01-10&amp;#39;">
 <meta property="og:locale" content="default">
 <meta property="og:updated_time" content="2020-02-01T04:03:42.839Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次慢查询问题的排查">
-<meta name="twitter:description" content="问题发现某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢 问题分析有问题的sql如下1234567mysql&amp;gt; select count(*) from test_tab where update_time&amp;gt;=&apos;2020-01-10&apos; an">
+<meta name="twitter:description" content="问题发现某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢 问题分析有问题的sql如下 mysql&amp;gt; select count(*) from test_tab where update_time&amp;gt;=&amp;#39;2020-01-10&amp;#39;">
 
 
 
@@ -300,19 +300,118 @@
 
       
         <h2 id="问题发现"><a href="#问题发现" class="headerlink" title="问题发现"></a>问题发现</h2><p>某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒<br>结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢</p>
-<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>有问题的sql如下<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count(*) from test_tab where update_time&gt;='2020-01-10' and update_time&lt;'2020-01-11' and label is not null;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| count(*) |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|   229330 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">41.34</span> sec)</span><br></pre></td></tr></table></figure></p>
-<p>首先看了一下全表数据，接近千万级，但是有趣的是耗时只有不到4s，对于千万级的表，勉强可以接收<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count(*) from test_tab;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| count(*) |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|  9469766 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">3.86</span> sec)</span><br></pre></td></tr></table></figure></p>
-<p>更有意思的是，执行相同条件查询数据记录的sql，结果10ms就返回了<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;='2020-01-10' and update_time&lt;'2020-01-11' and label is not null order by update_time desc limit 0, 20;</span><br><span class="line">+<span class="comment">----------+-------+------------+---------------------+---------------+-------------------+---------------------+</span></span><br><span class="line">| id       | label | call_round | dial_start_time     | dial_duration | disconnect_reason | update_time         |</span><br><span class="line">+<span class="comment">----------+-------+------------+---------------------+---------------+-------------------+---------------------+</span></span><br><span class="line">| 17510408 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 21:01:09 |</span><br><span class="line">| 17510411 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 21:01:08 |</span><br><span class="line">| 17510421 | E     |          8 | 2020-01-10 20:59:43 |            78 | NULL              | 2020-01-10 21:00:58 |</span><br><span class="line">| 17510418 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 21:00:54 |</span><br><span class="line">| 17510407 | C     |         15 | 2020-01-10 20:59:33 |            78 | NULL              | 2020-01-10 21:00:48 |</span><br><span class="line">| 17510416 | A     |          8 | 2020-01-10 20:59:34 |            57 | NULL              | 2020-01-10 21:00:28 |</span><br><span class="line">| 17510413 | C     |          2 | 2020-01-10 21:00:04 |            20 | NULL              | 2020-01-10 21:00:21 |</span><br><span class="line">| 17510415 | F     |       NULL | NULL                |          NULL | NULL              | 2020-01-10 21:00:20 |</span><br><span class="line">| 17510412 | F     |       NULL | NULL                |          NULL | NULL              | 2020-01-10 21:00:18 |</span><br><span class="line">| 17510423 | C     |          4 | 2020-01-10 20:59:49 |            31 | NULL              | 2020-01-10 21:00:17 |</span><br><span class="line">| 17510420 | C     |          1 | 2020-01-10 20:59:46 |             4 | NULL              | 2020-01-10 20:59:47 |</span><br><span class="line">| 17510424 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:44 |</span><br><span class="line">| 17510410 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:41 |</span><br><span class="line">| 17510419 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:38 |</span><br><span class="line">| 17510437 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 20:59:37 |</span><br><span class="line">| 17510441 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 20:59:35 |</span><br><span class="line">| 17510417 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:34 |</span><br><span class="line">| 17510414 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:32 |</span><br><span class="line">| 17510409 | F     |       NULL | NULL                |          NULL | 8                 | 2020-01-10 20:59:31 |</span><br><span class="line">| 17510422 | F     |       NULL | NULL                |          NULL | 6                 | 2020-01-10 20:59:29 |</span><br><span class="line">+<span class="comment">----------+-------+------------+---------------------+---------------+-------------------+---------------------+</span></span><br><span class="line">20 rows in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br></pre></td></tr></table></figure></p>
-<p>分别查看各条sql的执行计划，结果如下<br>sql_1:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; explain select count(*) from test_tab;</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+---------------+-------------------------------+---------+------+----------+-------------+</span></span><br><span class="line">| id | select_type | table                     | type  | possible_keys | key                           | key_len | ref  | rows     | Extra       |</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+---------------+-------------------------------+---------+------+----------+-------------+</span></span><br><span class="line">|  1 | SIMPLE      | test_tab | index | NULL          | ai_dianxiao_update_time_index | 4       | NULL | 11823805 | Using index |</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+---------------+-------------------------------+---------+------+----------+-------------+</span></span><br></pre></td></tr></table></figure></p>
-<p>sql_2:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; explain select count(*) from test_tab where update_time&gt;='2020-01-10' and update_time&lt;'2020-01-11' and label is not null;</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+</span></span><br><span class="line">| id | select_type | table                     | type  | possible_keys                 | key                           | key_len | ref  | rows   | Extra                              |</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+</span></span><br><span class="line">|  1 | SIMPLE      | test_tab | range | ai_dianxiao_update_time_index | ai_dianxiao_update_time_index | 4       | NULL | 515618 | Using index condition; Using where |</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+</span></span><br></pre></td></tr></table></figure></p>
-<p>sql_3:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; explain select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;='2020-01-10' and update_time&lt;'2020-01-11' and label is not null order by update_time desc limit 0, 20;</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+</span></span><br><span class="line">| id | select_type | table                     | type  | possible_keys                 | key                           | key_len | ref  | rows   | Extra                              |</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+</span></span><br><span class="line">|  1 | SIMPLE      | test_tab | range | ai_dianxiao_update_time_index | ai_dianxiao_update_time_index | 4       | NULL | 515618 | Using index condition; Using where |</span><br><span class="line">+<span class="comment">----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>有问题的sql如下</p>
+<pre><code class="sql">mysql&gt; select count(*) from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null;
++----------+
+| count(*) |
++----------+
+|   229330 |
++----------+
+1 row in set (41.34 sec)
+</code></pre>
+<p>首先看了一下全表数据，接近千万级，但是有趣的是耗时只有不到4s，对于千万级的表，勉强可以接收</p>
+<pre><code class="sql">mysql&gt; select count(*) from test_tab;
++----------+
+| count(*) |
++----------+
+|  9469766 |
++----------+
+1 row in set (3.86 sec)
+</code></pre>
+<p>更有意思的是，执行相同条件查询数据记录的sql，结果10ms就返回了</p>
+<pre><code class="sql">mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null order by update_time desc limit 0, 20;
++----------+-------+------------+---------------------+---------------+-------------------+---------------------+
+| id       | label | call_round | dial_start_time     | dial_duration | disconnect_reason | update_time         |
++----------+-------+------------+---------------------+---------------+-------------------+---------------------+
+| 17510408 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 21:01:09 |
+| 17510411 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 21:01:08 |
+| 17510421 | E     |          8 | 2020-01-10 20:59:43 |            78 | NULL              | 2020-01-10 21:00:58 |
+| 17510418 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 21:00:54 |
+| 17510407 | C     |         15 | 2020-01-10 20:59:33 |            78 | NULL              | 2020-01-10 21:00:48 |
+| 17510416 | A     |          8 | 2020-01-10 20:59:34 |            57 | NULL              | 2020-01-10 21:00:28 |
+| 17510413 | C     |          2 | 2020-01-10 21:00:04 |            20 | NULL              | 2020-01-10 21:00:21 |
+| 17510415 | F     |       NULL | NULL                |          NULL | NULL              | 2020-01-10 21:00:20 |
+| 17510412 | F     |       NULL | NULL                |          NULL | NULL              | 2020-01-10 21:00:18 |
+| 17510423 | C     |          4 | 2020-01-10 20:59:49 |            31 | NULL              | 2020-01-10 21:00:17 |
+| 17510420 | C     |          1 | 2020-01-10 20:59:46 |             4 | NULL              | 2020-01-10 20:59:47 |
+| 17510424 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:44 |
+| 17510410 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:41 |
+| 17510419 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:38 |
+| 17510437 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 20:59:37 |
+| 17510441 | F     |          0 | NULL                |          NULL | NULL              | 2020-01-10 20:59:35 |
+| 17510417 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:34 |
+| 17510414 | F     |       NULL | NULL                |          NULL | 1                 | 2020-01-10 20:59:32 |
+| 17510409 | F     |       NULL | NULL                |          NULL | 8                 | 2020-01-10 20:59:31 |
+| 17510422 | F     |       NULL | NULL                |          NULL | 6                 | 2020-01-10 20:59:29 |
++----------+-------+------------+---------------------+---------------+-------------------+---------------------+
+20 rows in set (0.01 sec)
+</code></pre>
+<p>分别查看各条sql的执行计划，结果如下<br>sql_1:</p>
+<pre><code class="sql">mysql&gt; explain select count(*) from test_tab;
++----+-------------+---------------------------+-------+---------------+-------------------------------+---------+------+----------+-------------+
+| id | select_type | table                     | type  | possible_keys | key                           | key_len | ref  | rows     | Extra       |
++----+-------------+---------------------------+-------+---------------+-------------------------------+---------+------+----------+-------------+
+|  1 | SIMPLE      | test_tab | index | NULL          | ai_dianxiao_update_time_index | 4       | NULL | 11823805 | Using index |
++----+-------------+---------------------------+-------+---------------+-------------------------------+---------+------+----------+-------------+
+</code></pre>
+<p>sql_2:</p>
+<pre><code class="sql">mysql&gt; explain select count(*) from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null;
++----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+
+| id | select_type | table                     | type  | possible_keys                 | key                           | key_len | ref  | rows   | Extra                              |
++----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+
+|  1 | SIMPLE      | test_tab | range | ai_dianxiao_update_time_index | ai_dianxiao_update_time_index | 4       | NULL | 515618 | Using index condition; Using where |
++----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+
+</code></pre>
+<p>sql_3:</p>
+<pre><code class="sql">mysql&gt; explain select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null order by update_time desc limit 0, 20;
++----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+
+| id | select_type | table                     | type  | possible_keys                 | key                           | key_len | ref  | rows   | Extra                              |
++----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+
+|  1 | SIMPLE      | test_tab | range | ai_dianxiao_update_time_index | ai_dianxiao_update_time_index | 4       | NULL | 515618 | Using index condition; Using where |
++----+-------------+---------------------------+-------+-------------------------------+-------------------------------+---------+------+--------+------------------------------------+
+</code></pre>
 <p>初步分析三个sql都用到了索引，sql_1虽然是查询全表数据，但是直接命中二级索引，所以查询速度也很快[4]<br>通过比较执行计划可以看到，sql_2和sql_3完全一致但是执行速度相差巨大，推测sql_3是因为筛选结果集靠前的结果，且只取结果集20条，所以很快返回结果</p>
-<p>sql_4:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;='2020-01-10' and update_time&lt;'2020-01-11' and label is not null order by update_time desc limit 50000, 20;</span><br><span class="line">+<span class="comment">----------+-------+------------+---------------------+---------------+-----------------------+---------------------+</span></span><br><span class="line">| id       | label | call_round | dial_start_time     | dial_duration | disconnect_reason     | update_time         |</span><br><span class="line">+<span class="comment">----------+-------+------------+---------------------+---------------+-----------------------+---------------------+</span></span><br><span class="line">| 17415457 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:24 |</span><br><span class="line">| 17415445 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:24 |</span><br><span class="line">| 17456511 | F     |       NULL | NULL                |          NULL | -ERR NO_USER_RESPONSE | 2020-01-10 14:06:23 |</span><br><span class="line">| 17456500 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:23 |</span><br><span class="line">| 17456491 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:23 |</span><br><span class="line">| 17456428 | G     |          0 | 2020-01-10 14:06:14 |            10 | NULL                  | 2020-01-10 14:06:23 |</span><br><span class="line">| 17433875 | F     |       NULL | NULL                |          NULL | NULL                  | 2020-01-10 14:06:23 |</span><br><span class="line">| 17433874 | F     |       NULL | NULL                |          NULL | NULL                  | 2020-01-10 14:06:23 |</span><br><span class="line">| 17415635 | F     |       NULL | 2020-01-10 14:02:37 |          NULL | 2                     | 2020-01-10 14:06:23 |</span><br><span class="line">| 17456501 | F     |       NULL | NULL                |          NULL | 5                     | 2020-01-10 14:06:22 |</span><br><span class="line">| 17456483 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:22 |</span><br><span class="line">| 17456460 | G     |          0 | 2020-01-10 14:06:17 |             7 | NULL                  | 2020-01-10 14:06:22 |</span><br><span class="line">| 17456444 | G     |          0 | 2020-01-10 14:06:15 |             9 | NULL                  | 2020-01-10 14:06:22 |</span><br><span class="line">| 17456496 | F     |       NULL | NULL                |          NULL | 6                     | 2020-01-10 14:06:21 |</span><br><span class="line">| 17456495 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:21 |</span><br><span class="line">| 17456464 | G     |          0 | 2020-01-10 14:06:15 |             7 | NULL                  | 2020-01-10 14:06:21 |</span><br><span class="line">| 17415461 | F     |       NULL | NULL                |          NULL | 4                     | 2020-01-10 14:06:21 |</span><br><span class="line">| 17456477 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:20 |</span><br><span class="line">| 17456474 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:20 |</span><br><span class="line">| 17456462 | G     |          0 | 2020-01-10 14:06:08 |            14 | NULL                  | 2020-01-10 14:06:20 |</span><br><span class="line">+<span class="comment">----------+-------+------------+---------------------+---------------+-----------------------+---------------------+</span></span><br><span class="line">20 rows in <span class="keyword">set</span> (<span class="number">13.77</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>sql_4:</p>
+<pre><code class="sql">mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null order by update_time desc limit 50000, 20;
++----------+-------+------------+---------------------+---------------+-----------------------+---------------------+
+| id       | label | call_round | dial_start_time     | dial_duration | disconnect_reason     | update_time         |
++----------+-------+------------+---------------------+---------------+-----------------------+---------------------+
+| 17415457 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:24 |
+| 17415445 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:24 |
+| 17456511 | F     |       NULL | NULL                |          NULL | -ERR NO_USER_RESPONSE | 2020-01-10 14:06:23 |
+| 17456500 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:23 |
+| 17456491 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:23 |
+| 17456428 | G     |          0 | 2020-01-10 14:06:14 |            10 | NULL                  | 2020-01-10 14:06:23 |
+| 17433875 | F     |       NULL | NULL                |          NULL | NULL                  | 2020-01-10 14:06:23 |
+| 17433874 | F     |       NULL | NULL                |          NULL | NULL                  | 2020-01-10 14:06:23 |
+| 17415635 | F     |       NULL | 2020-01-10 14:02:37 |          NULL | 2                     | 2020-01-10 14:06:23 |
+| 17456501 | F     |       NULL | NULL                |          NULL | 5                     | 2020-01-10 14:06:22 |
+| 17456483 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:22 |
+| 17456460 | G     |          0 | 2020-01-10 14:06:17 |             7 | NULL                  | 2020-01-10 14:06:22 |
+| 17456444 | G     |          0 | 2020-01-10 14:06:15 |             9 | NULL                  | 2020-01-10 14:06:22 |
+| 17456496 | F     |       NULL | NULL                |          NULL | 6                     | 2020-01-10 14:06:21 |
+| 17456495 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:21 |
+| 17456464 | G     |          0 | 2020-01-10 14:06:15 |             7 | NULL                  | 2020-01-10 14:06:21 |
+| 17415461 | F     |       NULL | NULL                |          NULL | 4                     | 2020-01-10 14:06:21 |
+| 17456477 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:20 |
+| 17456474 | F     |       NULL | NULL                |          NULL | 1                     | 2020-01-10 14:06:20 |
+| 17456462 | G     |          0 | 2020-01-10 14:06:08 |            14 | NULL                  | 2020-01-10 14:06:20 |
++----------+-------+------------+---------------------+---------------+-----------------------+---------------------+
+20 rows in set (13.77 sec)
+</code></pre>
 <p>尝试执行sql_4，验证了这个推测，当筛选结果比较靠后时，游标定位比较耗时，结果返回就比较慢了，这种情况下，需要用其他一些方式来优化[5]，在此不展开</p>
 <p>再回到sql_2，通过各种尝试比较暂时排除索引问题，注意到这个业务的时间字段使用的是timestamp，猜测字段的数据类型会有影响<br>为了不影响线上服务，先找了一个其他数据库，单表1200w数据，时间字段使用的是datetime，执行类似条件查询，居然不到一秒就返回结果，<br>为了验证结果，在非服务时间，将线上表复制到测试数据库，修改字段类型为datetime，执行sql_2同样是秒级响应，满足要求</p>
 <p>根据检索网上资料[3]，对于InnoDB引擎，建立索引的情况下，datetime明显优于timestamp</p>
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>建议业务方修改数据表字段为datetime，可以根本解决问题<br>但是业务方考虑之前是希望使用”ON UPDATE CURRENT_TIMESTAMP”特性而采用的timestamp，需要修改代码较多，暂时不愿调整，于是在这个案例中只能迁移历史数据，减少当前热表总记录的方式。</p>
-<p>另外，在分析过程中，还尝试修改查询条件，查询排序较靠前的记录，类似分页查询问题，速度有一定提升，分析是在索引进行扫描时，会预先根据条件按排序进行筛选，这样排序靠前的结果能更快的返回，查询速度自然要优于结果靠后的查询<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count(*) from test_tab where update_time&gt;='2019-12-01' and update_time&lt;'2019-12-02' and label is not null;</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">| count(*) |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">|    47302 |</span><br><span class="line">+<span class="comment">----------+</span></span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">7.13</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>另外，在分析过程中，还尝试修改查询条件，查询排序较靠前的记录，类似分页查询问题，速度有一定提升，分析是在索引进行扫描时，会预先根据条件按排序进行筛选，这样排序靠前的结果能更快的返回，查询速度自然要优于结果靠后的查询</p>
+<pre><code class="sql">mysql&gt; select count(*) from test_tab where update_time&gt;=&#39;2019-12-01&#39; and update_time&lt;&#39;2019-12-02&#39; and label is not null;
++----------+
+| count(*) |
++----------+
+|    47302 |
++----------+
+1 row in set (7.13 sec)
+</code></pre>
 <h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>对于这次案例，也许这并不是唯一的解决方案，也不是最好的处理方式，但是在项目使用中，对比datetime和timestamp两个类型，个人还是比较倾向与使用前者，毕竟日常数据库引擎都是InnoDB<br>也许使用timestamp唯一的优势只是使用”ON UPDATE CURRENT_TIMESTAMP”特性而少写一行更新时间代码而已，而且2038年也不远了<br>另外，在排查过程中，也有人提出分区表的方案，一方面，对应分区表了解不够全面，对于mysql执行过程不可控，再则分区表的分区键设计不够灵活，最终没有采用</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1]<a href="https://juejin.im/post/5bcc2935f265da0ac66987c9" target="_blank" rel="noopener">https://juejin.im/post/5bcc2935f265da0ac66987c9</a><br>[2]<a href="https://www.cnblogs.com/kerrycode/p/9909093.html" target="_blank" rel="noopener">https://www.cnblogs.com/kerrycode/p/9909093.html</a><br>[3]<a href="https://blog.csdn.net/adsadadaddadasda/article/details/78933784" target="_blank" rel="noopener">https://blog.csdn.net/adsadadaddadasda/article/details/78933784</a><br>[4]<a href="https://blog.csdn.net/wgw335363240/article/details/6295906" target="_blank" rel="noopener">https://blog.csdn.net/wgw335363240/article/details/6295906</a><br>[5]<a href="https://segmentfault.com/a/1190000008859706" target="_blank" rel="noopener">https://segmentfault.com/a/1190000008859706</a><br>[6]<a href="http://hedengcheng.com/?p=577" target="_blank" rel="noopener">http://hedengcheng.com/?p=577</a><br>[7]<a href="https://www.w3cschool.cn/architectroad/architectroad-mysql-partition-table.html" target="_blank" rel="noopener">https://www.w3cschool.cn/architectroad/architectroad-mysql-partition-table.html</a></p>
 
@@ -348,6 +447,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/01/centos7-firewall/" rel="prev" title="centos7 防火墙和端口">
+                centos7 防火墙和端口 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -424,7 +527,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

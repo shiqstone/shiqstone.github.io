@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="php,">
+  <meta name="keywords" content="Hexo, NexT">
 
 
 
@@ -79,18 +79,17 @@
 
 
 
-<meta name="description" content="问题在开发一个新功能，需要在运行的web界面，请求一个远程服务，功能很简单，用curl封转一个远程请求方法调用，对返回结果做简单处理即可； 功能开发完成，为了测试，临时写了一个demo接口，在页面配置好该接口，结果测试请求时报错，追踪错误日志发现，在请求demo接口时超时未响应。 分析首先通过浏览器访问，确认demo接口服务正常；在命令行中使用curl脚本也能获取正常返回结果； 开发环境使用的是n">
-<meta name="keywords" content="php">
+<meta name="description" content="首先检查某端口是否开启：firewall-cmd --query-port=80/tcp --zone=public  #查询80端口是否开启  返回no即未开启，显示yes为已开启 开启某端口firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口  修改完成后需要重启防火墙服务才能生效 查看防火墙状态systemctl s">
 <meta property="og:type" content="article">
-<meta property="og:title" content="windows环境下php-cgi使用curl请求接口阻塞超时的问题">
-<meta property="og:url" content="https://shiqstone.github.io/2019/04/16/windows-php-cgi-timeout/index.html">
+<meta property="og:title" content="centos7 防火墙和端口">
+<meta property="og:url" content="https://shiqstone.github.io/2020/03/01/centos7-firewall/index.html">
 <meta property="og:site_name" content="他山笨石">
-<meta property="og:description" content="问题在开发一个新功能，需要在运行的web界面，请求一个远程服务，功能很简单，用curl封转一个远程请求方法调用，对返回结果做简单处理即可； 功能开发完成，为了测试，临时写了一个demo接口，在页面配置好该接口，结果测试请求时报错，追踪错误日志发现，在请求demo接口时超时未响应。 分析首先通过浏览器访问，确认demo接口服务正常；在命令行中使用curl脚本也能获取正常返回结果； 开发环境使用的是n">
+<meta property="og:description" content="首先检查某端口是否开启：firewall-cmd --query-port=80/tcp --zone=public  #查询80端口是否开启  返回no即未开启，显示yes为已开启 开启某端口firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口  修改完成后需要重启防火墙服务才能生效 查看防火墙状态systemctl s">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-16T16:01:48.002Z">
+<meta property="og:updated_time" content="2020-03-01T09:15:32.871Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="windows环境下php-cgi使用curl请求接口阻塞超时的问题">
-<meta name="twitter:description" content="问题在开发一个新功能，需要在运行的web界面，请求一个远程服务，功能很简单，用curl封转一个远程请求方法调用，对返回结果做简单处理即可； 功能开发完成，为了测试，临时写了一个demo接口，在页面配置好该接口，结果测试请求时报错，追踪错误日志发现，在请求demo接口时超时未响应。 分析首先通过浏览器访问，确认demo接口服务正常；在命令行中使用curl脚本也能获取正常返回结果； 开发环境使用的是n">
+<meta name="twitter:title" content="centos7 防火墙和端口">
+<meta name="twitter:description" content="首先检查某端口是否开启：firewall-cmd --query-port=80/tcp --zone=public  #查询80端口是否开启  返回no即未开启，显示yes为已开启 开启某端口firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口  修改完成后需要重启防火墙服务才能生效 查看防火墙状态systemctl s">
 
 
 
@@ -120,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="https://shiqstone.github.io/2019/04/16/windows-php-cgi-timeout/">
+  <link rel="canonical" href="https://shiqstone.github.io/2020/03/01/centos7-firewall/">
 
 
 
 
 
-  <title>windows环境下php-cgi使用curl请求接口阻塞超时的问题 | 他山笨石</title>
+  <title>centos7 防火墙和端口 | 他山笨石</title>
   
 
 
@@ -233,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://shiqstone.github.io/2019/04/16/windows-php-cgi-timeout/">
+    <link itemprop="mainEntityOfPage" href="https://shiqstone.github.io/2020/03/01/centos7-firewall/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ben Stone">
@@ -250,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">windows环境下php-cgi使用curl请求接口阻塞超时的问题</h1>
+          <h1 class="post-title" itemprop="name headline">centos7 防火墙和端口</h1>
         
 
         <div class="post-meta">
@@ -262,8 +261,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-16T23:59:07+08:00">
-                2019-04-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-01T17:13:08+08:00">
+                2020-03-01
               </time>
             
 
@@ -300,69 +299,22 @@
       
 
       
-        <h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>在开发一个新功能，需要在运行的web界面，请求一个远程服务，功能很简单，用curl封转一个远程请求方法调用，对返回结果做简单处理即可；</p>
-<p>功能开发完成，为了测试，临时写了一个demo接口，在页面配置好该接口，结果测试请求时报错，追踪错误日志发现，在请求demo接口时超时未响应。</p>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>首先通过浏览器访问，确认demo接口服务正常；在命令行中使用curl脚本也能获取正常返回结果；</p>
-<p>开发环境使用的是nginx虚拟主机+php-cgi部署，通过本地绑定host的方式访问，初步分析是php进程运行时不能获取系统host设置，于是准备采用在curl请求的header头中添加host的方式绑定域名；（后续回归发现，这个判断是不准确的，域名未绑定返回的错误信息是 Could not resolve host， 而实际返回的错误信息为 Operation timed out）</p>
-<p>在header头添加host设置之后，还是继续提示请求超时的错误，为确认代码无误，将发送远程请求的这段代码截取出来，测试代码如下：</p>
-<pre><code class="php">
-&lt;?php
-$header = [
-  &quot;Host: demo.domain.com&quot;,
-];
-
-$params = [];
-$ch = curl_init();
-$defaults[CURLOPT_URL] = &#39;http://127.0.0.1/api/demo&#39;;
-$defaults[CURLOPT_HEADER] = FALSE;
-$defaults[CURLOPT_USERAGENT] = &quot;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.98 Safari/537.36&quot;;
-$defaults[CURLOPT_FOLLOWLOCATION] = TRUE;
-$defaults[CURLOPT_RETURNTRANSFER] = TRUE;
-$defaults[CURLOPT_CONNECTTIMEOUT] = 3;
-$defaults[CURLOPT_TIMEOUT] = 3;
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(&#39;Expect:&#39;));
-$options = [CURLOPT_HTTPHEADER=&gt;$header];
-curl_setopt_array($ch, (array) $options + $defaults);
-//var_dump($options, $defaults, (array) $options + $defaults);
-$data = curl_exec($ch);
-curl_close($ch);
-echo  $data;
+        <h1 id="首先检查某端口是否开启："><a href="#首先检查某端口是否开启：" class="headerlink" title="首先检查某端口是否开启："></a>首先检查某端口是否开启：</h1><pre><code class="bash">firewall-cmd --query-port=80/tcp --zone=public  #查询80端口是否开启
 </code></pre>
-<p>在本地命令行执行代码，结果正常响应；通过比对各项请求参数配置，完全一致，说明功能代码应该是没有问题的，于是把注意力再放到环境上；</p>
-<p>经过一番搜索之后，大致定位到原因，<strong>Windows下<code>PHP_FCGI_CHILDREN</code>无效</strong>，也就是windows下默认本地只启了一个php-cgi进程，不会产生新进程去处理请求，有并发处理时只能排队，在用户访问一个php页面的时候nginx已将该进程占用，在该进程又发起http请求时，nginx发现这个仅有的进程已被占用而造成阻塞，就这样造成了死锁，一直到超时。</p>
-<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><h2 id="使用linux环境"><a href="#使用linux环境" class="headerlink" title="使用linux环境"></a>使用linux环境</h2><ul>
-<li>方便快捷，杜绝一切后患，无需做任何修改</li>
-</ul>
-<h2 id="在windows下启动额外的php-cgi处理并发请求"><a href="#在windows下启动额外的php-cgi处理并发请求" class="headerlink" title="在windows下启动额外的php-cgi处理并发请求"></a>在windows下启动额外的php-cgi处理并发请求</h2><ul>
-<li>直接在命令行启动新的php-cgi进程，监听不同端口，如：9001,9002,9003…</li>
-</ul>
-<pre><code class="bash">php-cgi.exe -b 127.0.0.1:9001 -c php.ini
+<p>返回no即未开启，显示yes为已开启</p>
+<h1 id="开启某端口"><a href="#开启某端口" class="headerlink" title="开启某端口"></a>开启某端口</h1><pre><code class="bash">firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口
 </code></pre>
-<p><strong>注意保持命令行不被关闭</strong></p>
-<ul>
-<li><p>或者使用脚本（如 spawn-php.py）启动更多php-cgi进程127.0.0.1:[9001-9010]</p>
-</li>
-<li><p>修改nginx配置，添加代理配置</p>
-</li>
-</ul>
-<pre><code class="bash">upstream phpcgi_proxy {
-    server 127.0.0.1:9000,
-    server 127.0.0.1:9001,
-    server 127.0.0.1:9002,
-    #more
-}
-
+<p>修改完成后需要重启防火墙服务才能生效</p>
+<h1 id="查看防火墙状态"><a href="#查看防火墙状态" class="headerlink" title="查看防火墙状态"></a>查看防火墙状态</h1><pre><code class="bash">systemctl status firewalld
 </code></pre>
-<p>并将配置替换为代理</p>
-<pre><code class="bash">#fastcgi_pass 127.0.0.1:9000;
-fastcgi_pass phpcgi_proxy
+<p>有如下提示表示未开启<br>FirewallD is not running</p>
+<h1 id="开启防火墙，没有任何提示即开启成功"><a href="#开启防火墙，没有任何提示即开启成功" class="headerlink" title="开启防火墙，没有任何提示即开启成功"></a>开启防火墙，没有任何提示即开启成功</h1><pre><code class="bash">systemctl start firewalld
 </code></pre>
-<p>重新加载nginx配置生效</p>
-<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>在linux下，通过绑定系统host，或是在curl中设置header头host两种方法都能正常响应，完全不需要做这么多额外的处理，也不知道算不算浪费时间，-_-凸</p>
-<p>之前开发环境一直是在linux下，从来没有遇到过类似的问题，最近需要在windows下开发，时不时会遇到一些很诡异的问题。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://stackoverflow.com/questions/13813667/php-curl-timing-out-but-cli-curl-works?rq=1" target="_blank" rel="noopener">https://stackoverflow.com/questions/13813667/php-curl-timing-out-but-cli-curl-works?rq=1</a></p>
-<p><a href="https://www.cnblogs.com/gudaojuanma/p/php-curl-nginx-timeout-cli-work.html" target="_blank" rel="noopener">https://www.cnblogs.com/gudaojuanma/p/php-curl-nginx-timeout-cli-work.html</a></p>
-<p><a href="https://www.mokeyjay.com/archives/1103" target="_blank" rel="noopener">https://www.mokeyjay.com/archives/1103</a></p>
+<h1 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h1><pre><code class="bash">systemctl stop firewalld
+</code></pre>
+<h1 id="重启防火墙"><a href="#重启防火墙" class="headerlink" title="重启防火墙"></a>重启防火墙</h1><pre><code class="bash">systemctl restart firewalld
+</code></pre>
+<h1 id="相关网站收藏"><a href="#相关网站收藏" class="headerlink" title="相关网站收藏"></a>相关网站收藏</h1><p><a href="http://ping.pe" target="_blank" rel="noopener">http://ping.pe</a><br><a href="http://ping.chinaz.com" target="_blank" rel="noopener">http://ping.chinaz.com</a></p>
 
       
     </div>
@@ -378,12 +330,6 @@ fastcgi_pass phpcgi_proxy
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/php/" rel="tag"># php</a>
-          
-        </div>
-      
 
       
       
@@ -393,8 +339,8 @@ fastcgi_pass phpcgi_proxy
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/15/project-config-manage/" rel="next" title="协作开发的项目配置文件管理">
-                <i class="fa fa-chevron-left"></i> 协作开发的项目配置文件管理
+              <a href="/2020/02/01/troubleshooting-a-slow-query/" rel="next" title="一次慢查询问题的排查">
+                <i class="fa fa-chevron-left"></i> 一次慢查询问题的排查
               </a>
             
           </div>
@@ -402,10 +348,6 @@ fastcgi_pass phpcgi_proxy
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/04/24/git-lf-crlf/" rel="prev" title="Git 多平台换行符问题(LF or CRLF)">
-                Git 多平台换行符问题(LF or CRLF) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -528,7 +470,7 @@ fastcgi_pass phpcgi_proxy
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方案"><span class="nav-number">3.</span> <span class="nav-text">方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用linux环境"><span class="nav-number">3.1.</span> <span class="nav-text">使用linux环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在windows下启动额外的php-cgi处理并发请求"><span class="nav-number">3.2.</span> <span class="nav-text">在windows下启动额外的php-cgi处理并发请求</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#后记"><span class="nav-number">4.</span> <span class="nav-text">后记</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#首先检查某端口是否开启："><span class="nav-number">1.</span> <span class="nav-text">首先检查某端口是否开启：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开启某端口"><span class="nav-number">2.</span> <span class="nav-text">开启某端口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看防火墙状态"><span class="nav-number">3.</span> <span class="nav-text">查看防火墙状态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开启防火墙，没有任何提示即开启成功"><span class="nav-number">4.</span> <span class="nav-text">开启防火墙，没有任何提示即开启成功</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#关闭防火墙"><span class="nav-number">5.</span> <span class="nav-text">关闭防火墙</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重启防火墙"><span class="nav-number">6.</span> <span class="nav-text">重启防火墙</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#相关网站收藏"><span class="nav-number">7.</span> <span class="nav-text">相关网站收藏</span></a></li></ol></div>
             
 
           </div>

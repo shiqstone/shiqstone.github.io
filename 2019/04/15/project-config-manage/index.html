@@ -308,19 +308,74 @@
 <li>可以简单粗暴的将配置文件排除在代码库之外，这能解决上面一部分问题，但是显然代码库是不完整的，新成员直接拉取代码是无法运行的，更致命的是，当项目需要新增或修改一个公共配置的时候，不得不通知所有成员手动更新配置文件</li>
 <li>……</li>
 </ul>
-<h1 id="方案对比"><a href="#方案对比" class="headerlink" title="方案对比"></a>方案对比</h1><h2 id="基于Base类的配置文件"><a href="#基于Base类的配置文件" class="headerlink" title="基于Base类的配置文件"></a>基于Base类的配置文件</h2><p>曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数；<br>所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以；<br>项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题；<br>如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Config.php</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Config</span> <span class="keyword">extends</span> <span class="title">ConfigBase</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> LOG_PATH = <span class="string">'/home/user/log/project/'</span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ConfigBase.php</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConfigBase</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> LOG_PATH = <span class="string">'/var/log/project/'</span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Demo.php</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $logPath = Config::LOG_PATH;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="方案对比"><a href="#方案对比" class="headerlink" title="方案对比"></a>方案对比</h1><h2 id="基于Base类的配置文件"><a href="#基于Base类的配置文件" class="headerlink" title="基于Base类的配置文件"></a>基于Base类的配置文件</h2><p>曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数；<br>所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以；<br>项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题；<br>如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；</p>
+<pre><code class="php">Config.php
+&lt;?php
+class Config extends ConfigBase
+{
+    const LOG_PATH = &#39;/home/user/log/project/&#39;;
+    ...
+}
+
+ConfigBase.php
+&lt;?php
+class ConfigBase
+{
+    const LOG_PATH = &#39;/var/log/project/&#39;;
+    ...
+}
+
+Demo.php
+&lt;?php
+class Demo
+{
+    public function test()
+    {
+        $logPath = Config::LOG_PATH;
+    }
+}
+</code></pre>
 <h2 id="辅助脚本生成-更新配置文件"><a href="#辅助脚本生成-更新配置文件" class="headerlink" title="辅助脚本生成/更新配置文件"></a>辅助脚本生成/更新配置文件</h2><p>对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。<br>框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空；<br>编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中；<br>同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。</p>
 <h2 id="基于环境变量的配置管理"><a href="#基于环境变量的配置管理" class="headerlink" title="基于环境变量的配置管理"></a>基于环境变量的配置管理</h2><p>php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；</p>
-<h3 id="常见设置环境变量方法："><a href="#常见设置环境变量方法：" class="headerlink" title="常见设置环境变量方法："></a>常见设置环境变量方法：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#Apache</span><br><span class="line">SetEnv APPLICATION_ENV develop</span><br><span class="line"></span><br><span class="line">#nginx</span><br><span class="line">fastcgi_param APPLICATION_ENV develop;</span><br><span class="line"></span><br><span class="line">#php cli</span><br><span class="line">$ export APPLICATION_ENV=develop</span><br></pre></td></tr></table></figure>
-<p>那么框架就会自动加载对应的配置文件（默认位于 <code>application/develop.php</code>），根据配置加载优先级，该配置会覆盖默认的应用配置，应用配置文件是应用初始化的时候首先加载的公共配置文件，默认位于<code>application/config.php</code>。这样添加和修改公共配置的问题也解决了。<br>现在，我们再来处理一个细节问题，将环境变量的值设置到框架配置，把前面的操作结合到一起就可以完成，处理如下<br>1 在web服务环境中<a href="#常见设置环境变量方法：">设置环境变量</a><br>2 在项目入口处读取所设置的环境变量，并定义为常量<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line">$env = <span class="keyword">isset</span>($_SERVER[<span class="string">'APPLICATION_ENV'</span>]) ? $_SERVER[<span class="string">'APPLICATION_ENV'</span>] : <span class="string">'development'</span>;</span><br><span class="line">define(<span class="string">'APP_STATUS'</span>, $env);</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
-<p>3 把所定义的常量设置到配置文件config.php中<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'app_status'</span> =&gt; APP_STATUS</span><br></pre></td></tr></table></figure></p>
+<h3 id="常见设置环境变量方法："><a href="#常见设置环境变量方法：" class="headerlink" title="常见设置环境变量方法："></a>常见设置环境变量方法：</h3><pre><code>#Apache
+SetEnv APPLICATION_ENV develop
+
+#nginx
+fastcgi_param APPLICATION_ENV develop;
+
+#php cli
+$ export APPLICATION_ENV=develop
+</code></pre><p>那么框架就会自动加载对应的配置文件（默认位于 <code>application/develop.php</code>），根据配置加载优先级，该配置会覆盖默认的应用配置，应用配置文件是应用初始化的时候首先加载的公共配置文件，默认位于<code>application/config.php</code>。这样添加和修改公共配置的问题也解决了。<br>现在，我们再来处理一个细节问题，将环境变量的值设置到框架配置，把前面的操作结合到一起就可以完成，处理如下<br>1 在web服务环境中<a href="#常见设置环境变量方法：">设置环境变量</a><br>2 在项目入口处读取所设置的环境变量，并定义为常量</p>
+<pre><code class="php">&lt;?php
+...
+$env = isset($_SERVER[&#39;APPLICATION_ENV&#39;]) ? $_SERVER[&#39;APPLICATION_ENV&#39;] : &#39;development&#39;;
+define(&#39;APP_STATUS&#39;, $env);
+...
+</code></pre>
+<p>3 把所定义的常量设置到配置文件config.php中</p>
+<pre><code class="php">&#39;app_status&#39; =&gt; APP_STATUS
+</code></pre>
 <p>通过以上几步，基本完成了通过设置环境变量指定配置文件的功能。</p>
-<h2 id="使用-env-设置环境变量"><a href="#使用-env-设置环境变量" class="headerlink" title="使用 .env 设置环境变量"></a>使用 .env 设置环境变量</h2><p>前面的配置虽然实现了功能，但需要修改web服务器的配置添加额外配置，任何非标准配置都不利于系统的自动化运维，可能在部署过程中遗留导致服务部署异常，所以不一定是最好的方案；另外需要单独修改框架中非业务逻辑，好像也不是特别好；<br>在分析thinkphp配置文件的过程中，注意到很多配置项使用的是Env::get()方式设置的，其实就是thinkphp5.0支持的环境变量配置，在开发过程中，可以在应用根目录下面的<code>.env</code>来模拟环境变量配置，<code>.env</code>文件中的配置参数定义格式采用<code>ini</code>方式，所有我们可以在这里设置app_status配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[app]</span><br><span class="line">status = develop</span><br></pre></td></tr></table></figure></p>
-<p>并修改config.php配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;app_status&apos; =&gt; Env::get(&apos;app.status&apos;),</span><br></pre></td></tr></table></figure></p>
-<p>同样满足了之前的一系列要求，只需要保证不把<code>.env</code>文件添加到代码库即可</p>
+<h2 id="使用-env-设置环境变量"><a href="#使用-env-设置环境变量" class="headerlink" title="使用 .env 设置环境变量"></a>使用 .env 设置环境变量</h2><p>前面的配置虽然实现了功能，但需要修改web服务器的配置添加额外配置，任何非标准配置都不利于系统的自动化运维，可能在部署过程中遗留导致服务部署异常，所以不一定是最好的方案；另外需要单独修改框架中非业务逻辑，好像也不是特别好；<br>在分析thinkphp配置文件的过程中，注意到很多配置项使用的是Env::get()方式设置的，其实就是thinkphp5.0支持的环境变量配置，在开发过程中，可以在应用根目录下面的<code>.env</code>来模拟环境变量配置，<code>.env</code>文件中的配置参数定义格式采用<code>ini</code>方式，所有我们可以在这里设置app_status配置</p>
+<pre><code>[app]
+status = develop
+</code></pre><p>并修改config.php配置文件</p>
+<pre><code>&#39;app_status&#39; =&gt; Env::get(&#39;app.status&#39;),
+</code></pre><p>同样满足了之前的一系列要求，只需要保证不把<code>.env</code>文件添加到代码库即可</p>
 <p>注意：如果部署环境单独配置了环境变量，需要删除<code>.env</code>配置文件，避免冲突。</p>
-<h2 id="副产品"><a href="#副产品" class="headerlink" title="副产品"></a>副产品</h2><p>使用<code>.env</code>设置环境变量还能解决敏感信息配置安全性的问题，如，数据库配置文件中，用户名密码字段的值可以直接留空，从环境变量文件中设置即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.env</span><br><span class="line"></span><br><span class="line">[database]</span><br><span class="line">username =  root</span><br><span class="line">password =  123456</span><br><span class="line"></span><br><span class="line">database.php</span><br><span class="line">// 用户名 </span><br><span class="line">&apos;username&apos; =&gt; Env::get(&apos;database.username&apos;, &apos;&apos;), </span><br><span class="line">// 密码 </span><br><span class="line">&apos;password&apos; =&gt; Env::get(&apos;database.password&apos;, &apos;&apos;),</span><br></pre></td></tr></table></figure></p>
-<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>除了上面列举的几种方法，还有很多不同的处理，没有哪种实现是完美的，个人觉得选择方案主要还是要从支持协作开发，便于开发维护，支持持续集成，兼顾安全等各方面权衡。并且不同团队的开发使用习惯也不尽相同，还是应该选择最适合团队项目的实现方式。</p>
+<h2 id="副产品"><a href="#副产品" class="headerlink" title="副产品"></a>副产品</h2><p>使用<code>.env</code>设置环境变量还能解决敏感信息配置安全性的问题，如，数据库配置文件中，用户名密码字段的值可以直接留空，从环境变量文件中设置即可</p>
+<pre><code>.env
+
+[database]
+username =  root
+password =  123456
+
+database.php
+// 用户名 
+&#39;username&#39; =&gt; Env::get(&#39;database.username&#39;, &#39;&#39;), 
+// 密码 
+&#39;password&#39; =&gt; Env::get(&#39;database.password&#39;, &#39;&#39;),
+</code></pre><h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>除了上面列举的几种方法，还有很多不同的处理，没有哪种实现是完美的，个人觉得选择方案主要还是要从支持协作开发，便于开发维护，支持持续集成，兼顾安全等各方面权衡。并且不同团队的开发使用习惯也不尽相同，还是应该选择最适合团队项目的实现方式。</p>
 <p>#参考<br><a href="http://www.digpage.com/environment.html" target="_blank" rel="noopener">环境和配置文件</a><br><a href="https://www.kancloud.cn/manual/thinkphp5/118024" target="_blank" rel="noopener">thinkphp5.0完全开发手册-配置</a></p>
 
       
@@ -441,7 +496,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
