@@ -229,6 +229,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://shiqstone.github.io/2020/03/13/linux-crontab-avoid-repeat-run/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ben Stone">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="他山笨石">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/03/13/linux-crontab-avoid-repeat-run/" itemprop="url">在Linux下如何防止定时脚本重复执行</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-13T15:53:34+08:00">
+                2020-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>好多系统中会用到邮件系统，我们假设有一个 PHP 脚本用来发送邮件。使用 Linux cron 每分钟执行一次<br>我们暂时不引入队列系统，其实使用队列处理此方式更优。</p>
+<p>我们得到下面的基本配置</p>
+<pre><code class="bash">* * * * * php /home/app/email.php
+</code></pre>
+<h2 id="问题分析和解决"><a href="#问题分析和解决" class="headerlink" title="问题分析和解决"></a>问题分析和解决</h2><h4 id="异常问题"><a href="#异常问题" class="headerlink" title="异常问题"></a>异常问题</h4><p>如果这个邮件服务出现异常，进程僵死怎么办？<br>假设由于未知因素， email.php 脚本一直执行，没有退出。极端的情况，进入一个 while 死循环。<br>这下倒好，原来说好的一分钟执行一次，现在一直死这边了，后面的脚本也不能跑了</p>
+<h4 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h4><p>使用 timeout，假设我们设定每个脚本最多执行时间位 200秒，超过 200秒 就自动死掉。</p>
+<pre><code class="bash">* * * * * timeout 200 php /home/app/email.php
+</code></pre>
+<h4 id="重复问题"><a href="#重复问题" class="headerlink" title="重复问题"></a>重复问题</h4><p>如果这个脚本执行时间超过 60秒，下一分钟又会执行 php email.php，如果避免重复执行？<br>这样会出现，有两个进程同时在执行 php email.php，那会不会出现同一个任务被执行了两次？</p>
+<h4 id="解决办法：-1"><a href="#解决办法：-1" class="headerlink" title="解决办法："></a>解决办法：</h4><p>使用 flock 进行互斥控制</p>
+<pre><code>用法：
+ flock [选项] &lt;文件|目录&gt; &lt;命令&gt; [&lt;参数&gt;...]
+ flock [选项] &lt;文件|目录&gt; -c &lt;命令&gt;
+ flock [选项] &lt;文件描述符号码&gt;
+</code></pre><p>通过 shell 脚本管理文件锁。</p>
+<pre><code>选项：
+ -s, --shared             获取共享锁
+ -x, --exclusive          获取排他锁(默认)
+ -u, --unlock             移除锁
+ -n, --nonblock           失败而非等待
+ -w, --timeout &lt;秒&gt;       等待限定的时间
+ -E, --conflict-exit-code &lt;数字&gt;     冲突或超时后的退出代码
+ -o, --close              运行命令前关闭文件描述符
+ -c, --command &lt;命令&gt;      通过 shell 运行单个命令字符串
+ -F, --no-fork            执行命令时不 fork
+     --verbose            增加详尽程度
+ -h, --help               display this help
+ -V, --version            display version
+</code></pre><p>使用其中的排他设置</p>
+<pre><code class="bash">* * * * * flock -xn /tmp/test.lock -c &quot;timeout 200 php /home/app/email.php&quot;
+</code></pre>
+<p>添加日志，便于后续排查问题</p>
+<pre><code class="bash">* * * * * flock -xn /tmp/test.lock -c &quot;timeout 200 php /home/app/email.php &gt;&gt; /home/log/test.log 2&gt;&amp;1&quot;
+</code></pre>
+<h2 id="频率提升"><a href="#频率提升" class="headerlink" title="频率提升"></a>频率提升</h2><p>linux crontab 最小粒度为分钟级，如果觉得一分钟一次频率太低，想 10s 执行一次怎么办？</p>
+<pre><code class="bash">* * * * * php /home/app/email.php &gt;&gt; /home/log/test.log 2&gt;&amp;1
+* * * * * ( sleep 10 ; php /home/app/email.php &gt;&gt; /home/log/test.log 2&gt;&amp;1 )
+* * * * * ( sleep 20 ; php /home/app/email.php &gt;&gt; /home/log/test.log 2&gt;&amp;1 )
+* * * * * ( sleep 30 ; php /home/app/email.php &gt;&gt; /home/log/test.log 2&gt;&amp;1 )
+* * * * * ( sleep 40 ; php /home/app/email.php &gt;&gt; /home/log/test.log 2&gt;&amp;1 )
+* * * * * ( sleep 50 ; php /home/app/email.php &gt;&gt; /home/log/test.log 2&gt;&amp;1 )
+</code></pre>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>准备一个 php 脚本 test.php</p>
+<pre><code class="php">&lt;?php
+$i = 10000;
+while ($i &gt; 0) {
+  echo --$i . \PHP_EOL;
+  sleep(1);
+}
+</code></pre>
+<p>执行</p>
+<pre><code class="bash">flock -xn /tmp/mytest.lock -c &quot;timeout 30 php /path/to/flock/test.php&quot;
+</code></pre>
+<p>可以看到终端不停输出数值</p>
+<pre><code class="bash">9999
+9998
+9997
+9996
+9995
+9994
+9993
+...
+</code></pre>
+<p>这时，再打开另一个终端，执行相同命令，结果发现<br>第二次执行的没有输出（因为 flock 互斥）<br>第一个执行的，30秒后自动关闭进程（因为 timeout 30）</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://shiqstone.github.io/2020/03/01/centos7-firewall/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1768,170 +1951,6 @@ type GoroutinePoolInfo struct {
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://shiqstone.github.io/2019/08/11/vue-route-nginx/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ben Stone">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="他山笨石">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/08/11/vue-route-nginx/" itemprop="url">vue-router+nginx 路径配置方法</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-11T19:09:48+08:00">
-                2019-08-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>vue-router 的默认数据hash模式-使用url的hash来模拟一个完整的URL，于是当URL改变时，页面不会重新加载。</p>
-<p>一般情况下，我们不喜欢丑丑的hash，类似于index.html#/matchResult，可以使用路由的history模式。history模式是利用history.pushState API来实现页面跳转。</p>
-<p>但是有个问题，在使用nginx的时候，我们需要添加一些配置。</p>
-<h2 id="直接配置在根路径下"><a href="#直接配置在根路径下" class="headerlink" title="直接配置在根路径下"></a>直接配置在根路径下</h2><p>直接配置在根路径下，访问的时候只用输入<a href="http://yoursite.com/" target="_blank" rel="noopener">http://yoursite.com</a>，在nginx的配置如下</p>
-<pre><code>
-location / {
-
-  try_files $uri $uri/ /index.html;
-
-}
-
-</code></pre><h2 id="非根路径配置"><a href="#非根路径配置" class="headerlink" title="非根路径配置"></a>非根路径配置</h2><p>如果一个域名下有多个项目，那么使用根路径配置就不合适了，我们需要在根路径下指定一层路径，比如说</p>
-<p>A项目</p>
-<pre><code>
-http://yoursite.com/A
-
-</code></pre><p>B项目</p>
-<pre><code>
-http://yoursite.com/B
-
-</code></pre><p>nginx的配置</p>
-<pre><code>
-    location ^~/A {
-
-            alias /XX/A;//此处为A的路径
-
-            index index.html;
-
-            try_files $uri $uri/ /A/index.html;
-
-    }
-
-    location ^~/B {
-
-            alias /XX/B;//此处为B的路径
-
-            index index.html;
-
-            try_files $uri $uri/ /B/index.html;
-
-    }
-
-
-
-</code></pre><p><strong>tip: 注意要用alias不能用root</strong></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1982,7 +2001,7 @@ http://yoursite.com/B
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -1995,7 +2014,7 @@ http://yoursite.com/B
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">tags</span>
                 
               </div>
