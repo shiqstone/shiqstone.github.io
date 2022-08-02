@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>hexo on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/hexo/</link>
+    <description>Recent content in hexo on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Sat, 13 Apr 2019 16:22:54 +0000</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/hexo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用Hexo&#43;github搭建博客（基础）</title>
+      <link>https://shiqstone.github.io/post/first-hexo/</link>
+      <pubDate>Sat, 13 Apr 2019 16:22:54 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/first-hexo/</guid>
+      <description>前提 安装Node.js，配置node环境 安装和配置git 注册github账号，新建项目，项目名设定为：{username}.github.io，并且勾选Initialize this repository with a README 安装Hexo 新建文件夹
+mkdir blog cd blog 安装Hexo
+npm install hexo -g 检查安装结果
+hexo -v 初始化
+hexo init 安装所有依赖组件
+npm install 生成blog网站代码
+hexo g 启动本地服务
+hexo s 如果启动成功，可访问http://localhost:4000 进行预览 如果页面无法访问，可能是本地端口被占用，可使用以下命令更改端口启动服务
+hexo server -p port 当出现如下界面表示服务启动成功 将hexo与github page关联起来 设置git的user和email
+git config --global user.name &amp;#34;you name&amp;#34; git config --global user.email &amp;#34;you email&amp;#34; 设置git免密信任授权，将本地~/.ssh/id_rsa.pub 文件的内容添加到github settings-&amp;gt;SSH keys 测试ssh信任是否成功
+ssh -T git@github.com 配置Deployment，在文件夹中找到_config.yml配置文件，修改repo的值
+deploy: type: git repository: git@github.</description>
+    </item>
+    
+  </channel>
+</rss>

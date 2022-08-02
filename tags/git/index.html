@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>charset | 他山笨石</title>
+<title>git | 他山笨石</title>
 <meta name="keywords" content="">
 <meta name="description" content="Show no remorse">
 <meta name="author" content="">
-<link rel="canonical" href="https://shiqstone.github.io/tags/charset/">
+<link rel="canonical" href="https://shiqstone.github.io/tags/git/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://shiqstone.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
@@ -18,7 +18,7 @@
 <link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/charset/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/git/index.xml">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,13 +55,13 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="charset" />
+</noscript><meta property="og:title" content="git" />
 <meta property="og:description" content="Show no remorse" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://shiqstone.github.io/tags/charset/" />
+<meta property="og:url" content="https://shiqstone.github.io/tags/git/" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="charset"/>
+<meta name="twitter:title" content="git"/>
 <meta name="twitter:description" content="Show no remorse"/>
 
 </head>
@@ -127,20 +127,23 @@
 <main class="main"> 
 <header class="page-header">
   <h1>
-    charset
+    git
   </h1>
 </header>
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
-    <h2>windows程序员常见乱码问题汇总
+    <h2>Git 多平台换行符问题(LF or CRLF)
     </h2>
   </header>
   <div class="entry-content">
-    <p> 名称 示例 特点 产生原因 古文码 鍝堝搱鐪嬪埌瀹堕噷鐫″ぇ瑙� 大都为不认识的古文，夹杂日韩文 以GBK方式读取UTF-8编码的中文 口子码 ����������� 大部分字符为小方块 以UTF-8方式读取GBK编码的中文 符号码 å“ˆå“ˆçœ‹åˆ°å®¶é‡Œç¡å¤§è§‰ 大部分字符为各种符号 以ISO8859-1方式读取UTF-8编码的中文 拼音码 ¿¨·É»úÉÏµÄ 大部分字符为头顶带各种类似声调符号的字母 以ISO8859-1方式读取GBK编码的中文 问句码 幽月要好好学习天天向?? 字符串长度为偶数时正常，长度为奇数时最后几个字符变为问号 以GBK的方式读取UTF-8编码的中文，然后用UTF-8格式再次读取 锟拷码 锟斤拷锟斤拷锟斤拷锟 全中文字符，且大部分文字为“锟斤拷”几个字符 以UTF-8方式读取GBK编码的中文，然后用GBK格式再次读取 </p>
+    <p>$ git add . fatal: CRLF would be replaced by LF ... 文本文件所使用的换行符，在不同的系统平台上是不一样的。UNIX/Linux 使用的是 0x0A（LF），早期的 Mac OS 使用的是 0x0D（CR），后来的 OS X 在更换内核后与 UNIX 保持一致了。但 DOS/Windows 一直使用 0x0D0A（CRLF） 作为换行符。
+跨平台协作开发是常有的，不统一的换行符确实对跨平台的文件交换带来了麻烦。最大的问题是，在不同平台上，换行符发生改变时，Git 会认为整个文件被修改，这就造成我们没法 diff，不能正确反映本次的修改。还好 Git 在设计时就考虑了这一点，其提供了一个 autocrlf 的配置项，用于在提交和检出时自动转换换行符，该配置有三个可选项：
+true: 提交时转换为 LF，检出时转换为 CRLF false: 提交检出均不转换 input: 提交时转换为LF，检出时不转换 用如下命令即可完成配置：
+# 提交时转换为LF，检出时转换为CRLF git config --global core.autocrlf true # 提交时转换为LF，检出时不转换 git config --global core.autocrlf input # 提交检出均不转换 git config --global core.autocrlf false 如果把 autocrlf 设置为 false 时，那另一个配置项 safecrlf 最好设置为 ture。该选项用于检查文件是否包含混合换行符，其有三个可选项：...</p>
   </div>
-  <footer class="entry-footer"><span title='2019-08-18 13:14:45 +0000 UTC'>August 18, 2019</span></footer>
-  <a class="entry-link" aria-label="post link to windows程序员常见乱码问题汇总" href="https://shiqstone.github.io/post/gibberish/"></a>
+  <footer class="entry-footer"><span title='2019-04-24 00:06:23 +0000 UTC'>April 24, 2019</span></footer>
+  <a class="entry-link" aria-label="post link to Git 多平台换行符问题(LF or CRLF)" href="https://shiqstone.github.io/post/git-lf-crlf/"></a>
 </article>
     </main>
     

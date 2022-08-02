@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Go语言开发效率的小技巧 | 他山笨石</title>
+<meta name="keywords" content="Go">
+<meta name="description" content="前言 每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、for-each等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。
+可变长参数 Go语言允许一个函数把任意数量的值作为参数，Go语言内置了...操作符，在函数的最后一个形参才能使用...操作符，使用它必须注意如下事项：
+可变长参数必须在函数列表的最后一个； 把可变长参数当切片来解析，可变长参数没有没有值时就是nil切片 可变长参数的类型必须相同 func test(a int, b ...int) { return } 既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用...进行解包转换为参数列表，append 方法就是最好的例子：
+var sarr []int sarr = append(sarr, 1) sarr = append(sarr, sarr...) append方法定义如下：
+// slice = append(slice, elem1, elem2) // slice = append(slice, anotherSlice...) func append(slice []Type, elems ...Type) []Type 声明不定长数组 数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用&hellip;操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；
+a := [...]int{1, 3, 5} // 数组长度是3，等同于 a := [3]{1, 3, 5} 有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用&hellip;操作符搞定：
+a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0 init函数 Go语言提供了先于main函数执行的init函数，初始化每个包后会自动执行init函数，每个包中可以有多个init函数，每个包中的源文件中也可以有多个init函数，加载顺序如下：">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Go语言开发效率的小技巧" />
+<meta property="og:description" content="前言 每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、for-each等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。
+可变长参数 Go语言允许一个函数把任意数量的值作为参数，Go语言内置了...操作符，在函数的最后一个形参才能使用...操作符，使用它必须注意如下事项：
+可变长参数必须在函数列表的最后一个； 把可变长参数当切片来解析，可变长参数没有没有值时就是nil切片 可变长参数的类型必须相同 func test(a int, b ...int) { return } 既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用...进行解包转换为参数列表，append 方法就是最好的例子：
+var sarr []int sarr = append(sarr, 1) sarr = append(sarr, sarr...) append方法定义如下：
+// slice = append(slice, elem1, elem2) // slice = append(slice, anotherSlice...) func append(slice []Type, elems ...Type) []Type 声明不定长数组 数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用&hellip;操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；
+a := [...]int{1, 3, 5} // 数组长度是3，等同于 a := [3]{1, 3, 5} 有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用&hellip;操作符搞定：
+a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0 init函数 Go语言提供了先于main函数执行的init函数，初始化每个包后会自动执行init函数，每个包中可以有多个init函数，每个包中的源文件中也可以有多个init函数，加载顺序如下：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-08-02T00:15:51&#43;00:00" />
+<meta property="article:modified_time" content="2022-08-02T00:15:51&#43;00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go语言开发效率的小技巧"/>
+<meta name="twitter:description" content="前言 每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、for-each等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。
+可变长参数 Go语言允许一个函数把任意数量的值作为参数，Go语言内置了...操作符，在函数的最后一个形参才能使用...操作符，使用它必须注意如下事项：
+可变长参数必须在函数列表的最后一个； 把可变长参数当切片来解析，可变长参数没有没有值时就是nil切片 可变长参数的类型必须相同 func test(a int, b ...int) { return } 既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用...进行解包转换为参数列表，append 方法就是最好的例子：
+var sarr []int sarr = append(sarr, 1) sarr = append(sarr, sarr...) append方法定义如下：
+// slice = append(slice, elem1, elem2) // slice = append(slice, anotherSlice...) func append(slice []Type, elems ...Type) []Type 声明不定长数组 数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用&hellip;操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；
+a := [...]int{1, 3, 5} // 数组长度是3，等同于 a := [3]{1, 3, 5} 有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用&hellip;操作符搞定：
+a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0 init函数 Go语言提供了先于main函数执行的init函数，初始化每个包后会自动执行init函数，每个包中可以有多个init函数，每个包中的源文件中也可以有多个init函数，加载顺序如下："/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Go语言开发效率的小技巧",
+      "item": "https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Go语言开发效率的小技巧",
+  "name": "Go语言开发效率的小技巧",
+  "description": "前言 每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、for-each等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。\n可变长参数 Go语言允许一个函数把任意数量的值作为参数，Go语言内置了...操作符，在函数的最后一个形参才能使用...操作符，使用它必须注意如下事项：\n可变长参数必须在函数列表的最后一个； 把可变长参数当切片来解析，可变长参数没有没有值时就是nil切片 可变长参数的类型必须相同 func test(a int, b ...int) { return } 既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用...进行解包转换为参数列表，append 方法就是最好的例子：\nvar sarr []int sarr = append(sarr, 1) sarr = append(sarr, sarr...) append方法定义如下：\n// slice = append(slice, elem1, elem2) // slice = append(slice, anotherSlice...) func append(slice []Type, elems ...Type) []Type 声明不定长数组 数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用\u0026hellip;操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；\na := [...]int{1, 3, 5} // 数组长度是3，等同于 a := [3]{1, 3, 5} 有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用\u0026hellip;操作符搞定：\na := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0 init函数 Go语言提供了先于main函数执行的init函数，初始化每个包后会自动执行init函数，每个包中可以有多个init函数，每个包中的源文件中也可以有多个init函数，加载顺序如下：",
+  "keywords": [
+    "Go"
+  ],
+  "articleBody": "前言 每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、for-each等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。\n可变长参数 Go语言允许一个函数把任意数量的值作为参数，Go语言内置了...操作符，在函数的最后一个形参才能使用...操作符，使用它必须注意如下事项：\n可变长参数必须在函数列表的最后一个； 把可变长参数当切片来解析，可变长参数没有没有值时就是nil切片 可变长参数的类型必须相同 func test(a int, b ...int) { return } 既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用...进行解包转换为参数列表，append 方法就是最好的例子：\nvar sarr []int sarr = append(sarr, 1) sarr = append(sarr, sarr...) append方法定义如下：\n// slice = append(slice, elem1, elem2) // slice = append(slice, anotherSlice...) func append(slice []Type, elems ...Type) []Type 声明不定长数组 数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用…操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；\na := [...]int{1, 3, 5} // 数组长度是3，等同于 a := [3]{1, 3, 5} 有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用…操作符搞定：\na := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0 init函数 Go语言提供了先于main函数执行的init函数，初始化每个包后会自动执行init函数，每个包中可以有多个init函数，每个包中的源文件中也可以有多个init函数，加载顺序如下：\n从当前包开始，如果当前包包含多个依赖包，则先初始化依赖包，层层递归初始化各个包，在每一个包中，按照源文件的字典序从前往后执行，每一个源文件中，优先初始化常量、变量，最后初始化init函数，当出现多个init函数时，则按照顺序从前往后依次执行，每一个包完成加载后，递归返回，最后在初始化当前包！\ninit函数实现了sync.Once，无论包被导入多少次，init函数只会被执行一次，所以使用init可以应用在服务注册、中间件初始化、实现单例模式等等，比如我们经常使用的pprof工具，他就使用到了init函数，在init函数里面进行路由注册：\nfunc init() { http.HandleFunc(\"/io\", serveSVGProfile(pprofByGoroutine(computePprofIO))) http.HandleFunc(\"/block\", serveSVGProfile(pprofByGoroutine(computePprofBlock))) http.HandleFunc(\"/syscall\", serveSVGProfile(pprofByGoroutine(computePprofSyscall))) http.HandleFunc(\"/sched\", serveSVGProfile(pprofByGoroutine(computePprofSched))) http.HandleFunc(\"/regionio\", serveSVGProfile(pprofByRegion(computePprofIO))) http.HandleFunc(\"/regionblock\", serveSVGProfile(pprofByRegion(computePprofBlock))) http.HandleFunc(\"/regionsyscall\", serveSVGProfile(pprofByRegion(computePprofSyscall))) http.HandleFunc(\"/regionsched\", serveSVGProfile(pprofByRegion(computePprofSched))) } 忽略导包 Go语言在设计师有代码洁癖，在设计上尽可能避免代码滥用，所以Go语言的导包必须要使用，如果导包了但是没有使用的话就会产生编译错误，但有些场景我们会遇到只想导包，但是不使用的情况，比如上文提到的init函数，我们只想初始化包里的init函数，但是不会使用包内的任何方法，这时就可以使用 _ 操作符号重命名导入一个不使用的包：\nimport _ \"github.com/asong\" 忽略字段 在我们日常开发中，遇到可以用的方法就直接复用了，但是这个方法的返回值我们并不一定都使用，还要绞尽脑汁的给他想一个命名，有没有办法可以不处理不要的返回值呢？当然有，还是 _ 操作符，将不需要的值赋给空标识符：\n_, ok := test(a, b int) json序列化忽略某个字段 大多数业务场景我们都会对struct做序列化操作，但有些时候我们想要json里面的某些字段不参加序列化，-操作符可以帮我们处理，Go语言的结构体提供标签功能，在结构体标签中使用 - 操作符就可以对不需要序列化的字段做特殊处理，使用如下：\ntype Person struct{ name string `json:\"-\"` age string `json: \"age\"` } json序列化忽略空值字段 我们使用json.Marshal进行序列化时不会忽略struct中的空值，默认输出字段的类型零值（string类型零值是\"\"，对象类型的零值是nil...），如果我们想在序列化时忽略掉这些没有值的字段时，可以在结构体标签中中添加omitempty tag：\ntype User struct { Name string `json:\"name\"` Email string `json:\"email,omitempty\"` Age int `json: \"age\"` } func test() { u1 := User{ Name: \"asong\", } b, err := json.Marshal(u1) if err != nil { fmt.Printf(\"json.Marshal failed, err:%v\\n\", err) return } fmt.Printf(\"str:%s\\n\", b) } 运行结果：\nstr:{\"name\":\"asong\",\"Age\":0} Age字段我们没有添加omitempty tag在json序列化结果就是带空值的，email字段就被忽略掉了；\n短变量声明 每次使用变量时都要先进行函数声明，那么在Go语言是不是也可以不进行变量声明直接使用呢？我们可以使用 name := expression 的语法形式来声明和初始化局部变量，相比于使用var声明的方式可以减少声明的步骤：\nvar a int = 10 //等用于 a := 10 使用短变量声明时有两个注释事项：\n短变量声明只能在函数内使用，不能用于初始化全局变量 短变量声明代表引入一个新的变量，不能在同一作用域重复声明变量 多变量声明中如果其中一个变量是新变量，那么可以使用短变量声明，否则不可重复声明变量； 类型断言 我们通常都会使用interface，一种是带方法的interface，一种是空的interface，Go1.18之前是没有泛型的，所以我们可以用空的interface{}来作为一种伪泛型使用，当我们使用到空的interface{}作为入参或返回值时，就会使用到类型断言，来获取我们所需要的类型，在Go语言中类型断言的语法格式如下：\nvalue, ok := x.(T) //or value := x.(T) x是interface类型，T是具体的类型，方式一是安全的断言，方式二断言失败会触发panic；这里类型断言需要区分x的类型，如果x是空接口类型：\n空接口类型断言实质是将eface中_type与要匹配的类型进行对比，匹配成功在内存中组装返回值，匹配失败直接清空寄存器，返回默认值。\n如果x是非空接口类型：\n非空接口类型断言的实质是 iface 中 *itab 的对比。*itab 匹配成功会在内存中组装返回值。匹配失败直接清空寄存器，返回默认值。\n切片循环 切片/数组是我们经常使用的操作，在Go语言中提供了for range语法来快速迭代对象，数组、切片、字符串、map、channel等等都可以进行遍历，总结起来总共有三种方式：\n// 方式一：只遍历不关心数据，适用于切片、数组、字符串、map、channel for range T {} // 方式二：遍历获取索引或数组，切片，数组、字符串就是索引，map就是key，channel就是数据 for key := range T{} // 方式三：遍历获取索引和数据，适用于切片、数组、字符串，第一个参数就是索引，第二个参数就是对应的元素值，map 第一个参数就是key，第二个参数就是对应的值； for key, value := range T{} 判断map的key是否存在 Go语言提供语法 value, ok := m[key]来判断map中的key是否存在，如果存在就会返回key所对应的值，不存在就会返回空值：\nimport \"fmt\" func main() { dict := map[string]int{\"asong\": 1} if value, ok := dict[\"asong\"]; ok { fmt.Printf(value) } else { fmt.Println(\"key:asong不存在\") } } select控制结构 Go语言提供了select关键字，select配合channel能够让Goroutine同时等待多个channel读或者写，在channel状态未改变之前，select会一直阻塞当前线程或Goroutine。先看一个例子：\nfunc fibonacci(ch chan int, done chan struct{}) { x, y := 0, 1 for { select { case ch \u003c- x: x, y = y, x+y case \u003c-done: fmt.Println(\"over\") return } } } func main() { ch := make(chan int) done := make(chan struct{}) go func() { for i := 0; i \u003c 10; i++ { fmt.Println(\u003c-ch) } done \u003c- struct{}{} }() fibonacci(ch, done) } select与switch具有相似的控制结构，与switch不同的是，select中的case中的表达式必须是channel的收发操作，当select中的两个case同时被触发时，会随机执行其中的一个。为什么是随机执行的呢？随机的引入就是为了避免饥饿问题的发生，如果我们每次都是按照顺序依次执行的，若两个case一直都是满足条件的，那么后面的case永远都不会执行。\n上面例子中的select用法是阻塞式的收发操作，直到有一个channel发生状态改变。我们也可以在select中使用default语句，那么select语句在执行时会遇到这两种情况：\n当存在可以收发的channel时，直接处理该channel 对应的 case； 当不存在可以收发的channel 时，执行 default 中的语句； 注意：nil channel上的操作会一直被阻塞，如果没有default case,只有nil channel的select会一直被阻塞。\n",
+  "wordCount" : "347",
+  "inLanguage": "en",
+  "datePublished": "2022-08-02T00:15:51Z",
+  "dateModified": "2022-08-02T00:15:51Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Go语言开发效率的小技巧
+    </h1>
+    <div class="post-meta"><span title='2022-08-02 00:15:51 +0000 UTC'>August 2, 2022</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e5%89%8d%e8%a8%80" aria-label="前言">前言</a></li>
+                <li>
+                    <a href="#%e5%8f%af%e5%8f%98%e9%95%bf%e5%8f%82%e6%95%b0" aria-label="可变长参数">可变长参数</a></li>
+                <li>
+                    <a href="#%e5%a3%b0%e6%98%8e%e4%b8%8d%e5%ae%9a%e9%95%bf%e6%95%b0%e7%bb%84" aria-label="声明不定长数组">声明不定长数组</a></li>
+                <li>
+                    <a href="#init%e5%87%bd%e6%95%b0" aria-label="init函数">init函数</a></li>
+                <li>
+                    <a href="#%e5%bf%bd%e7%95%a5%e5%af%bc%e5%8c%85" aria-label="忽略导包">忽略导包</a></li>
+                <li>
+                    <a href="#%e5%bf%bd%e7%95%a5%e5%ad%97%e6%ae%b5" aria-label="忽略字段">忽略字段</a><ul>
+                        
+                <li>
+                    <a href="#json%e5%ba%8f%e5%88%97%e5%8c%96%e5%bf%bd%e7%95%a5%e6%9f%90%e4%b8%aa%e5%ad%97%e6%ae%b5" aria-label="json序列化忽略某个字段">json序列化忽略某个字段</a></li>
+                <li>
+                    <a href="#json%e5%ba%8f%e5%88%97%e5%8c%96%e5%bf%bd%e7%95%a5%e7%a9%ba%e5%80%bc%e5%ad%97%e6%ae%b5" aria-label="json序列化忽略空值字段">json序列化忽略空值字段</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e7%9f%ad%e5%8f%98%e9%87%8f%e5%a3%b0%e6%98%8e" aria-label="短变量声明">短变量声明</a></li>
+                <li>
+                    <a href="#%e7%b1%bb%e5%9e%8b%e6%96%ad%e8%a8%80" aria-label="类型断言">类型断言</a></li>
+                <li>
+                    <a href="#%e5%88%87%e7%89%87%e5%be%aa%e7%8e%af" aria-label="切片循环">切片循环</a></li>
+                <li>
+                    <a href="#%e5%88%a4%e6%96%admap%e7%9a%84key%e6%98%af%e5%90%a6%e5%ad%98%e5%9c%a8" aria-label="判断map的key是否存在">判断map的key是否存在</a></li>
+                <li>
+                    <a href="#select%e6%8e%a7%e5%88%b6%e7%bb%93%e6%9e%84" aria-label="select控制结构">select控制结构</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h2 id="前言">前言<a hidden class="anchor" aria-hidden="true" href="#前言">#</a></h2>
+<p>每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、<code>for-each</code>等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。</p>
+<h2 id="可变长参数">可变长参数<a hidden class="anchor" aria-hidden="true" href="#可变长参数">#</a></h2>
+<p>Go语言允许一个函数把任意数量的值作为参数，Go语言内置了<code>...</code>操作符，在函数的最后一个形参才能使用<code>...</code>操作符，使用它必须注意如下事项：</p>
+<ul>
+<li>可变长参数必须在函数列表的最后一个；</li>
+<li>把可变长参数当切片来解析，可变长参数没有没有值时就是<code>nil</code>切片</li>
+<li>可变长参数的类型必须相同</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>(<span style="color:#a6e22e">a</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">b</span> <span style="color:#f92672">...</span><span style="color:#66d9ef">int</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用<code>...</code>进行解包转换为参数列表，<code>append</code> 方法就是最好的例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">sarr</span> []<span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">sarr</span> = append(<span style="color:#a6e22e">sarr</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">sarr</span> = append(<span style="color:#a6e22e">sarr</span>, <span style="color:#a6e22e">sarr</span><span style="color:#f92672">...</span>)
+</span></span></code></pre></div><p><code>append</code>方法定义如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// slice = append(slice, elem1, elem2)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// slice = append(slice, anotherSlice...)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> append(<span style="color:#a6e22e">slice</span> []<span style="color:#a6e22e">Type</span>, <span style="color:#a6e22e">elems</span> <span style="color:#f92672">...</span><span style="color:#a6e22e">Type</span>) []<span style="color:#a6e22e">Type</span>
+</span></span></code></pre></div><h2 id="声明不定长数组">声明不定长数组<a hidden class="anchor" aria-hidden="true" href="#声明不定长数组">#</a></h2>
+<p>数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用&hellip;操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> [<span style="color:#f92672">...</span>]<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">5</span>} <span style="color:#75715e">// 数组长度是3，等同于 a := [3]{1, 3, 5}
+</span></span></span></code></pre></div><p>有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用&hellip;操作符搞定：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> [<span style="color:#f92672">...</span>]<span style="color:#66d9ef">int</span>{<span style="color:#ae81ff">1</span>: <span style="color:#ae81ff">20</span>, <span style="color:#ae81ff">999</span>: <span style="color:#ae81ff">10</span>} <span style="color:#75715e">// 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0
+</span></span></span></code></pre></div><h2 id="init函数">init函数<a hidden class="anchor" aria-hidden="true" href="#init函数">#</a></h2>
+<p>Go语言提供了先于<code>main</code>函数执行的<code>init</code>函数，初始化每个包后会自动执行<code>init</code>函数，每个包中可以有多个<code>init</code>函数，每个包中的源文件中也可以有多个<code>init</code>函数，加载顺序如下：</p>
+<blockquote>
+<p>从当前包开始，如果当前包包含多个依赖包，则先初始化依赖包，层层递归初始化各个包，在每一个包中，按照源文件的字典序从前往后执行，每一个源文件中，优先初始化常量、变量，最后初始化init函数，当出现多个<code>init</code>函数时，则按照顺序从前往后依次执行，每一个包完成加载后，递归返回，最后在初始化当前包！</p>
+</blockquote>
+<p><code>init</code>函数实现了<code>sync.Once</code>，无论包被导入多少次，<code>init</code>函数只会被执行一次，所以使用<code>init</code>可以应用在服务注册、中间件初始化、实现单例模式等等，比如我们经常使用的<code>pprof</code>工具，他就使用到了<code>init</code>函数，在<code>init</code>函数里面进行路由注册：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/io&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByGoroutine</span>(<span style="color:#a6e22e">computePprofIO</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/block&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByGoroutine</span>(<span style="color:#a6e22e">computePprofBlock</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/syscall&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByGoroutine</span>(<span style="color:#a6e22e">computePprofSyscall</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/sched&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByGoroutine</span>(<span style="color:#a6e22e">computePprofSched</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/regionio&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByRegion</span>(<span style="color:#a6e22e">computePprofIO</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/regionblock&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByRegion</span>(<span style="color:#a6e22e">computePprofBlock</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/regionsyscall&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByRegion</span>(<span style="color:#a6e22e">computePprofSyscall</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/regionsched&#34;</span>, <span style="color:#a6e22e">serveSVGProfile</span>(<span style="color:#a6e22e">pprofByRegion</span>(<span style="color:#a6e22e">computePprofSched</span>)))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="忽略导包">忽略导包<a hidden class="anchor" aria-hidden="true" href="#忽略导包">#</a></h2>
+<p>Go语言在设计师有代码洁癖，在设计上尽可能避免代码滥用，所以Go语言的导包必须要使用，如果导包了但是没有使用的话就会产生编译错误，但有些场景我们会遇到只想导包，但是不使用的情况，比如上文提到的<code>init</code>函数，我们只想初始化包里的<code>init</code>函数，但是不会使用包内的任何方法，这时就可以使用 <code>_</code> 操作符号重命名导入一个不使用的包：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/asong&#34;</span>
+</span></span></code></pre></div><h2 id="忽略字段">忽略字段<a hidden class="anchor" aria-hidden="true" href="#忽略字段">#</a></h2>
+<p>在我们日常开发中，遇到可以用的方法就直接复用了，但是这个方法的返回值我们并不一定都使用，还要绞尽脑汁的给他想一个命名，有没有办法可以不处理不要的返回值呢？当然有，还是 _ 操作符，将不需要的值赋给空标识符：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">test</span>(<span style="color:#a6e22e">a</span>, <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">int</span>)
+</span></span></code></pre></div><h3 id="json序列化忽略某个字段">json序列化忽略某个字段<a hidden class="anchor" aria-hidden="true" href="#json序列化忽略某个字段">#</a></h3>
+<p>大多数业务场景我们都会对<code>struct</code>做序列化操作，但有些时候我们想要<code>json</code>里面的某些字段不参加序列化，<code>-</code>操作符可以帮我们处理，Go语言的结构体提供标签功能，在结构体标签中使用 - 操作符就可以对不需要序列化的字段做特殊处理，使用如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Person</span> <span style="color:#66d9ef">struct</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json:&#34;-&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json: &#34;age&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="json序列化忽略空值字段">json序列化忽略空值字段<a hidden class="anchor" aria-hidden="true" href="#json序列化忽略空值字段">#</a></h3>
+<p>我们使用<code>json.Marshal</code>进行序列化时不会忽略<code>struct</code>中的空值，默认输出字段的类型零值（<code>string</code>类型零值是<code>&quot;&quot;</code>，对象类型的零值是<code>nil...</code>），如果我们想在序列化时忽略掉这些没有值的字段时，可以在结构体标签中中添加<code>omitempty tag</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">User</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Name</span>  <span style="color:#66d9ef">string</span>   <span style="color:#e6db74">`json:&#34;name&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Email</span> <span style="color:#66d9ef">string</span>   <span style="color:#e6db74">`json:&#34;email,omitempty&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Age</span> <span style="color:#66d9ef">int</span>        <span style="color:#e6db74">`json: &#34;age&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">test</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">u1</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">User</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Name</span>: <span style="color:#e6db74">&#34;asong&#34;</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Marshal</span>(<span style="color:#a6e22e">u1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;json.Marshal failed, err:%v\n&#34;</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;str:%s\n&#34;</span>, <span style="color:#a6e22e">b</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>运行结果：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>str:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;asong&#34;</span>,<span style="color:#e6db74">&#34;Age&#34;</span>:0<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><code>Age</code>字段我们没有添加<code>omitempty</code> tag在<code>json</code>序列化结果就是带空值的，<code>email</code>字段就被忽略掉了；</p>
+<h2 id="短变量声明">短变量声明<a hidden class="anchor" aria-hidden="true" href="#短变量声明">#</a></h2>
+<p>每次使用变量时都要先进行函数声明，那么在Go语言是不是也可以不进行变量声明直接使用呢？我们可以使用 <code>name := expression</code> 的语法形式来声明和初始化局部变量，相比于使用<code>var</code>声明的方式可以减少声明的步骤：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">int</span> = <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//等用于
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">10</span>
+</span></span></code></pre></div><p>使用短变量声明时有两个注释事项：</p>
+<ul>
+<li>短变量声明只能在函数内使用，不能用于初始化全局变量</li>
+<li>短变量声明代表引入一个新的变量，不能在同一作用域重复声明变量</li>
+<li>多变量声明中如果其中一个变量是新变量，那么可以使用短变量声明，否则不可重复声明变量；</li>
+</ul>
+<h2 id="类型断言">类型断言<a hidden class="anchor" aria-hidden="true" href="#类型断言">#</a></h2>
+<p>我们通常都会使用<code>interface</code>，一种是带方法的<code>interface</code>，一种是空的<code>interface</code>，Go1.18之前是没有泛型的，所以我们可以用空的<code>interface{}</code>来作为一种伪泛型使用，当我们使用到空的<code>interface{}</code>作为入参或返回值时，就会使用到类型断言，来获取我们所需要的类型，在Go语言中类型断言的语法格式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">T</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//or
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x</span>.(<span style="color:#a6e22e">T</span>)
+</span></span></code></pre></div><p>x是<code>interface</code>类型，T是具体的类型，方式一是安全的断言，方式二断言失败会触发<code>panic</code>；这里类型断言需要区分x的类型，如果x是空接口类型：</p>
+<p>空接口类型断言实质是将eface中_type与要匹配的类型进行对比，匹配成功在内存中组装返回值，匹配失败直接清空寄存器，返回默认值。</p>
+<p>如果x是非空接口类型：</p>
+<p>非空接口类型断言的实质是 iface 中 <code>*itab</code> 的对比。<code>*itab</code> 匹配成功会在内存中组装返回值。匹配失败直接清空寄存器，返回默认值。</p>
+<h2 id="切片循环">切片循环<a hidden class="anchor" aria-hidden="true" href="#切片循环">#</a></h2>
+<p>切片/数组是我们经常使用的操作，在Go语言中提供了<code>for range</code>语法来快速迭代对象，数组、切片、字符串、<code>map</code>、<code>channel</code>等等都可以进行遍历，总结起来总共有三种方式：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 方式一：只遍历不关心数据，适用于切片、数组、字符串、map、channel
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">T</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 方式二：遍历获取索引或数组，切片，数组、字符串就是索引，map就是key，channel就是数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">key</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">T</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 方式三：遍历获取索引和数据，适用于切片、数组、字符串，第一个参数就是索引，第二个参数就是对应的元素值，map 第一个参数就是key，第二个参数就是对应的值；
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">key</span>, <span style="color:#a6e22e">value</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">T</span>{}
+</span></span></code></pre></div><h2 id="判断map的key是否存在">判断map的key是否存在<a hidden class="anchor" aria-hidden="true" href="#判断map的key是否存在">#</a></h2>
+<p>Go语言提供语法 <code>value, ok := m[key]</code>来判断<code>map</code>中的<code>key</code>是否存在，如果存在就会返回<code>key</code>所对应的值，不存在就会返回空值：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">dict</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">int</span>{<span style="color:#e6db74">&#34;asong&#34;</span>: <span style="color:#ae81ff">1</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">value</span>, <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dict</span>[<span style="color:#e6db74">&#34;asong&#34;</span>]; <span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#a6e22e">value</span>)
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;key:asong不存在&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="select控制结构">select控制结构<a hidden class="anchor" aria-hidden="true" href="#select控制结构">#</a></h2>
+<p>Go语言提供了<code>select</code>关键字，<code>select</code>配合<code>channel</code>能够让Goroutine同时等待多个<code>channel</code>读或者写，在<code>channel</code>状态未改变之前，<code>select</code>会一直阻塞当前线程或Goroutine。先看一个例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">fibonacci</span>(<span style="color:#a6e22e">ch</span> <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">done</span> <span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">struct</span>{}) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">select</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">ch</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">x</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span> = <span style="color:#a6e22e">y</span>, <span style="color:#a6e22e">x</span><span style="color:#f92672">+</span><span style="color:#a6e22e">y</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">case</span> <span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">done</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;over&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ch</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">done</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">struct</span>{})
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">ch</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">done</span> <span style="color:#f92672">&lt;-</span> <span style="color:#66d9ef">struct</span>{}{}
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fibonacci</span>(<span style="color:#a6e22e">ch</span>, <span style="color:#a6e22e">done</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>select</code>与<code>switch</code>具有相似的控制结构，与<code>switch</code>不同的是，<code>select</code>中的<code>case</code>中的表达式必须是<code>channel</code>的收发操作，当<code>select</code>中的两个<code>case</code>同时被触发时，会随机执行其中的一个。为什么是随机执行的呢？随机的引入就是为了避免饥饿问题的发生，如果我们每次都是按照顺序依次执行的，若两个<code>case</code>一直都是满足条件的，那么后面的<code>case</code>永远都不会执行。</p>
+<p>上面例子中的<code>select</code>用法是阻塞式的收发操作，直到有一个<code>channel</code>发生状态改变。我们也可以在<code>select</code>中使用<code>default</code>语句，那么<code>select</code>语句在执行时会遇到这两种情况：</p>
+<p>当存在可以收发的<code>channel</code>时，直接处理该<code>channel</code> 对应的 <code>case</code>；
+当不存在可以收发的<code>channel</code> 时，执行 <code>default</code> 中的语句；
+注意：<code>nil channel</code>上的操作会一直被阻塞，如果没有<code>default case</code>,只有<code>nil channel</code>的<code>select</code>会一直被阻塞。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/go/">Go</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

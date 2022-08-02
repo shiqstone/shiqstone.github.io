@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>尝试使用Go截取视频生成缩略图 | 他山笨石</title>
+<meta name="keywords" content="go">
+<meta name="description" content="1 基本命令 使用ffmpeg截取视频生成图片，原始命令为
+ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( &#34;bytes&#34; &#34;fmt&#34; &#34;os/exec&#34; ) func main() { filename := &#34;test.mp4&#34; width := 288 height := 512 output := &#34;output.jpg&#34; cmd := exec.Command(&#34;ffmpeg&#34;, &#34;-i&#34;, filename, &#34;-vframes&#34;, &#34;1&#34;, &#34;-s&#34;, fmt.Sprintf(&#34;%dx%d&#34;, width, height), &#34;-f&#34;, &#34;singlejpeg&#34;, output) var buffer bytes.Buffer cmd.Stdout = &amp;buffer if cmd.Run() != nil { panic(&#34;could not generate frame&#34;) } } 3 查询数据库 增加从mysql数据库读取视频路径">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/try-golang-snapshot-video-thumb/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="尝试使用Go截取视频生成缩略图" />
+<meta property="og:description" content="1 基本命令 使用ffmpeg截取视频生成图片，原始命令为
+ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( &#34;bytes&#34; &#34;fmt&#34; &#34;os/exec&#34; ) func main() { filename := &#34;test.mp4&#34; width := 288 height := 512 output := &#34;output.jpg&#34; cmd := exec.Command(&#34;ffmpeg&#34;, &#34;-i&#34;, filename, &#34;-vframes&#34;, &#34;1&#34;, &#34;-s&#34;, fmt.Sprintf(&#34;%dx%d&#34;, width, height), &#34;-f&#34;, &#34;singlejpeg&#34;, output) var buffer bytes.Buffer cmd.Stdout = &amp;buffer if cmd.Run() != nil { panic(&#34;could not generate frame&#34;) } } 3 查询数据库 增加从mysql数据库读取视频路径" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/try-golang-snapshot-video-thumb/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2020-01-31T18:44:26&#43;00:00" />
+<meta property="article:modified_time" content="2020-01-31T18:44:26&#43;00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="尝试使用Go截取视频生成缩略图"/>
+<meta name="twitter:description" content="1 基本命令 使用ffmpeg截取视频生成图片，原始命令为
+ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( &#34;bytes&#34; &#34;fmt&#34; &#34;os/exec&#34; ) func main() { filename := &#34;test.mp4&#34; width := 288 height := 512 output := &#34;output.jpg&#34; cmd := exec.Command(&#34;ffmpeg&#34;, &#34;-i&#34;, filename, &#34;-vframes&#34;, &#34;1&#34;, &#34;-s&#34;, fmt.Sprintf(&#34;%dx%d&#34;, width, height), &#34;-f&#34;, &#34;singlejpeg&#34;, output) var buffer bytes.Buffer cmd.Stdout = &amp;buffer if cmd.Run() != nil { panic(&#34;could not generate frame&#34;) } } 3 查询数据库 增加从mysql数据库读取视频路径"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "尝试使用Go截取视频生成缩略图",
+      "item": "https://shiqstone.github.io/post/try-golang-snapshot-video-thumb/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "尝试使用Go截取视频生成缩略图",
+  "name": "尝试使用Go截取视频生成缩略图",
+  "description": "1 基本命令 使用ffmpeg截取视频生成图片，原始命令为\nffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( \u0026#34;bytes\u0026#34; \u0026#34;fmt\u0026#34; \u0026#34;os/exec\u0026#34; ) func main() { filename := \u0026#34;test.mp4\u0026#34; width := 288 height := 512 output := \u0026#34;output.jpg\u0026#34; cmd := exec.Command(\u0026#34;ffmpeg\u0026#34;, \u0026#34;-i\u0026#34;, filename, \u0026#34;-vframes\u0026#34;, \u0026#34;1\u0026#34;, \u0026#34;-s\u0026#34;, fmt.Sprintf(\u0026#34;%dx%d\u0026#34;, width, height), \u0026#34;-f\u0026#34;, \u0026#34;singlejpeg\u0026#34;, output) var buffer bytes.Buffer cmd.Stdout = \u0026amp;buffer if cmd.Run() != nil { panic(\u0026#34;could not generate frame\u0026#34;) } } 3 查询数据库 增加从mysql数据库读取视频路径",
+  "keywords": [
+    "go"
+  ],
+  "articleBody": "1 基本命令 使用ffmpeg截取视频生成图片，原始命令为\nffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( \"bytes\" \"fmt\" \"os/exec\" ) func main() { filename := \"test.mp4\" width := 288 height := 512 output := \"output.jpg\" cmd := exec.Command(\"ffmpeg\", \"-i\", filename, \"-vframes\", \"1\", \"-s\", fmt.Sprintf(\"%dx%d\", width, height), \"-f\", \"singlejpeg\", output) var buffer bytes.Buffer cmd.Stdout = \u0026buffer if cmd.Run() != nil { panic(\"could not generate frame\") } } 3 查询数据库 增加从mysql数据库读取视频路径\npackage main import ( \"bytes\" \"fmt\" \"path\" \"path/filepath\" \"strings\" \"os/exec\" \"database/sql\" _ \"github.com/go-sql-driver/mysql\" ) func main() { //user:password@tcp(localhost:5555)/dbname?charset=utf8 db, err := sql.Open(\"mysql\", \"root@tcp(localhost:3306)/dsp?charset=utf8\") checkErr(err) //查询数据 rows, err := db.Query(\"SELECT video_s3_url FROM material_video\") checkErr(err) for rows.Next() { var video_s3_url string err = rows.Scan(\u0026video_s3_url) checkErr(err) fullpath := video_s3_url //width := 288 //height := 512 fileName := filepath.Base(fullpath) fileSuffix := path.Ext(fileName) output := strings.TrimSuffix(fileName, fileSuffix) + \".png\" //fmt.Println(output) cmd := exec.Command(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) var buffer bytes.Buffer cmd.Stdout = \u0026buffer if cmd.Run() != nil { panic(\"could not generate frame\") } //break; } } func checkErr(err error) { if err != nil { panic(err) } } 4 更新数据库 将生成图片路径更新到数据库\npackage main import ( \"bytes\" \"fmt\" \"path\" \"path/filepath\" \"strings\" \"os/exec\" \"database/sql\" _ \"github.com/go-sql-driver/mysql\" ) func main() { //user:password@tcp(localhost:5555)/dbname?charset=utf8 db, err := sql.Open(\"mysql\", \"root@tcp(localhost:3306)/dsp?charset=utf8\") checkErr(err) //查询数据 rows, err := db.Query(\"SELECT id, video_s3_url FROM material_video\") checkErr(err) cnt := 0 for rows.Next() { var id int var video_s3_url string err = rows.Scan(\u0026id, \u0026video_s3_url) checkErr(err) fullpath := video_s3_url fileName := filepath.Base(fullpath) fileSuffix := path.Ext(fileName) output := strings.TrimSuffix(fileName, fileSuffix) + \".png\" cmd := exec.Command(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) var buffer bytes.Buffer cmd.Stdout = \u0026buffer if cmd.Run() != nil { panic(\"could not generate frame\") } //更新数据 stmt, err := db.Prepare(\"update material_video set video_thumb_url=? where id=?\") checkErr(err) res, err := stmt.Exec(output, id) checkErr(err) affect, err := res.RowsAffected() checkErr(err) if(affect\u003e0) { cnt++ } } fmt.Println(cnt) } func checkErr(err error) { if err != nil { panic(err) } } 5 文件上传共享 考虑本地存储文件的局限性，改为将生成文件上传到S3服务器上，便于后续共享访问\npackage main import ( \"bytes\" \"fmt\" \"path\" \"path/filepath\" \"strings\" \"os\" \"os/exec\" \"database/sql\" _ \"github.com/go-sql-driver/mysql\" \"net/http\" \"github.com/aws/aws-sdk-go/aws\" \"github.com/aws/aws-sdk-go/aws/credentials\" \"github.com/aws/aws-sdk-go/aws/session\" \"github.com/aws/aws-sdk-go/service/s3\" ) func main() { //user:password@tcp(localhost:5555)/dbname?charset=utf8 db, err := sql.Open(\"mysql\", \"root@tcp(localhost:3306)/dsp?charset=utf8\") checkErr(err) //query date rows, err := db.Query(\"SELECT id, video_s3_url FROM material_video where video_thumb_url is null\") checkErr(err) access_key := \"access_key_str\" secret_key := \"secret_key_str\" end_point := \"http://test.s3.amazon.cn\" bucket := \"bucket_str\" // Configure to use S3 Server s, err := session.NewSession(\u0026aws.Config{ Region: aws.String(\"us-west-2\"), Credentials: credentials.NewStaticCredentials( access_key, secret_key, \"\"), // token can be left blank for now Endpoint: aws.String(end_point), DisableSSL: aws.Bool(true), S3ForcePathStyle: aws.Bool(true), }) if err != nil { checkErr(err) } cnt := 0 for rows.Next() { var id int var video_s3_url string err = rows.Scan(\u0026id, \u0026video_s3_url) checkErr(err) fullpath := video_s3_url fileName := filepath.Base(fullpath) fileSuffix := path.Ext(fileName) fileSingleName := strings.TrimSuffix(fileName, fileSuffix) output := fileSingleName + \".png\" fmt.Println(output) //delete exist file err = os.Remove(output); if err != nil { fmt.Println(err); } fmt.Println(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) cmd := exec.Command(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) var buffer bytes.Buffer cmd.Stdout = \u0026buffer if cmd.Run() != nil { panic(\"could not generate frame\") } // Upload err = AddFileToS3(s, bucket, output) if err != nil { checkErr(err) } thumb_url := end_point + \"/\" + bucket + \"/\" + output //update db stmt, err := db.Prepare(\"update material_video set video_thumb_url=? where id=?\") checkErr(err) res, err := stmt.Exec(thumb_url, id) checkErr(err) affect, err := res.RowsAffected() checkErr(err) if(affect\u003e0) { cnt++ } if(cnt\u003e10) { break; } } fmt.Println(cnt) } func checkErr(err error) { if err != nil { panic(err) } } func AddFileToS3(s *session.Session, bucket string, fileDir string) error { // Open the file for use file, err := os.Open(fileDir) if err != nil { return err } defer file.Close() // Get file size and read the file content into a buffer fileInfo, _ := file.Stat() var size int64 = fileInfo.Size() buffer := make([]byte, size) file.Read(buffer) // Config settings: this is where you choose the bucket, filename, content-type etc. // of the file you're uploading. _, err = s3.New(s).PutObject(\u0026s3.PutObjectInput{ Bucket: aws.String(bucket), Key: aws.String(fileDir), //ACL: aws.String(\"private\"), Body: bytes.NewReader(buffer), ContentLength: aws.Int64(size), ContentType: aws.String(http.DetectContentType(buffer)), ContentDisposition: aws.String(\"attachment\"), ServerSideEncryption: aws.String(\"AES256\"), }) return err } 6 敏感信息配置 基本功能实现了，但是直接把数据库账号密码等配置的信息写在代码里的方式不够好，改为把数据库和S3配置使用配置文件方式 conf/conf.yaml\ndb: dialect : mysql user : root password : host : localhost port : 3306 database : dsp charset : utf8 s3: access_key : access_key_str secret_key : secret_key_str end_point : http://test.s3.amazon.cn bucket : bucket_str snapshot.go\npackage main import ( \"io/ioutil\" yaml \"gopkg.in/yaml.v2\" \"bytes\" //\"fmt\" \"log\" \"path\" \"path/filepath\" \"strings\" \"os\" \"os/exec\" \"database/sql\" _ \"github.com/go-sql-driver/mysql\" \"time\" \"net/http\" \"github.com/aws/aws-sdk-go/aws\" \"github.com/aws/aws-sdk-go/aws/credentials\" \"github.com/aws/aws-sdk-go/aws/session\" \"github.com/aws/aws-sdk-go/service/s3\" ) var db *sql.DB var s *session.Session func main() { var ( Config Config ) data, err := ioutil.ReadFile(\"conf/conf.yaml\") if err != nil { checkErr(err) } err = yaml.Unmarshal(data, \u0026Config) if err != nil { checkErr(err) } //user:password@tcp(localhost:5555)/dbname?charset=utf8 db, err = sql.Open(Config.Db.Dialect, Config.Db.User + \"@tcp(\" + Config.Db.Host + \":\" + Config.Db.Port + \")/\" + Config.Db.Database + \"?charset=\" + Config.Db.Charset) checkErr(err) //query date rows, err := db.Query(\"SELECT id, video_s3_url FROM material_video where video_thumb_url is null\") checkErr(err) access_key := Config.S3.AccessKey secret_key := Config.S3.SecretKey end_point := Config.S3.EndPoint bucket := Config.S3.Bucket // Configure to use S3 Server s, err = session.NewSession(\u0026aws.Config{ Region: aws.String(\"us-west-2\"), Credentials: credentials.NewStaticCredentials( access_key, secret_key, \"\"), // token can be left blank for now Endpoint: aws.String(end_point), DisableSSL: aws.Bool(true), S3ForcePathStyle: aws.Bool(true), }) if err != nil { checkErr(err) } cnt := 0 for rows.Next() { var id int var video_s3_url string err = rows.Scan(\u0026id, \u0026video_s3_url) checkErr(err) process(id, video_s3_url, bucket, end_point) if(cnt\u003e10) { break } cnt++ } log.Println(cnt) } func process(id int, video_s3_url string, bucket string, end_point string) int64 { fullpath := video_s3_url fileName := filepath.Base(fullpath) fileSuffix := path.Ext(fileName) fileSingleName := strings.TrimSuffix(fileName, fileSuffix) output := fileSingleName + \".png\" log.Println(output) //delete exist file _ = os.Remove(output); log.Println(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) cmd := exec.Command(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) var buffer bytes.Buffer cmd.Stdout = \u0026buffer if cmd.Run() != nil { //panic(\"could not generate frame\") log.Println(\"could not generate frame\") } // Upload err := AddFileToS3(bucket, output) if err != nil { log.Println(\"could not update to s3\") checkErr(err) } log.Println(output, \"update to s3\") thumb_url := end_point + \"/\" + bucket + \"/\" + output //update db timeStr := time.Now().Format(\"2006-01-02 15:04:05\") log.Println(\"update material_video set video_thumb_url='\", thumb_url, \"', update_time='\", timeStr, \"' where id=\", id) stmt, err := db.Prepare(\"update material_video set video_thumb_url=?, update_time=? where id=?\") defer stmt.Close() checkErr(err) res, err := stmt.Exec(thumb_url, timeStr, id) log.Println(\"res\", res) checkErr(err) affect, err := res.RowsAffected() checkErr(err) return affect } func checkErr(err error) { log.Println(err) if err != nil { panic(err) } } func AddFileToS3(bucket string, fileDir string) error { // Open the file for use file, err := os.Open(fileDir) if err != nil { return err } defer file.Close() // Get file size and read the file content into a buffer fileInfo, _ := file.Stat() var size int64 = fileInfo.Size() buffer := make([]byte, size) file.Read(buffer) // Config settings: this is where you choose the bucket, filename, content-type etc. // of the file you're uploading. _, err = s3.New(s).PutObject(\u0026s3.PutObjectInput{ Bucket: aws.String(bucket), Key: aws.String(fileDir), //ACL: aws.String(\"private\"), Body: bytes.NewReader(buffer), ContentLength: aws.Int64(size), ContentType: aws.String(http.DetectContentType(buffer)), ContentDisposition: aws.String(\"attachment\"), ServerSideEncryption: aws.String(\"AES256\"), }) return err } type Config struct { Db DBConfigInfo S3 S3ConfigInfo } type DBConfigInfo struct { Dialect string `yaml:\"dialect\"` User string `yaml:\"user\"` Password string `yaml:\"password\"` Host string `yaml:\"host\"` Port string `yaml:\"port\"` Database string `yaml:\"database\"` Charset string `yaml:\"charset\"` } type S3ConfigInfo struct { AccessKey string `yaml:\"access_key\"` SecretKey string `yaml:\"secret_key\"` EndPoint string `yaml:\"end_point\"` Bucket string `yaml:\"bucket\"` } 7 重构为并行处理 单条处理耗时较久，尝试使用goroutine重构，提升性能 snapshot.go\npackage main import ( \"io/ioutil\" yaml \"gopkg.in/yaml.v2\" \"bytes\" //\"fmt\" \"log\" \"path\" \"path/filepath\" \"strings\" \"os\" \"os/exec\" \"database/sql\" _ \"github.com/go-sql-driver/mysql\" \"time\" \"net/http\" \"github.com/aws/aws-sdk-go/aws\" \"github.com/aws/aws-sdk-go/aws/credentials\" \"github.com/aws/aws-sdk-go/aws/session\" \"github.com/aws/aws-sdk-go/service/s3\" ) var db *sql.DB var s *session.Session var quit = make(chan int64, 100) func main() { var ( Config Config ) data, err := ioutil.ReadFile(\"conf/conf.yaml\") if err != nil { checkErr(err) } err = yaml.Unmarshal(data, \u0026Config) if err != nil { checkErr(err) } //user:password@tcp(localhost:5555)/dbname?charset=utf8 db, err = sql.Open(Config.Db.Dialect, Config.Db.User + \"@tcp(\" + Config.Db.Host + \":\" + Config.Db.Port + \")/\" + Config.Db.Database + \"?charset=\" + Config.Db.Charset) checkErr(err) //query date rows, err := db.Query(\"SELECT id, video_s3_url FROM material_video where video_thumb_url is null\") checkErr(err) access_key := Config.S3.AccessKey secret_key := Config.S3.SecretKey end_point := Config.S3.EndPoint bucket := Config.S3.Bucket // Configure to use S3 Server s, err = session.NewSession(\u0026aws.Config{ Region: aws.String(\"us-west-2\"), Credentials: credentials.NewStaticCredentials( access_key, secret_key, \"\"), // token can be left blank for now Endpoint: aws.String(end_point), DisableSSL: aws.Bool(true), S3ForcePathStyle: aws.Bool(true), }) if err != nil { checkErr(err) } quit = make(chan int64) cnt := 0 for rows.Next() { var id int var video_s3_url string err = rows.Scan(\u0026id, \u0026video_s3_url) checkErr(err) go process(id, video_s3_url, bucket, end_point) if cnt % 100 == 0 { for i := cnt; i \u003e 0; i-- { \u003c- quit } } cnt++ } //log.Println(cnt) for i := cnt; i \u003e 0; i-- { \u003c- quit } } func process(id int, video_s3_url string, bucket string, end_point string) int64 { fullpath := video_s3_url fileSuffix := path.Ext(fileName) fileSingleName := strings.TrimSuffix(fileName, fileSuffix) output := fileSingleName + \".png\" log.Println(output) //delete exist file //_ = os.Remove(output); //if err != nil { // log.Println(err) //} log.Println(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) cmd := exec.Command(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) var buffer bytes.Buffer cmd.Stdout = \u0026buffer if cmd.Run() != nil { //panic(\"could not generate frame\") log.Println(\"could not generate frame\") } // Upload err := AddFileToS3(bucket, output) if err != nil { log.Println(\"could not update to s3\") checkErr(err) } log.Println(output, \"update to s3\") thumb_url := end_point + \"/\" + bucket + \"/\" + output //update db timeStr := time.Now().Format(\"2006-01-02 15:04:05\") log.Println(\"update material_video set video_thumb_url='\", thumb_url, \"', update_time='\", timeStr, \"' where id=\", id) stmt, err := db.Prepare(\"update material_video set video_thumb_url=?, update_time=? where id=?\") defer stmt.Close() checkErr(err) res, err := stmt.Exec(thumb_url, timeStr, id) //log.Println(\"res\", res) checkErr(err) affect, err := res.RowsAffected() checkErr(err) _ = os.Remove(output); quit \u003c- affect return affect } func checkErr(err error) { if err != nil { log.Println(err) panic(err) } } func AddFileToS3(bucket string, fileDir string) error { // Open the file for use file, err := os.Open(fileDir) if err != nil { log.Println(err) return err } defer file.Close() // Get file size and read the file content into a buffer fileInfo, _ := file.Stat() var size int64 = fileInfo.Size() buffer := make([]byte, size) file.Read(buffer) // Config settings: this is where you choose the bucket, filename, content-type etc. // of the file you're uploading. _, err = s3.New(s).PutObject(\u0026s3.PutObjectInput{ Bucket: aws.String(bucket), Key: aws.String(fileDir), //ACL: aws.String(\"private\"), Body: bytes.NewReader(buffer), ContentLength: aws.Int64(size), ContentType: aws.String(http.DetectContentType(buffer)), ContentDisposition: aws.String(\"attachment\"), ServerSideEncryption: aws.String(\"AES256\"), }) return err } type Config struct { Db DBConfigInfo S3 S3ConfigInfo } type DBConfigInfo struct { Dialect string `yaml:\"dialect\"` User string `yaml:\"user\"` Password string `yaml:\"password\"` Host string `yaml:\"host\"` Port string `yaml:\"port\"` Database string `yaml:\"database\"` Charset string `yaml:\"charset\"` } type S3ConfigInfo struct { AccessKey string `yaml:\"access_key\"` SecretKey string `yaml:\"secret_key\"` EndPoint string `yaml:\"end_point\"` Bucket string `yaml:\"bucket\"` } 此处，对于新手需要注意：\n在启动协程后，实际处理过程类似于在主线程中fork出子线程，由子线程完成实际的任务处理，但是，如果主线程没有等待协程处理完返回，特别是循环启动大批量协程的场景，则可能出现不是所有协程都被启动，或者协程处理没有正常返回等问题； 对于这种情况，golang中提供了四种方式实现goroutine与主线程同步\ntime.sleep()，这种方式较死板，不建议使用 使用channel机制，每个goroutine传一个channel进去然后往里写数据，在再主线程中读取这些channel，直到全部读到数据了子goroutine也就全部运行完了，那么主goroutine也就可以结束了。这种模式是子线程去通知主线程结束。 使用context中cancel函数，这种模式是主线程去通知子线程结束。 sync.WaitGroup模式，Add方法设置等待子goroutine的数量，使用Done方法设置等待子goroutine的数量减1，当等待的数量等于0时，Wait函数返回。 8 限制并发协程 测试发现，使用goroutine并发，理论上可以快速处理批量任务，但是实际处理时，需要考虑数据库连接数及服务器CPU和内存等限制，考虑使用线程池的方式，限制同时处理任务的协程数\npackage main import ( \"io/ioutil\" yaml \"gopkg.in/yaml.v2\" \"bytes\" //\"fmt\" \"log\" \"path\" \"path/filepath\" \"strings\" \"os\" \"os/exec\" \"database/sql\" _ \"github.com/go-sql-driver/mysql\" \"time\" \"net/http\" \"github.com/aws/aws-sdk-go/aws\" \"github.com/aws/aws-sdk-go/aws/credentials\" \"github.com/aws/aws-sdk-go/aws/session\" \"github.com/aws/aws-sdk-go/service/s3\" \"sync\" \"github.com/panjf2000/ants\" ) var db *sql.DB var s *session.Session func main() { var ( Config Config goSync sync.WaitGroup ) data, err := ioutil.ReadFile(\"conf/conf.yaml\") if err != nil { checkErr(err) } err = yaml.Unmarshal(data, \u0026Config) if err != nil { checkErr(err) } //user:password@tcp(localhost:5555)/dbname?charset=utf8 db, err = sql.Open(Config.Db.Dialect, Config.Db.User + \"@tcp(\" + Config.Db.Host + \":\" + Config.Db.Port + \")/\" + Config.Db.Database + \"?charset=\" + Config.Db.Charset) checkErr(err) //query date rows, err := db.Query(\"SELECT id, video_s3_url FROM material_video where video_thumb_url is null\") checkErr(err) access_key := Config.S3.AccessKey secret_key := Config.S3.SecretKey end_point := Config.S3.EndPoint bucket := Config.S3.Bucket // Configure to use S3 Server s, err = session.NewSession(\u0026aws.Config{ Region: aws.String(\"us-west-2\"), Credentials: credentials.NewStaticCredentials( access_key, secret_key, \"\"), // token can be left blank for now Endpoint: aws.String(end_point), DisableSSL: aws.Bool(true), S3ForcePathStyle: aws.Bool(true), }) if err != nil { checkErr(err) } defer ants.Release() p, _ := ants.NewPoolWithFunc(Config.Pool.MaxNum, func(params interface{}) { var id int var video_s3_url string for k, v := range params.(map[string]interface{}){ if k == \"id\" { id = v.(int) } if k == \"video_s3_url\" { video_s3_url = v.(string) } } process(id, video_s3_url, bucket, end_point) goSync.Done() }) defer p.Release() cnt := 0 for rows.Next() { var id int var video_s3_url string err = rows.Scan(\u0026id, \u0026video_s3_url) checkErr(err) log.Println(id, video_s3_url, bucket, end_point) params := make(map[string]interface{}) params[\"id\"] = id params[\"video_s3_url\"] = video_s3_url goSync.Add(1) _ = p.Invoke(params) cnt++ } log.Println(cnt) goSync.Wait() //log.Printf(\"running goroutines: %d\\n\", ants.Running()) log.Printf(\"finish all tasks.\\n\") } func process(id int, video_s3_url string, bucket string, end_point string) int64 { fullpath := video_s3_url fileName := filepath.Base(fullpath) fileSuffix := path.Ext(fileName) fileSingleName := strings.TrimSuffix(fileName, fileSuffix) output := fileSingleName + \".png\" log.Println(output) //delete exist file //_ = os.Remove(output); //if err != nil { // log.Println(err) //} log.Println(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) cmd := exec.Command(\"ffmpeg\", \"-i\", fullpath, \"-vframes\", \"1\", \"-ss\", \"3\", \"-t\", \"1\", output) var buffer bytes.Buffer cmd.Stdout = \u0026buffer if cmd.Run() != nil { //panic(\"could not generate frame\") log.Println(\"could not generate frame\") } // Upload err := AddFileToS3(bucket, output) if err != nil { log.Println(\"could not update to s3\") checkErr(err) } log.Println(output, \"update to s3\") thumb_url := end_point + \"/\" + bucket + \"/\" + output //update db timeStr := time.Now().Format(\"2006-01-02 15:04:05\") log.Println(\"update material_video set video_thumb_url='\", thumb_url, \"', update_time='\", timeStr, \"' where id=\", id) stmt, err := db.Prepare(\"update material_video set video_thumb_url=?, update_time=? where id=?\") defer stmt.Close() checkErr(err) res, err := stmt.Exec(thumb_url, timeStr, id) checkErr(err) affect, err := res.RowsAffected() checkErr(err) _ = os.Remove(output); return affect } func checkErr(err error) { if err != nil { log.Println(err) panic(err) } } func AddFileToS3(bucket string, fileDir string) error { // Open the file for use file, err := os.Open(fileDir) if err != nil { log.Println(err) return err } defer file.Close() // Get file size and read the file content into a buffer fileInfo, _ := file.Stat() var size int64 = fileInfo.Size() buffer := make([]byte, size) file.Read(buffer) // Config settings: this is where you choose the bucket, filename, content-type etc. // of the file you're uploading. _, err = s3.New(s).PutObject(\u0026s3.PutObjectInput{ Bucket: aws.String(bucket), Key: aws.String(fileDir), //ACL: aws.String(\"private\"), Body: bytes.NewReader(buffer), ContentLength: aws.Int64(size), ContentType: aws.String(http.DetectContentType(buffer)), ContentDisposition: aws.String(\"attachment\"), ServerSideEncryption: aws.String(\"AES256\"), }) return err } type Config struct { Db DBConfigInfo S3 S3ConfigInfo Pool GoroutinePoolInfo } type DBConfigInfo struct { Dialect string `yaml:\"dialect\"` User string `yaml:\"user\"` Password string `yaml:\"password\"` Host string `yaml:\"host\"` Port string `yaml:\"port\"` Database string `yaml:\"database\"` Charset string `yaml:\"charset\"` } type S3ConfigInfo struct { AccessKey string `yaml:\"access_key\"` SecretKey string `yaml:\"secret_key\"` EndPoint string `yaml:\"end_point\"` Bucket string `yaml:\"bucket\"` } type GoroutinePoolInfo struct { MaxNum string `yaml:\"max_num\"` } 参考 https://stackoverflow.com/questions/35411585/first-frame-of-video https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/05.2.md http://www.hatlonely.com/2018/03/04/golang-aws-sdk-go-%E4%B9%8B-s3-%E6%9C%8D%E5%8A%A1/index.html https://mlog.club/article/293940 https://colobu.com/2016/12/21/how-to-dump-goroutine-stack-traces/ https://mp.weixin.qq.com/s/aoWQSxrXXZUtJh48tmqMkA https://www.cnblogs.com/node-js/p/8964171.html https://www.cnblogs.com/williamjie/p/9267741.html https://github.com/panjf2000/ants\n",
+  "wordCount" : "2376",
+  "inLanguage": "en",
+  "datePublished": "2020-01-31T18:44:26Z",
+  "dateModified": "2020-01-31T18:44:26Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/try-golang-snapshot-video-thumb/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      尝试使用Go截取视频生成缩略图
+    </h1>
+    <div class="post-meta"><span title='2020-01-31 18:44:26 +0000 UTC'>January 31, 2020</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#1-%e5%9f%ba%e6%9c%ac%e5%91%bd%e4%bb%a4" aria-label="1 基本命令">1 基本命令</a></li>
+                <li>
+                    <a href="#2-%e7%ae%80%e5%8d%95%e5%b0%81%e8%a3%85" aria-label="2 简单封装">2 简单封装</a></li>
+                <li>
+                    <a href="#3-%e6%9f%a5%e8%af%a2%e6%95%b0%e6%8d%ae%e5%ba%93" aria-label="3 查询数据库">3 查询数据库</a></li>
+                <li>
+                    <a href="#4-%e6%9b%b4%e6%96%b0%e6%95%b0%e6%8d%ae%e5%ba%93" aria-label="4 更新数据库">4 更新数据库</a></li>
+                <li>
+                    <a href="#5-%e6%96%87%e4%bb%b6%e4%b8%8a%e4%bc%a0%e5%85%b1%e4%ba%ab" aria-label="5 文件上传共享">5 文件上传共享</a></li>
+                <li>
+                    <a href="#6-%e6%95%8f%e6%84%9f%e4%bf%a1%e6%81%af%e9%85%8d%e7%bd%ae" aria-label="6 敏感信息配置">6 敏感信息配置</a></li>
+                <li>
+                    <a href="#7-%e9%87%8d%e6%9e%84%e4%b8%ba%e5%b9%b6%e8%a1%8c%e5%a4%84%e7%90%86" aria-label="7 重构为并行处理">7 重构为并行处理</a></li>
+                <li>
+                    <a href="#8-%e9%99%90%e5%88%b6%e5%b9%b6%e5%8f%91%e5%8d%8f%e7%a8%8b" aria-label="8 限制并发协程">8 限制并发协程</a></li>
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83" aria-label="参考">参考</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h3 id="1-基本命令">1 基本命令<a hidden class="anchor" aria-hidden="true" href="#1-基本命令">#</a></h3>
+<p>使用ffmpeg截取视频生成图片，原始命令为</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ffmpeg -i src.mp4 -y -f mjpeg -ss <span style="color:#ae81ff">3</span> -t <span style="color:#ae81ff">1</span> -s 80x44 dist.jpg
+</span></span></code></pre></div><h3 id="2-简单封装">2 简单封装<a hidden class="anchor" aria-hidden="true" href="#2-简单封装">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>                    
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;bytes&#34;</span>       
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;os/exec&#34;</span>     
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {     
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">filename</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;test.mp4&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">width</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">288</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">height</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">512</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">output</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;output.jpg&#34;</span>   
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">filename</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-s&#34;</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%dx%d&#34;</span>, <span style="color:#a6e22e">width</span>, <span style="color:#a6e22e">height</span>), <span style="color:#e6db74">&#34;-f&#34;</span>, <span style="color:#e6db74">&#34;singlejpeg&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">buffer</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">buffer</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Run</span>() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>      panic(<span style="color:#e6db74">&#34;could not generate frame&#34;</span>)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="3-查询数据库">3 查询数据库<a hidden class="anchor" aria-hidden="true" href="#3-查询数据库">#</a></h3>
+<p>增加从mysql数据库读取视频路径</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;bytes&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path/filepath&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os/exec&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;database/sql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//user:password@tcp(localhost:5555)/dbname?charset=utf8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#e6db74">&#34;root@tcp(localhost:3306)/dsp?charset=utf8&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//查询数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#e6db74">&#34;SELECT video_s3_url FROM material_video&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">video_s3_url</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fullpath</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">video_s3_url</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//width := 288
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//height := 512
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">fileName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">filepath</span>.<span style="color:#a6e22e">Base</span>(<span style="color:#a6e22e">fullpath</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fileSuffix</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">Ext</span>(<span style="color:#a6e22e">fileName</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">output</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">TrimSuffix</span>(<span style="color:#a6e22e">fileName</span>, <span style="color:#a6e22e">fileSuffix</span>) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.png&#34;</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//fmt.Println(output)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">buffer</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">buffer</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Run</span>() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>            panic(<span style="color:#e6db74">&#34;could not generate frame&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//break;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="4-更新数据库">4 更新数据库<a hidden class="anchor" aria-hidden="true" href="#4-更新数据库">#</a></h3>
+<p>将生成图片路径更新到数据库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;bytes&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path/filepath&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os/exec&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;database/sql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//user:password@tcp(localhost:5555)/dbname?charset=utf8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#e6db74">&#34;root@tcp(localhost:3306)/dsp?charset=utf8&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//查询数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#e6db74">&#34;SELECT id, video_s3_url FROM material_video&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cnt</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">id</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">video_s3_url</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fullpath</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">video_s3_url</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fileName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">filepath</span>.<span style="color:#a6e22e">Base</span>(<span style="color:#a6e22e">fullpath</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fileSuffix</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">Ext</span>(<span style="color:#a6e22e">fileName</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">output</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">TrimSuffix</span>(<span style="color:#a6e22e">fileName</span>, <span style="color:#a6e22e">fileSuffix</span>) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.png&#34;</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">buffer</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">buffer</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Run</span>() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>            panic(<span style="color:#e6db74">&#34;could not generate frame&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//更新数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">stmt</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Prepare</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=? where id=?&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">output</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">affect</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">RowsAffected</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">affect</span>&gt;<span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">cnt</span><span style="color:#f92672">++</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">cnt</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="5-文件上传共享">5 文件上传共享<a hidden class="anchor" aria-hidden="true" href="#5-文件上传共享">#</a></h3>
+<p>考虑本地存储文件的局限性，改为将生成文件上传到S3服务器上，便于后续共享访问</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;bytes&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path/filepath&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os/exec&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;database/sql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/credentials&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/service/s3&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//user:password@tcp(localhost:5555)/dbname?charset=utf8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#e6db74">&#34;mysql&#34;</span>, <span style="color:#e6db74">&#34;root@tcp(localhost:3306)/dsp?charset=utf8&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//query date
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#e6db74">&#34;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">access_key</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;access_key_str&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">secret_key</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;secret_key_str&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;http://test.s3.amazon.cn&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;bucket_str&#34;</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Configure to use S3 Server
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">NewSession</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Config</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Region</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;us-west-2&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Credentials</span>: <span style="color:#a6e22e">credentials</span>.<span style="color:#a6e22e">NewStaticCredentials</span>( <span style="color:#a6e22e">access_key</span>, <span style="color:#a6e22e">secret_key</span>, <span style="color:#e6db74">&#34;&#34;</span>),  <span style="color:#75715e">// token can be left blank for now
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Endpoint</span>:         <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">end_point</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">DisableSSL</span>:       <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">S3ForcePathStyle</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cnt</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">id</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">video_s3_url</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fullpath</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">video_s3_url</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fileName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">filepath</span>.<span style="color:#a6e22e">Base</span>(<span style="color:#a6e22e">fullpath</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fileSuffix</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">Ext</span>(<span style="color:#a6e22e">fileName</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">TrimSuffix</span>(<span style="color:#a6e22e">fileName</span>, <span style="color:#a6e22e">fileSuffix</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">output</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.png&#34;</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//delete exist file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Remove</span>(<span style="color:#a6e22e">output</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">buffer</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">buffer</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Run</span>() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>            panic(<span style="color:#e6db74">&#34;could not generate frame&#34;</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Upload
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">thumb_url</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">output</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//update db
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">stmt</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Prepare</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=? where id=?&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">thumb_url</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">affect</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">RowsAffected</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">affect</span>&gt;<span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">cnt</span><span style="color:#f92672">++</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">cnt</span>&gt;<span style="color:#ae81ff">10</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">cnt</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>, <span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">fileDir</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Open the file for use
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">file</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">fileDir</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Get file size and read the file content into a buffer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fileInfo</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Stat</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">size</span> <span style="color:#66d9ef">int64</span> = <span style="color:#a6e22e">fileInfo</span>.<span style="color:#a6e22e">Size</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">buffer</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#a6e22e">size</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Read</span>(<span style="color:#a6e22e">buffer</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Config settings: this is where you choose the bucket, filename, content-type etc.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// of the file you&#39;re uploading.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">s</span>).<span style="color:#a6e22e">PutObject</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">PutObjectInput</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Bucket</span>:               <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">bucket</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Key</span>:                  <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">fileDir</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//ACL:                  aws.String(&#34;private&#34;),
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Body</span>:                 <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">buffer</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentLength</span>:        <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int64</span>(<span style="color:#a6e22e">size</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentType</span>:          <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">DetectContentType</span>(<span style="color:#a6e22e">buffer</span>)),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentDisposition</span>:   <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;attachment&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ServerSideEncryption</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;AES256&#34;</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="6-敏感信息配置">6 敏感信息配置<a hidden class="anchor" aria-hidden="true" href="#6-敏感信息配置">#</a></h3>
+<p>基本功能实现了，但是直接把数据库账号密码等配置的信息写在代码里的方式不够好，改为把数据库和S3配置使用配置文件方式
+conf/conf.yaml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">db</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">dialect </span>: <span style="color:#ae81ff">mysql</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">user </span>: <span style="color:#ae81ff">root</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">password </span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">host </span>: <span style="color:#ae81ff">localhost</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port </span>: <span style="color:#ae81ff">3306</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">database </span>: <span style="color:#ae81ff">dsp</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">charset </span>: <span style="color:#ae81ff">utf8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">s3</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">access_key </span>: <span style="color:#ae81ff">access_key_str</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secret_key </span>: <span style="color:#ae81ff">secret_key_str</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">end_point </span>: <span style="color:#ae81ff">http://test.s3.amazon.cn</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">bucket </span>: <span style="color:#ae81ff">bucket_str</span>
+</span></span></code></pre></div><p>snapshot.go</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;io/ioutil&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">yaml</span> <span style="color:#e6db74">&#34;gopkg.in/yaml.v2&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;bytes&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//&#34;fmt&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path/filepath&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os/exec&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;database/sql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;time&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/credentials&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/service/s3&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> (
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Config</span> <span style="color:#a6e22e">Config</span>
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ioutil</span>.<span style="color:#a6e22e">ReadFile</span>(<span style="color:#e6db74">&#34;conf/conf.yaml&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">yaml</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">data</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Config</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//user:password@tcp(localhost:5555)/dbname?charset=utf8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Dialect</span>, <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">User</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;@tcp(&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Host</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Port</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;)/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Database</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;?charset=&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Charset</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//query date
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#e6db74">&#34;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">access_key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">AccessKey</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">secret_key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">SecretKey</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">EndPoint</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">Bucket</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Configure to use S3 Server
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">NewSession</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Config</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Region</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;us-west-2&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Credentials</span>: <span style="color:#a6e22e">credentials</span>.<span style="color:#a6e22e">NewStaticCredentials</span>( <span style="color:#a6e22e">access_key</span>, <span style="color:#a6e22e">secret_key</span>, <span style="color:#e6db74">&#34;&#34;</span>),  <span style="color:#75715e">// token can be left blank for now
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Endpoint</span>:         <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">end_point</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">DisableSSL</span>:       <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">S3ForcePathStyle</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cnt</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">id</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">video_s3_url</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>         <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">video_s3_url</span>, <span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">end_point</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">cnt</span>&gt;<span style="color:#ae81ff">10</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cnt</span><span style="color:#f92672">++</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">cnt</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">end_point</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">int64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fullpath</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">video_s3_url</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">filepath</span>.<span style="color:#a6e22e">Base</span>(<span style="color:#a6e22e">fullpath</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileSuffix</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">Ext</span>(<span style="color:#a6e22e">fileName</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">TrimSuffix</span>(<span style="color:#a6e22e">fileName</span>, <span style="color:#a6e22e">fileSuffix</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">output</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.png&#34;</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//delete exist file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_</span> = <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Remove</span>(<span style="color:#a6e22e">output</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">buffer</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">buffer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Run</span>() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//panic(&#34;could not generate frame&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;could not generate frame&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Upload
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;could not update to s3&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">output</span>, <span style="color:#e6db74">&#34;update to s3&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">thumb_url</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">output</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//update db
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">timeStr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Format</span>(<span style="color:#e6db74">&#34;2006-01-02 15:04:05&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=&#39;&#34;</span>, <span style="color:#a6e22e">thumb_url</span>, <span style="color:#e6db74">&#34;&#39;, update_time=&#39;&#34;</span>, <span style="color:#a6e22e">timeStr</span>, <span style="color:#e6db74">&#34;&#39; where id=&#34;</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stmt</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Prepare</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=?, update_time=? where id=?&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">thumb_url</span>, <span style="color:#a6e22e">timeStr</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;res&#34;</span>, <span style="color:#a6e22e">res</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">affect</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">RowsAffected</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">affect</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">fileDir</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Open the file for use
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">file</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">fileDir</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Get file size and read the file content into a buffer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fileInfo</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Stat</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">size</span> <span style="color:#66d9ef">int64</span> = <span style="color:#a6e22e">fileInfo</span>.<span style="color:#a6e22e">Size</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">buffer</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#a6e22e">size</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Read</span>(<span style="color:#a6e22e">buffer</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Config settings: this is where you choose the bucket, filename, content-type etc.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// of the file you&#39;re uploading.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">s</span>).<span style="color:#a6e22e">PutObject</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">PutObjectInput</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Bucket</span>:               <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">bucket</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Key</span>:                  <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">fileDir</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//ACL:                  aws.String(&#34;private&#34;),
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Body</span>:                 <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">buffer</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentLength</span>:        <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int64</span>(<span style="color:#a6e22e">size</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentType</span>:          <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">DetectContentType</span>(<span style="color:#a6e22e">buffer</span>)),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentDisposition</span>:   <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;attachment&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ServerSideEncryption</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;AES256&#34;</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Config</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Db</span> <span style="color:#a6e22e">DBConfigInfo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">S3</span> <span style="color:#a6e22e">S3ConfigInfo</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DBConfigInfo</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Dialect</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;dialect&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">User</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;user&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Password</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;password&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Host</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;host&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Port</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;port&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Database</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;database&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Charset</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;charset&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">S3ConfigInfo</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">AccessKey</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;access_key&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">SecretKey</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;secret_key&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">EndPoint</span>      <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;end_point&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Bucket</span>        <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;bucket&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="7-重构为并行处理">7 重构为并行处理<a hidden class="anchor" aria-hidden="true" href="#7-重构为并行处理">#</a></h3>
+<p>单条处理耗时较久，尝试使用goroutine重构，提升性能
+snapshot.go</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;io/ioutil&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">yaml</span> <span style="color:#e6db74">&#34;gopkg.in/yaml.v2&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;bytes&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//&#34;fmt&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path/filepath&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os/exec&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;database/sql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;time&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/credentials&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/service/s3&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">quit</span> = make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int64</span>, <span style="color:#ae81ff">100</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> (
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Config</span> <span style="color:#a6e22e">Config</span>
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ioutil</span>.<span style="color:#a6e22e">ReadFile</span>(<span style="color:#e6db74">&#34;conf/conf.yaml&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">yaml</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">data</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Config</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//user:password@tcp(localhost:5555)/dbname?charset=utf8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Dialect</span>, <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">User</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;@tcp(&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Host</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Port</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;)/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Database</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;?charset=&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Charset</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//query date
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#e6db74">&#34;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">access_key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">AccessKey</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">secret_key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">SecretKey</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">EndPoint</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">Bucket</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Configure to use S3 Server
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">NewSession</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Config</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Region</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;us-west-2&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Credentials</span>: <span style="color:#a6e22e">credentials</span>.<span style="color:#a6e22e">NewStaticCredentials</span>( <span style="color:#a6e22e">access_key</span>, <span style="color:#a6e22e">secret_key</span>, <span style="color:#e6db74">&#34;&#34;</span>),  <span style="color:#75715e">// token can be left blank for now
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Endpoint</span>:         <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">end_point</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">DisableSSL</span>:       <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">S3ForcePathStyle</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">quit</span> = make(<span style="color:#66d9ef">chan</span> <span style="color:#66d9ef">int64</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cnt</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">id</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">video_s3_url</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">go</span> <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">video_s3_url</span>, <span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">end_point</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cnt</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">100</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cnt</span>; <span style="color:#a6e22e">i</span> &gt; <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">--</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">quit</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cnt</span><span style="color:#f92672">++</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//log.Println(cnt)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cnt</span>; <span style="color:#a6e22e">i</span> &gt; <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">--</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">quit</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">end_point</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">int64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fullpath</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">video_s3_url</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileSuffix</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">Ext</span>(<span style="color:#a6e22e">fileName</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">TrimSuffix</span>(<span style="color:#a6e22e">fileName</span>, <span style="color:#a6e22e">fileSuffix</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">output</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.png&#34;</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//delete exist file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//_ = os.Remove(output);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//if err != nil {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//    log.Println(err)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">buffer</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">buffer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Run</span>() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//panic(&#34;could not generate frame&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;could not generate frame&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Upload
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;could not update to s3&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">output</span>, <span style="color:#e6db74">&#34;update to s3&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">thumb_url</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">output</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//update db
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">timeStr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Format</span>(<span style="color:#e6db74">&#34;2006-01-02 15:04:05&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=&#39;&#34;</span>, <span style="color:#a6e22e">thumb_url</span>, <span style="color:#e6db74">&#34;&#39;, update_time=&#39;&#34;</span>, <span style="color:#a6e22e">timeStr</span>, <span style="color:#e6db74">&#34;&#39; where id=&#34;</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stmt</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Prepare</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=?, update_time=? where id=?&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">thumb_url</span>, <span style="color:#a6e22e">timeStr</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//log.Println(&#34;res&#34;, res)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">affect</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">RowsAffected</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> = <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Remove</span>(<span style="color:#a6e22e">output</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">quit</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">affect</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">affect</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">fileDir</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Open the file for use
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">file</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">fileDir</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Get file size and read the file content into a buffer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fileInfo</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Stat</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">size</span> <span style="color:#66d9ef">int64</span> = <span style="color:#a6e22e">fileInfo</span>.<span style="color:#a6e22e">Size</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">buffer</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#a6e22e">size</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Read</span>(<span style="color:#a6e22e">buffer</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Config settings: this is where you choose the bucket, filename, content-type etc.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// of the file you&#39;re uploading.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">s</span>).<span style="color:#a6e22e">PutObject</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">PutObjectInput</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Bucket</span>:               <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">bucket</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Key</span>:                  <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">fileDir</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//ACL:                  aws.String(&#34;private&#34;),
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Body</span>:                 <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">buffer</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentLength</span>:        <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int64</span>(<span style="color:#a6e22e">size</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentType</span>:          <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">DetectContentType</span>(<span style="color:#a6e22e">buffer</span>)),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentDisposition</span>:   <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;attachment&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ServerSideEncryption</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;AES256&#34;</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Config</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Db</span> <span style="color:#a6e22e">DBConfigInfo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">S3</span> <span style="color:#a6e22e">S3ConfigInfo</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DBConfigInfo</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Dialect</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;dialect&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">User</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;user&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Password</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;password&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Host</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;host&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Port</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;port&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Database</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;database&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Charset</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;charset&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">S3ConfigInfo</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">AccessKey</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;access_key&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">SecretKey</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;secret_key&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">EndPoint</span>      <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;end_point&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Bucket</span>        <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;bucket&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>此处，对于新手需要注意：</strong></p>
+<p>在启动协程后，实际处理过程类似于在主线程中fork出子线程，由子线程完成实际的任务处理，但是，如果主线程没有等待协程处理完返回，特别是循环启动大批量协程的场景，则可能出现不是所有协程都被启动，或者协程处理没有正常返回等问题；
+对于这种情况，golang中提供了四种方式实现goroutine与主线程同步</p>
+<ol>
+<li>time.sleep()，这种方式较死板，不建议使用</li>
+<li>使用channel机制，每个goroutine传一个channel进去然后往里写数据，在再主线程中读取这些channel，直到全部读到数据了子goroutine也就全部运行完了，那么主goroutine也就可以结束了。这种模式是子线程去通知主线程结束。</li>
+<li>使用context中cancel函数，这种模式是主线程去通知子线程结束。</li>
+<li>sync.WaitGroup模式，Add方法设置等待子goroutine的数量，使用Done方法设置等待子goroutine的数量减1，当等待的数量等于0时，Wait函数返回。</li>
+</ol>
+<h3 id="8-限制并发协程">8 限制并发协程<a hidden class="anchor" aria-hidden="true" href="#8-限制并发协程">#</a></h3>
+<p>测试发现，使用goroutine并发，理论上可以快速处理批量任务，但是实际处理时，需要考虑数据库连接数及服务器CPU和内存等限制，考虑使用线程池的方式，限制同时处理任务的协程数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;io/ioutil&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">yaml</span> <span style="color:#e6db74">&#34;gopkg.in/yaml.v2&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;bytes&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//&#34;fmt&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;path/filepath&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;os/exec&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;database/sql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;github.com/go-sql-driver/mysql&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;time&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/credentials&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/aws/session&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/aws/aws-sdk-go/service/s3&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;sync&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/panjf2000/ants&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">db</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">DB</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">s</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> (
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Config</span> <span style="color:#a6e22e">Config</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">goSync</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ioutil</span>.<span style="color:#a6e22e">ReadFile</span>(<span style="color:#e6db74">&#34;conf/conf.yaml&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">yaml</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">data</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">Config</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//user:password@tcp(localhost:5555)/dbname?charset=utf8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">db</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">sql</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Dialect</span>, <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">User</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;@tcp(&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Host</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Port</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;)/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Database</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;?charset=&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Db</span>.<span style="color:#a6e22e">Charset</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//query date
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">rows</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Query</span>(<span style="color:#e6db74">&#34;SELECT id, video_s3_url FROM material_video where video_thumb_url is null&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">access_key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">AccessKey</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">secret_key</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">SecretKey</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">EndPoint</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">Bucket</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Configure to use S3 Server
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">s</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">NewSession</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Config</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Region</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;us-west-2&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Credentials</span>: <span style="color:#a6e22e">credentials</span>.<span style="color:#a6e22e">NewStaticCredentials</span>( <span style="color:#a6e22e">access_key</span>, <span style="color:#a6e22e">secret_key</span>, <span style="color:#e6db74">&#34;&#34;</span>),  <span style="color:#75715e">// token can be left blank for now
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Endpoint</span>:         <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">end_point</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">DisableSSL</span>:       <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">S3ForcePathStyle</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">ants</span>.<span style="color:#a6e22e">Release</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">p</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ants</span>.<span style="color:#a6e22e">NewPoolWithFunc</span>(<span style="color:#a6e22e">Config</span>.<span style="color:#a6e22e">Pool</span>.<span style="color:#a6e22e">MaxNum</span>, <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">params</span> <span style="color:#66d9ef">interface</span>{}) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">params</span>.(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}){
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;id&#34;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">id</span> = <span style="color:#a6e22e">v</span>.(<span style="color:#66d9ef">int</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;video_s3_url&#34;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">video_s3_url</span> = <span style="color:#a6e22e">v</span>.(<span style="color:#66d9ef">string</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">video_s3_url</span>, <span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">end_point</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">goSync</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Release</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cnt</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">rows</span>.<span style="color:#a6e22e">Scan</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">id</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">video_s3_url</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">video_s3_url</span>, <span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">end_point</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">params</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{})
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">params</span>[<span style="color:#e6db74">&#34;id&#34;</span>] = <span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">params</span>[<span style="color:#e6db74">&#34;video_s3_url&#34;</span>] = <span style="color:#a6e22e">video_s3_url</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">goSync</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">_</span> = <span style="color:#a6e22e">p</span>.<span style="color:#a6e22e">Invoke</span>(<span style="color:#a6e22e">params</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">cnt</span><span style="color:#f92672">++</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">cnt</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">goSync</span>.<span style="color:#a6e22e">Wait</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//log.Printf(&#34;running goroutines: %d\n&#34;, ants.Running())
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;finish all tasks.\n&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">process</span>(<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">video_s3_url</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">end_point</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">int64</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fullpath</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">video_s3_url</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">filepath</span>.<span style="color:#a6e22e">Base</span>(<span style="color:#a6e22e">fullpath</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileSuffix</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">path</span>.<span style="color:#a6e22e">Ext</span>(<span style="color:#a6e22e">fileName</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">TrimSuffix</span>(<span style="color:#a6e22e">fileName</span>, <span style="color:#a6e22e">fileSuffix</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">output</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fileSingleName</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.png&#34;</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//delete exist file
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//_ = os.Remove(output);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//if err != nil {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//    log.Println(err)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmd</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">exec</span>.<span style="color:#a6e22e">Command</span>(<span style="color:#e6db74">&#34;ffmpeg&#34;</span>, <span style="color:#e6db74">&#34;-i&#34;</span>, <span style="color:#a6e22e">fullpath</span>, <span style="color:#e6db74">&#34;-vframes&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;-ss&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>, <span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">buffer</span> <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">Buffer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Stdout</span> = <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">buffer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">cmd</span>.<span style="color:#a6e22e">Run</span>() <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//panic(&#34;could not generate frame&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;could not generate frame&#34;</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Upload
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">bucket</span>, <span style="color:#a6e22e">output</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;could not update to s3&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">output</span>, <span style="color:#e6db74">&#34;update to s3&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">thumb_url</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">end_point</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">output</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//update db
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">timeStr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Format</span>(<span style="color:#e6db74">&#34;2006-01-02 15:04:05&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=&#39;&#34;</span>, <span style="color:#a6e22e">thumb_url</span>, <span style="color:#e6db74">&#34;&#39;, update_time=&#39;&#34;</span>, <span style="color:#a6e22e">timeStr</span>, <span style="color:#e6db74">&#34;&#39; where id=&#34;</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stmt</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">db</span>.<span style="color:#a6e22e">Prepare</span>(<span style="color:#e6db74">&#34;update material_video set video_thumb_url=?, update_time=? where id=?&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">res</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">stmt</span>.<span style="color:#a6e22e">Exec</span>(<span style="color:#a6e22e">thumb_url</span>, <span style="color:#a6e22e">timeStr</span>, <span style="color:#a6e22e">id</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">affect</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">RowsAffected</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> = <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Remove</span>(<span style="color:#a6e22e">output</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">affect</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">checkErr</span>(<span style="color:#a6e22e">err</span> <span style="color:#66d9ef">error</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        panic(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">AddFileToS3</span>(<span style="color:#a6e22e">bucket</span> <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">fileDir</span> <span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Open the file for use
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">file</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Open</span>(<span style="color:#a6e22e">fileDir</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Get file size and read the file content into a buffer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">fileInfo</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Stat</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">size</span> <span style="color:#66d9ef">int64</span> = <span style="color:#a6e22e">fileInfo</span>.<span style="color:#a6e22e">Size</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">buffer</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">byte</span>, <span style="color:#a6e22e">size</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">file</span>.<span style="color:#a6e22e">Read</span>(<span style="color:#a6e22e">buffer</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Config settings: this is where you choose the bucket, filename, content-type etc.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// of the file you&#39;re uploading.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">s</span>).<span style="color:#a6e22e">PutObject</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">s3</span>.<span style="color:#a6e22e">PutObjectInput</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Bucket</span>:               <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">bucket</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Key</span>:                  <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">fileDir</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//ACL:                  aws.String(&#34;private&#34;),
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">Body</span>:                 <span style="color:#a6e22e">bytes</span>.<span style="color:#a6e22e">NewReader</span>(<span style="color:#a6e22e">buffer</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentLength</span>:        <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int64</span>(<span style="color:#a6e22e">size</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentType</span>:          <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">DetectContentType</span>(<span style="color:#a6e22e">buffer</span>)),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ContentDisposition</span>:   <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;attachment&#34;</span>),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ServerSideEncryption</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;AES256&#34;</span>),
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">err</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Config</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Db</span>   <span style="color:#a6e22e">DBConfigInfo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">S3</span>   <span style="color:#a6e22e">S3ConfigInfo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Pool</span> <span style="color:#a6e22e">GoroutinePoolInfo</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DBConfigInfo</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Dialect</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;dialect&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">User</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;user&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Password</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;password&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Host</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;host&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Port</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;port&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Database</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;database&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Charset</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;charset&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">S3ConfigInfo</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">AccessKey</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;access_key&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">SecretKey</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;secret_key&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">EndPoint</span>      <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;end_point&#34;`</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Bucket</span>        <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;bucket&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GoroutinePoolInfo</span> <span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">MaxNum</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`yaml:&#34;max_num&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="参考">参考<a hidden class="anchor" aria-hidden="true" href="#参考">#</a></h3>
+<p><a href="https://stackoverflow.com/questions/35411585/first-frame-of-video">https://stackoverflow.com/questions/35411585/first-frame-of-video</a>
+<a href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/05.2.md">https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/05.2.md</a>
+<a href="http://www.hatlonely.com/2018/03/04/golang-aws-sdk-go-%E4%B9%8B-s3-%E6%9C%8D%E5%8A%A1/index.html">http://www.hatlonely.com/2018/03/04/golang-aws-sdk-go-%E4%B9%8B-s3-%E6%9C%8D%E5%8A%A1/index.html</a>
+<a href="https://mlog.club/article/293940">https://mlog.club/article/293940</a>
+<a href="https://colobu.com/2016/12/21/how-to-dump-goroutine-stack-traces/">https://colobu.com/2016/12/21/how-to-dump-goroutine-stack-traces/</a>
+<a href="https://mp.weixin.qq.com/s/aoWQSxrXXZUtJh48tmqMkA">https://mp.weixin.qq.com/s/aoWQSxrXXZUtJh48tmqMkA</a>
+<a href="https://www.cnblogs.com/node-js/p/8964171.html">https://www.cnblogs.com/node-js/p/8964171.html</a>
+<a href="https://www.cnblogs.com/williamjie/p/9267741.html">https://www.cnblogs.com/williamjie/p/9267741.html</a>
+<a href="https://github.com/panjf2000/ants">https://github.com/panjf2000/ants</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/go/">Go</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

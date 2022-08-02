@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>协作开发的项目配置文件管理 | 他山笨石</title>
+<meta name="keywords" content="php">
+<meta name="description" content="背景 我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。 对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少都会有不一致的设置。 以thinkphp为例，项目基本配置都在config.php和database.php中，为保证服务能正常启动运行，配置文件必不可缺，都应该提交到代码仓库中去（注意：如果代码库是公开的github，则用户名密码等敏感信息一定不能提交发布，本文所讨论情况，局限于私有代码库） 这在代码的版本控制上，可能出现以下几种麻烦：
+成员在本地开发的时候，都需要将配置修改为各自不同的设置，提交代码和拉去代码时，可能产生冲突，虽然不难解决，但每次解决类似问题比较影响效率 也有成员处于安全考虑，不将本地敏感配置提交到代码库，但每次拉取代码后，本地设置都需要重新修改一遍 不同测试和生产环境使用的配置不同，每次发布上线代码时都需要认真比对修改配置，无法完全自动化处理 可以简单粗暴的将配置文件排除在代码库之外，这能解决上面一部分问题，但是显然代码库是不完整的，新成员直接拉取代码是无法运行的，更致命的是，当项目需要新增或修改一个公共配置的时候，不得不通知所有成员手动更新配置文件 …… 方案对比 基于Base类的配置文件 曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数； 所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以； 项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题； 如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；
+Config.php &lt;?php class Config extends ConfigBase { const LOG_PATH = &#39;/home/user/log/project/&#39;; ... } ConfigBase.php &lt;?php class ConfigBase { const LOG_PATH = &#39;/var/log/project/&#39;; ... } Demo.php &lt;?php class Demo { public function test() { $logPath = Config::LOG_PATH; } } 辅助脚本生成/更新配置文件 对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。 框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空； 编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中； 同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。
+基于环境变量的配置管理 php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；
+常见设置环境变量方法： #Apache SetEnv APPLICATION_ENV develop #nginx fastcgi_param APPLICATION_ENV develop; #php cli $ export APPLICATION_ENV=develop 那么框架就会自动加载对应的配置文件（默认位于 application/develop.">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/project-config-manage/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="协作开发的项目配置文件管理" />
+<meta property="og:description" content="背景 我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。 对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少都会有不一致的设置。 以thinkphp为例，项目基本配置都在config.php和database.php中，为保证服务能正常启动运行，配置文件必不可缺，都应该提交到代码仓库中去（注意：如果代码库是公开的github，则用户名密码等敏感信息一定不能提交发布，本文所讨论情况，局限于私有代码库） 这在代码的版本控制上，可能出现以下几种麻烦：
+成员在本地开发的时候，都需要将配置修改为各自不同的设置，提交代码和拉去代码时，可能产生冲突，虽然不难解决，但每次解决类似问题比较影响效率 也有成员处于安全考虑，不将本地敏感配置提交到代码库，但每次拉取代码后，本地设置都需要重新修改一遍 不同测试和生产环境使用的配置不同，每次发布上线代码时都需要认真比对修改配置，无法完全自动化处理 可以简单粗暴的将配置文件排除在代码库之外，这能解决上面一部分问题，但是显然代码库是不完整的，新成员直接拉取代码是无法运行的，更致命的是，当项目需要新增或修改一个公共配置的时候，不得不通知所有成员手动更新配置文件 …… 方案对比 基于Base类的配置文件 曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数； 所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以； 项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题； 如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；
+Config.php &lt;?php class Config extends ConfigBase { const LOG_PATH = &#39;/home/user/log/project/&#39;; ... } ConfigBase.php &lt;?php class ConfigBase { const LOG_PATH = &#39;/var/log/project/&#39;; ... } Demo.php &lt;?php class Demo { public function test() { $logPath = Config::LOG_PATH; } } 辅助脚本生成/更新配置文件 对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。 框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空； 编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中； 同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。
+基于环境变量的配置管理 php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；
+常见设置环境变量方法： #Apache SetEnv APPLICATION_ENV develop #nginx fastcgi_param APPLICATION_ENV develop; #php cli $ export APPLICATION_ENV=develop 那么框架就会自动加载对应的配置文件（默认位于 application/develop." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/project-config-manage/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2019-04-15T22:38:06&#43;00:00" />
+<meta property="article:modified_time" content="2019-04-15T22:38:06&#43;00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="协作开发的项目配置文件管理"/>
+<meta name="twitter:description" content="背景 我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。 对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少都会有不一致的设置。 以thinkphp为例，项目基本配置都在config.php和database.php中，为保证服务能正常启动运行，配置文件必不可缺，都应该提交到代码仓库中去（注意：如果代码库是公开的github，则用户名密码等敏感信息一定不能提交发布，本文所讨论情况，局限于私有代码库） 这在代码的版本控制上，可能出现以下几种麻烦：
+成员在本地开发的时候，都需要将配置修改为各自不同的设置，提交代码和拉去代码时，可能产生冲突，虽然不难解决，但每次解决类似问题比较影响效率 也有成员处于安全考虑，不将本地敏感配置提交到代码库，但每次拉取代码后，本地设置都需要重新修改一遍 不同测试和生产环境使用的配置不同，每次发布上线代码时都需要认真比对修改配置，无法完全自动化处理 可以简单粗暴的将配置文件排除在代码库之外，这能解决上面一部分问题，但是显然代码库是不完整的，新成员直接拉取代码是无法运行的，更致命的是，当项目需要新增或修改一个公共配置的时候，不得不通知所有成员手动更新配置文件 …… 方案对比 基于Base类的配置文件 曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数； 所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以； 项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题； 如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；
+Config.php &lt;?php class Config extends ConfigBase { const LOG_PATH = &#39;/home/user/log/project/&#39;; ... } ConfigBase.php &lt;?php class ConfigBase { const LOG_PATH = &#39;/var/log/project/&#39;; ... } Demo.php &lt;?php class Demo { public function test() { $logPath = Config::LOG_PATH; } } 辅助脚本生成/更新配置文件 对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。 框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空； 编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中； 同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。
+基于环境变量的配置管理 php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；
+常见设置环境变量方法： #Apache SetEnv APPLICATION_ENV develop #nginx fastcgi_param APPLICATION_ENV develop; #php cli $ export APPLICATION_ENV=develop 那么框架就会自动加载对应的配置文件（默认位于 application/develop."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "协作开发的项目配置文件管理",
+      "item": "https://shiqstone.github.io/post/project-config-manage/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "协作开发的项目配置文件管理",
+  "name": "协作开发的项目配置文件管理",
+  "description": "背景 我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。 对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少都会有不一致的设置。 以thinkphp为例，项目基本配置都在config.php和database.php中，为保证服务能正常启动运行，配置文件必不可缺，都应该提交到代码仓库中去（注意：如果代码库是公开的github，则用户名密码等敏感信息一定不能提交发布，本文所讨论情况，局限于私有代码库） 这在代码的版本控制上，可能出现以下几种麻烦：\n成员在本地开发的时候，都需要将配置修改为各自不同的设置，提交代码和拉去代码时，可能产生冲突，虽然不难解决，但每次解决类似问题比较影响效率 也有成员处于安全考虑，不将本地敏感配置提交到代码库，但每次拉取代码后，本地设置都需要重新修改一遍 不同测试和生产环境使用的配置不同，每次发布上线代码时都需要认真比对修改配置，无法完全自动化处理 可以简单粗暴的将配置文件排除在代码库之外，这能解决上面一部分问题，但是显然代码库是不完整的，新成员直接拉取代码是无法运行的，更致命的是，当项目需要新增或修改一个公共配置的时候，不得不通知所有成员手动更新配置文件 …… 方案对比 基于Base类的配置文件 曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数； 所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以； 项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题； 如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；\nConfig.php \u0026lt;?php class Config extends ConfigBase { const LOG_PATH = \u0026#39;/home/user/log/project/\u0026#39;; ... } ConfigBase.php \u0026lt;?php class ConfigBase { const LOG_PATH = \u0026#39;/var/log/project/\u0026#39;; ... } Demo.php \u0026lt;?php class Demo { public function test() { $logPath = Config::LOG_PATH; } } 辅助脚本生成/更新配置文件 对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。 框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空； 编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中； 同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。\n基于环境变量的配置管理 php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；\n常见设置环境变量方法： #Apache SetEnv APPLICATION_ENV develop #nginx fastcgi_param APPLICATION_ENV develop; #php cli $ export APPLICATION_ENV=develop 那么框架就会自动加载对应的配置文件（默认位于 application/develop.",
+  "keywords": [
+    "php"
+  ],
+  "articleBody": "背景 我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。 对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少都会有不一致的设置。 以thinkphp为例，项目基本配置都在config.php和database.php中，为保证服务能正常启动运行，配置文件必不可缺，都应该提交到代码仓库中去（注意：如果代码库是公开的github，则用户名密码等敏感信息一定不能提交发布，本文所讨论情况，局限于私有代码库） 这在代码的版本控制上，可能出现以下几种麻烦：\n成员在本地开发的时候，都需要将配置修改为各自不同的设置，提交代码和拉去代码时，可能产生冲突，虽然不难解决，但每次解决类似问题比较影响效率 也有成员处于安全考虑，不将本地敏感配置提交到代码库，但每次拉取代码后，本地设置都需要重新修改一遍 不同测试和生产环境使用的配置不同，每次发布上线代码时都需要认真比对修改配置，无法完全自动化处理 可以简单粗暴的将配置文件排除在代码库之外，这能解决上面一部分问题，但是显然代码库是不完整的，新成员直接拉取代码是无法运行的，更致命的是，当项目需要新增或修改一个公共配置的时候，不得不通知所有成员手动更新配置文件 …… 方案对比 基于Base类的配置文件 曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数； 所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以； 项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题； 如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；\nConfig.php \u003c?php class Config extends ConfigBase { const LOG_PATH = '/home/user/log/project/'; ... } ConfigBase.php \u003c?php class ConfigBase { const LOG_PATH = '/var/log/project/'; ... } Demo.php \u003c?php class Demo { public function test() { $logPath = Config::LOG_PATH; } } 辅助脚本生成/更新配置文件 对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。 框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空； 编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中； 同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。\n基于环境变量的配置管理 php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；\n常见设置环境变量方法： #Apache SetEnv APPLICATION_ENV develop #nginx fastcgi_param APPLICATION_ENV develop; #php cli $ export APPLICATION_ENV=develop 那么框架就会自动加载对应的配置文件（默认位于 application/develop.php），根据配置加载优先级，该配置会覆盖默认的应用配置，应用配置文件是应用初始化的时候首先加载的公共配置文件，默认位于application/config.php。这样添加和修改公共配置的问题也解决了。 现在，我们再来处理一个细节问题，将环境变量的值设置到框架配置，把前面的操作结合到一起就可以完成，处理如下 1 在web服务环境中设置环境变量 2 在项目入口处读取所设置的环境变量，并定义为常量\n\u003c?php ... $env = isset($_SERVER['APPLICATION_ENV']) ? $_SERVER['APPLICATION_ENV'] : 'development'; define('APP_STATUS', $env); ... 3 把所定义的常量设置到配置文件config.php中\n'app_status' =\u003e APP_STATUS 通过以上几步，基本完成了通过设置环境变量指定配置文件的功能。\n使用 .env 设置环境变量 前面的配置虽然实现了功能，但需要修改web服务器的配置添加额外配置，任何非标准配置都不利于系统的自动化运维，可能在部署过程中遗留导致服务部署异常，所以不一定是最好的方案；另外需要单独修改框架中非业务逻辑，好像也不是特别好； 在分析thinkphp配置文件的过程中，注意到很多配置项使用的是Env::get()方式设置的，其实就是thinkphp5.0支持的环境变量配置，在开发过程中，可以在应用根目录下面的.env来模拟环境变量配置，.env文件中的配置参数定义格式采用ini方式，所有我们可以在这里设置app_status配置\n[app] status = develop 并修改config.php配置文件\n'app_status' =\u003e Env::get('app.status'), 同样满足了之前的一系列要求，只需要保证不把.env文件添加到代码库即可\n注意：如果部署环境单独配置了环境变量，需要删除.env配置文件，避免冲突。\n副产品 使用.env设置环境变量还能解决敏感信息配置安全性的问题，如，数据库配置文件中，用户名密码字段的值可以直接留空，从环境变量文件中设置即可\n.env [database] username = root password = 123456 database.php // 用户名 'username' =\u003e Env::get('database.username', ''), // 密码 'password' =\u003e Env::get('database.password', ''), 小结 除了上面列举的几种方法，还有很多不同的处理，没有哪种实现是完美的，个人觉得选择方案主要还是要从支持协作开发，便于开发维护，支持持续集成，兼顾安全等各方面权衡。并且不同团队的开发使用习惯也不尽相同，还是应该选择最适合团队项目的实现方式。\n#参考 环境和配置文件 thinkphp5.0完全开发手册-配置\n",
+  "wordCount" : "144",
+  "inLanguage": "en",
+  "datePublished": "2019-04-15T22:38:06Z",
+  "dateModified": "2019-04-15T22:38:06Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/project-config-manage/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      协作开发的项目配置文件管理
+    </h1>
+    <div class="post-meta"><span title='2019-04-15 22:38:06 +0000 UTC'>April 15, 2019</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e8%83%8c%e6%99%af" aria-label="背景">背景</a></li>
+                <li>
+                    <a href="#%e6%96%b9%e6%a1%88%e5%af%b9%e6%af%94" aria-label="方案对比">方案对比</a><ul>
+                        
+                <li>
+                    <a href="#%e5%9f%ba%e4%ba%8ebase%e7%b1%bb%e7%9a%84%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" aria-label="基于Base类的配置文件">基于Base类的配置文件</a></li>
+                <li>
+                    <a href="#%e8%be%85%e5%8a%a9%e8%84%9a%e6%9c%ac%e7%94%9f%e6%88%90%e6%9b%b4%e6%96%b0%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" aria-label="辅助脚本生成/更新配置文件">辅助脚本生成/更新配置文件</a></li>
+                <li>
+                    <a href="#%e5%9f%ba%e4%ba%8e%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e7%9a%84%e9%85%8d%e7%bd%ae%e7%ae%a1%e7%90%86" aria-label="基于环境变量的配置管理">基于环境变量的配置管理</a><ul>
+                        
+                <li>
+                    <a href="#%e5%b8%b8%e8%a7%81%e8%ae%be%e7%bd%ae%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e6%96%b9%e6%b3%95" aria-label="常见设置环境变量方法：">常见设置环境变量方法：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%bd%bf%e7%94%a8-env-%e8%ae%be%e7%bd%ae%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f" aria-label="使用 .env 设置环境变量">使用 .env 设置环境变量</a></li>
+                <li>
+                    <a href="#%e5%89%af%e4%ba%a7%e5%93%81" aria-label="副产品">副产品</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%b0%8f%e7%bb%93" aria-label="小结">小结</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h1 id="背景">背景<a hidden class="anchor" aria-hidden="true" href="#背景">#</a></h1>
+<p>我们在日常开发中经常遇到这样一些比较典型的情况：一个开发团队有多个成员，每个人各自使用不同的开发环境，linux、windows或者Mac OS，每个人使用的IDE也不尽相同。
+对于程序本身，并没有什么问题，php可以在各个平台正常运行，但是每个人可能会有各自的开发环境，团队应该提供单独的测试环境，线上服务也可能需要提供灰度和正式环境，不同的环境对应的配置文件中服务配置、数据库配置、路径配置多少都会有不一致的设置。
+以thinkphp为例，项目基本配置都在config.php和database.php中，为保证服务能正常启动运行，配置文件必不可缺，都应该提交到代码仓库中去（<strong>注意：如果代码库是公开的github，则用户名密码等敏感信息一定不能提交发布</strong>，本文所讨论情况，局限于私有代码库）
+这在代码的版本控制上，可能出现以下几种麻烦：</p>
+<ul>
+<li>成员在本地开发的时候，都需要将配置修改为各自不同的设置，提交代码和拉去代码时，可能产生冲突，虽然不难解决，但每次解决类似问题比较影响效率</li>
+<li>也有成员处于安全考虑，不将本地敏感配置提交到代码库，但每次拉取代码后，本地设置都需要重新修改一遍</li>
+<li>不同测试和生产环境使用的配置不同，每次发布上线代码时都需要认真比对修改配置，无法完全自动化处理</li>
+<li>可以简单粗暴的将配置文件排除在代码库之外，这能解决上面一部分问题，但是显然代码库是不完整的，新成员直接拉取代码是无法运行的，更致命的是，当项目需要新增或修改一个公共配置的时候，不得不通知所有成员手动更新配置文件</li>
+<li>……</li>
+</ul>
+<h1 id="方案对比">方案对比<a hidden class="anchor" aria-hidden="true" href="#方案对比">#</a></h1>
+<h2 id="基于base类的配置文件">基于Base类的配置文件<a hidden class="anchor" aria-hidden="true" href="#基于base类的配置文件">#</a></h2>
+<p>曾经在一些历史项目中采用这个方案，框架为基础极简架构，只提供基础mvc；在项目中使用一个Config类作为主配置文件，Config类继承自ConfigBase类，配置项都声明为类中的常量，在使用配置项的地方直接读取子类的常量参数；
+所有配置项都会在基类进行定义，环境有别于基类的配置则在子类中重新声明，覆盖基类定义，这样每个人都可以有自己的环境配置，且添加公共配置的时候，直接添加到ConfigBase就可以；
+项目初始化的时候，所有配置都写在基类中，Config类默认为空，后续开发过程中，可以将本地配置设置到Config类中，并将Config.php文件添加到代码库ignore配置中，这样就可以满足协同开发配置问题；
+如果希望将自己的配置文件也添加到代码库中进行变更管理，可以复制Config.php生成带个人后缀的配置文件Config.php.dev，将个人文件提交到代码库，之后重新生成链接文件Config.php指向到个人配置文件，即可满足要求；</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">Config</span><span style="color:#f92672">.</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Config</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">ConfigBase</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">LOG_PATH</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;/home/user/log/project/&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">ConfigBase</span><span style="color:#f92672">.</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConfigBase</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">LOG_PATH</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;/var/log/project/&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Demo</span><span style="color:#f92672">.</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Demo</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">test</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $logPath <span style="color:#f92672">=</span> <span style="color:#a6e22e">Config</span><span style="color:#f92672">::</span><span style="color:#a6e22e">LOG_PATH</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="辅助脚本生成更新配置文件">辅助脚本生成/更新配置文件<a hidden class="anchor" aria-hidden="true" href="#辅助脚本生成更新配置文件">#</a></h2>
+<p>对于一些目前比较流行的开源框架（以thinkphp为例），基本都是采用在指定路径的config.php文件中返回php数组的方式定义系统配置，（也支持.ini，.xml，.json等格式的配置文件，单最终也都由框架解析为php数组。）显然，前面所提到的方式不适用，但在这个方案的基础上我们可以做一点变化满足要求。
+框架默认读取的配置文件是config.php和database.php，还是以config配置为例，考虑添加config.base.php作为基础配置文件，包括全部配置项，再增加一个config.dev.php作为个人配置文件，默认返回空数组，有个人配置项时，个人配置覆盖基础配置；项目实际还是从config.php读取配置，初始化默认为空；
+编写一个脚手架脚本，提供初始化和更新功能，初始化时，根据config.base.php和config.dev.php配置生成一个合并的配置文件config.php供项目读取；执行更新任务时，比对config.php文件、基础配置和个人配置，如果基础配置有新增，则将新加配置项添加到config.php中，如果有配置修改，依照个人配置覆盖基础配置的原则将配置项更新到config.php文件中；
+同样，将config.php文件加到代码库ignore配置中，添加个人后缀的本地配置文件，并可提交到代码库管理，执行脚本时，指定自己使用的本地配置文件，同样可以满足协同开发的配置管理基本要求。</p>
+<h2 id="基于环境变量的配置管理">基于环境变量的配置管理<a hidden class="anchor" aria-hidden="true" href="#基于环境变量的配置管理">#</a></h2>
+<p>php本身可以通过getenv获取环境变量，现在主流的框架对环境变量也有很好的支持，所以考虑通过设置环境变量的方式来指定加载不同的配置文件，这样就可以满足针对不同环境使用不同配置的管理和切换问题；</p>
+<h3 id="常见设置环境变量方法">常见设置环境变量方法：<a hidden class="anchor" aria-hidden="true" href="#常见设置环境变量方法">#</a></h3>
+<pre tabindex="0"><code>#Apache
+SetEnv APPLICATION_ENV develop
+
+#nginx
+fastcgi_param APPLICATION_ENV develop;
+
+#php cli
+$ export APPLICATION_ENV=develop
+</code></pre><p>那么框架就会自动加载对应的配置文件（默认位于 <code>application/develop.php</code>），根据配置加载优先级，该配置会覆盖默认的应用配置，应用配置文件是应用初始化的时候首先加载的公共配置文件，默认位于<code>application/config.php</code>。这样添加和修改公共配置的问题也解决了。
+现在，我们再来处理一个细节问题，将环境变量的值设置到框架配置，把前面的操作结合到一起就可以完成，处理如下
+1 在web服务环境中<a href="#%E5%B8%B8%E8%A7%81%E8%AE%BE%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%96%B9%E6%B3%95%EF%BC%9A">设置环境变量</a>
+2 在项目入口处读取所设置的环境变量，并定义为常量</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>$env <span style="color:#f92672">=</span> <span style="color:#a6e22e">isset</span>($_SERVER[<span style="color:#e6db74">&#39;APPLICATION_ENV&#39;</span>]) <span style="color:#f92672">?</span> $_SERVER[<span style="color:#e6db74">&#39;APPLICATION_ENV&#39;</span>] <span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;development&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">define</span>(<span style="color:#e6db74">&#39;APP_STATUS&#39;</span>, $env);
+</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span>
+</span></span></code></pre></div><p>3 把所定义的常量设置到配置文件config.php中</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#e6db74">&#39;app_status&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">APP_STATUS</span>
+</span></span></code></pre></div><p>通过以上几步，基本完成了通过设置环境变量指定配置文件的功能。</p>
+<h2 id="使用-env-设置环境变量">使用 .env 设置环境变量<a hidden class="anchor" aria-hidden="true" href="#使用-env-设置环境变量">#</a></h2>
+<p>前面的配置虽然实现了功能，但需要修改web服务器的配置添加额外配置，任何非标准配置都不利于系统的自动化运维，可能在部署过程中遗留导致服务部署异常，所以不一定是最好的方案；另外需要单独修改框架中非业务逻辑，好像也不是特别好；
+在分析thinkphp配置文件的过程中，注意到很多配置项使用的是Env::get()方式设置的，其实就是thinkphp5.0支持的环境变量配置，在开发过程中，可以在应用根目录下面的<code>.env</code>来模拟环境变量配置，<code>.env</code>文件中的配置参数定义格式采用<code>ini</code>方式，所有我们可以在这里设置app_status配置</p>
+<pre tabindex="0"><code>[app]
+status = develop
+</code></pre><p>并修改config.php配置文件</p>
+<pre tabindex="0"><code>&#39;app_status&#39; =&gt; Env::get(&#39;app.status&#39;),
+</code></pre><p>同样满足了之前的一系列要求，只需要保证不把<code>.env</code>文件添加到代码库即可</p>
+<p>注意：如果部署环境单独配置了环境变量，需要删除<code>.env</code>配置文件，避免冲突。</p>
+<h2 id="副产品">副产品<a hidden class="anchor" aria-hidden="true" href="#副产品">#</a></h2>
+<p>使用<code>.env</code>设置环境变量还能解决敏感信息配置安全性的问题，如，数据库配置文件中，用户名密码字段的值可以直接留空，从环境变量文件中设置即可</p>
+<pre tabindex="0"><code>.env
+
+[database]
+username =  root
+password =  123456
+
+database.php
+// 用户名 
+&#39;username&#39; =&gt; Env::get(&#39;database.username&#39;, &#39;&#39;), 
+// 密码 
+&#39;password&#39; =&gt; Env::get(&#39;database.password&#39;, &#39;&#39;),
+</code></pre><h1 id="小结">小结<a hidden class="anchor" aria-hidden="true" href="#小结">#</a></h1>
+<p>除了上面列举的几种方法，还有很多不同的处理，没有哪种实现是完美的，个人觉得选择方案主要还是要从支持协作开发，便于开发维护，支持持续集成，兼顾安全等各方面权衡。并且不同团队的开发使用习惯也不尽相同，还是应该选择最适合团队项目的实现方式。</p>
+<p>#参考
+<a href="http://www.digpage.com/environment.html">环境和配置文件</a>
+<a href="https://www.kancloud.cn/manual/thinkphp5/118024">thinkphp5.0完全开发手册-配置</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/php/">php</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

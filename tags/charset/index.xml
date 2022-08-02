@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>charset on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/charset/</link>
+    <description>Recent content in charset on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Sun, 18 Aug 2019 13:14:45 +0000</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/charset/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>windows程序员常见乱码问题汇总</title>
+      <link>https://shiqstone.github.io/post/gibberish/</link>
+      <pubDate>Sun, 18 Aug 2019 13:14:45 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/gibberish/</guid>
+      <description> 名称 示例 特点 产生原因 古文码 鍝堝搱鐪嬪埌瀹堕噷鐫″ぇ瑙� 大都为不认识的古文，夹杂日韩文 以GBK方式读取UTF-8编码的中文 口子码 ����������� 大部分字符为小方块 以UTF-8方式读取GBK编码的中文 符号码 å“ˆå“ˆçœ‹åˆ°å®¶é‡Œç¡å¤§è§‰ 大部分字符为各种符号 以ISO8859-1方式读取UTF-8编码的中文 拼音码 ¿¨·É»úÉÏµÄ 大部分字符为头顶带各种类似声调符号的字母 以ISO8859-1方式读取GBK编码的中文 问句码 幽月要好好学习天天向?? 字符串长度为偶数时正常，长度为奇数时最后几个字符变为问号 以GBK的方式读取UTF-8编码的中文，然后用UTF-8格式再次读取 锟拷码 锟斤拷锟斤拷锟斤拷锟 全中文字符，且大部分文字为“锟斤拷”几个字符 以UTF-8方式读取GBK编码的中文，然后用GBK格式再次读取 </description>
+    </item>
+    
+  </channel>
+</rss>

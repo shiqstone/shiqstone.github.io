@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>linux on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/linux/</link>
+    <description>Recent content in linux on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Fri, 13 Mar 2020 15:53:34 +0000</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>在Linux下如何防止定时脚本重复执行</title>
+      <link>https://shiqstone.github.io/post/linux-crontab-avoid-repeat-run/</link>
+      <pubDate>Fri, 13 Mar 2020 15:53:34 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/linux-crontab-avoid-repeat-run/</guid>
+      <description>场景 好多系统中会用到邮件系统，我们假设有一个 PHP 脚本用来发送邮件。使用 Linux cron 每分钟执行一次 我们暂时不引入队列系统，其实使用队列处理此方式更优。
+我们得到下面的基本配置
+* * * * * php /home/app/email.php 问题分析和解决 异常问题 如果这个邮件服务出现异常，进程僵死怎么办？ 假设由于未知因素， email.php 脚本一直执行，没有退出。极端的情况，进入一个 while 死循环。 这下倒好，原来说好的一分钟执行一次，现在一直死这边了，后面的脚本也不能跑了
+解决办法： 使用 timeout，假设我们设定每个脚本最多执行时间位 200秒，超过 200秒 就自动死掉。
+* * * * * timeout 200 php /home/app/email.php 重复问题 如果这个脚本执行时间超过 60秒，下一分钟又会执行 php email.php，如果避免重复执行？ 这样会出现，有两个进程同时在执行 php email.php，那会不会出现同一个任务被执行了两次？
+解决办法： 使用 flock 进行互斥控制
+用法： flock [选项] &amp;lt;文件|目录&amp;gt; &amp;lt;命令&amp;gt; [&amp;lt;参数&amp;gt;...] flock [选项] &amp;lt;文件|目录&amp;gt; -c &amp;lt;命令&amp;gt; flock [选项] &amp;lt;文件描述符号码&amp;gt; 通过 shell 脚本管理文件锁。
+选项： -s, --shared 获取共享锁 -x, --exclusive 获取排他锁(默认) -u, --unlock 移除锁 -n, --nonblock 失败而非等待 -w, --timeout &amp;lt;秒&amp;gt; 等待限定的时间 -E, --conflict-exit-code &amp;lt;数字&amp;gt; 冲突或超时后的退出代码 -o, --close 运行命令前关闭文件描述符 -c, --command &amp;lt;命令&amp;gt; 通过 shell 运行单个命令字符串 -F, --no-fork 执行命令时不 fork --verbose 增加详尽程度 -h, --help display this help -V, --version display version 使用其中的排他设置</description>
+    </item>
+    
+    <item>
+      <title>centos7 防火墙和端口</title>
+      <link>https://shiqstone.github.io/post/centos7-firewall/</link>
+      <pubDate>Sun, 01 Mar 2020 17:13:08 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/centos7-firewall/</guid>
+      <description>首先检查某端口是否开启： firewall-cmd --query-port=80/tcp --zone=public #查询80端口是否开启 返回no即未开启，显示yes为已开启
+开启某端口 firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口 修改完成后需要重启防火墙服务才能生效
+查看防火墙状态 systemctl status firewalld 有如下提示表示未开启 FirewallD is not running
+开启防火墙，没有任何提示即开启成功 systemctl start firewalld 关闭防火墙 systemctl stop firewalld 重启防火墙 systemctl restart firewalld 相关网站收藏 http://ping.pe http://ping.chinaz.com</description>
+    </item>
+    
+  </channel>
+</rss>

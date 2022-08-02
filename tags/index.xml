@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tags on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/</link>
+    <description>Recent content in Tags on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Tue, 02 Aug 2022 00:15:51 +0000</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go</title>
+      <link>https://shiqstone.github.io/tags/go/</link>
+      <pubDate>Tue, 02 Aug 2022 00:15:51 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://shiqstone.github.io/tags/linux/</link>
+      <pubDate>Fri, 13 Mar 2020 15:53:34 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mysql</title>
+      <link>https://shiqstone.github.io/tags/mysql/</link>
+      <pubDate>Sat, 01 Feb 2020 11:55:30 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/mysql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>charset</title>
+      <link>https://shiqstone.github.io/tags/charset/</link>
+      <pubDate>Sun, 18 Aug 2019 13:14:45 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/charset/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nginx</title>
+      <link>https://shiqstone.github.io/tags/nginx/</link>
+      <pubDate>Sun, 11 Aug 2019 19:09:48 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/nginx/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vue</title>
+      <link>https://shiqstone.github.io/tags/vue/</link>
+      <pubDate>Sun, 11 Aug 2019 19:09:48 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/vue/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>http</title>
+      <link>https://shiqstone.github.io/tags/http/</link>
+      <pubDate>Sat, 03 Aug 2019 18:40:38 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/http/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>git</title>
+      <link>https://shiqstone.github.io/tags/git/</link>
+      <pubDate>Wed, 24 Apr 2019 00:06:23 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/git/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>php</title>
+      <link>https://shiqstone.github.io/tags/php/</link>
+      <pubDate>Tue, 16 Apr 2019 23:59:07 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/php/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hexo</title>
+      <link>https://shiqstone.github.io/tags/hexo/</link>
+      <pubDate>Sat, 13 Apr 2019 16:22:54 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/hexo/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

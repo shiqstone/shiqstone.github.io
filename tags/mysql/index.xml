@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>mysql on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/mysql/</link>
+    <description>Recent content in mysql on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Sat, 01 Feb 2020 11:55:30 +0000</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>一次慢查询问题的排查</title>
+      <link>https://shiqstone.github.io/post/troubleshooting-a-slow-query/</link>
+      <pubDate>Sat, 01 Feb 2020 11:55:30 +0000</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/troubleshooting-a-slow-query/</guid>
+      <description>问题发现 某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒 结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢
+问题分析 有问题的sql如下
+mysql&amp;gt; select count(*) from test_tab where update_time&amp;gt;=&amp;#39;2020-01-10&amp;#39; and update_time&amp;lt;&amp;#39;2020-01-11&amp;#39; and label is not null; +----------+ | count(*) | +----------+ | 229330 | +----------+ 1 row in set (41.34 sec) 首先看了一下全表数据，接近千万级，但是有趣的是耗时只有不到4s，对于千万级的表，勉强可以接收
+mysql&amp;gt; select count(*) from test_tab; +----------+ | count(*) | +----------+ | 9469766 | +----------+ 1 row in set (3.86 sec) 更有意思的是，执行相同条件查询数据记录的sql，结果10ms就返回了
+mysql&amp;gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&amp;gt;=&amp;#39;2020-01-10&amp;#39; and update_time&amp;lt;&amp;#39;2020-01-11&amp;#39; and label is not null order by update_time desc limit 0, 20; +----------+-------+------------+---------------------+---------------+-------------------+---------------------+ | id | label | call_round | dial_start_time | dial_duration | disconnect_reason | update_time | +----------+-------+------------+---------------------+---------------+-------------------+---------------------+ | 17510408 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:09 | | 17510411 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:08 | | 17510421 | E | 8 | 2020-01-10 20:59:43 | 78 | NULL | 2020-01-10 21:00:58 | | 17510418 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:00:54 | | 17510407 | C | 15 | 2020-01-10 20:59:33 | 78 | NULL | 2020-01-10 21:00:48 | | 17510416 | A | 8 | 2020-01-10 20:59:34 | 57 | NULL | 2020-01-10 21:00:28 | | 17510413 | C | 2 | 2020-01-10 21:00:04 | 20 | NULL | 2020-01-10 21:00:21 | | 17510415 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:20 | | 17510412 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:18 | | 17510423 | C | 4 | 2020-01-10 20:59:49 | 31 | NULL | 2020-01-10 21:00:17 | | 17510420 | C | 1 | 2020-01-10 20:59:46 | 4 | NULL | 2020-01-10 20:59:47 | | 17510424 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:44 | | 17510410 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:41 | | 17510419 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:38 | | 17510437 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:37 | | 17510441 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:35 | | 17510417 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:34 | | 17510414 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:32 | | 17510409 | F | NULL | NULL | NULL | 8 | 2020-01-10 20:59:31 | | 17510422 | F | NULL | NULL | NULL | 6 | 2020-01-10 20:59:29 | +----------+-------+------------+---------------------+---------------+-------------------+---------------------+ 20 rows in set (0.</description>
+    </item>
+    
+  </channel>
+</rss>
