@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>博客从Hexo迁移到Hugo | 他山笨石</title>
+<meta name="keywords" content="hugo">
+<meta name="description" content="前言 很久不写文章，最近整理了点东西准备发出来，结果发现原来使用的hexo因为npm版本原因，发布到github page一直出现问题，搜了一圈解决方案基本都是建议npm降级，折腾了半天没有成功，感觉不是很好，于是准备找个替代品迁移一下。
+Hugo 简介 Hugo 是一个基于 Go 语言开发的静态网站生成器（SSG），目前由 @bep 领衔开发，Hugo 的突出特点是简洁、灵活、高效，目前有很多知名网站都在使用 Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。与目前国内流行的 Hexo 相比，Hugo 的速度可称为飞速🚀——在安装和使用上都是如此。 Hugo 支持Markdown 语法，我们可以将自己的文章写成Markdown 的格式，可以快速方便的创建自己的博客。
+Hugo 安装 Hugo 使用方式比较简单，可参考官方 Quick Start。
+在MacOs 中使用brew 命令安装：
+brew install hugo 使用下面命令查看Hugo 是否安装成功：
+hugo version hugo v0.101.0&#43;extended darwin/arm64 BuildDate=unknown Hugo 使用 创建博客 hugo 安装成功后，使用hugo new site 命令创建博客
+# 博客项目的名字为myblog hugo new site myblog 这个命令会创建一个名为myblog 的目录，这就是博客的根目录。目录结构如下：
+. ├── README.md ├── archetypes # 文章模板 │ └── default.md ├── config.">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/hexo_to_hugo/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="博客从Hexo迁移到Hugo" />
+<meta property="og:description" content="前言 很久不写文章，最近整理了点东西准备发出来，结果发现原来使用的hexo因为npm版本原因，发布到github page一直出现问题，搜了一圈解决方案基本都是建议npm降级，折腾了半天没有成功，感觉不是很好，于是准备找个替代品迁移一下。
+Hugo 简介 Hugo 是一个基于 Go 语言开发的静态网站生成器（SSG），目前由 @bep 领衔开发，Hugo 的突出特点是简洁、灵活、高效，目前有很多知名网站都在使用 Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。与目前国内流行的 Hexo 相比，Hugo 的速度可称为飞速🚀——在安装和使用上都是如此。 Hugo 支持Markdown 语法，我们可以将自己的文章写成Markdown 的格式，可以快速方便的创建自己的博客。
+Hugo 安装 Hugo 使用方式比较简单，可参考官方 Quick Start。
+在MacOs 中使用brew 命令安装：
+brew install hugo 使用下面命令查看Hugo 是否安装成功：
+hugo version hugo v0.101.0&#43;extended darwin/arm64 BuildDate=unknown Hugo 使用 创建博客 hugo 安装成功后，使用hugo new site 命令创建博客
+# 博客项目的名字为myblog hugo new site myblog 这个命令会创建一个名为myblog 的目录，这就是博客的根目录。目录结构如下：
+. ├── README.md ├── archetypes # 文章模板 │ └── default.md ├── config." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/hexo_to_hugo/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-08-02T13:25:20&#43;08:00" />
+<meta property="article:modified_time" content="2022-08-02T13:25:20&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="博客从Hexo迁移到Hugo"/>
+<meta name="twitter:description" content="前言 很久不写文章，最近整理了点东西准备发出来，结果发现原来使用的hexo因为npm版本原因，发布到github page一直出现问题，搜了一圈解决方案基本都是建议npm降级，折腾了半天没有成功，感觉不是很好，于是准备找个替代品迁移一下。
+Hugo 简介 Hugo 是一个基于 Go 语言开发的静态网站生成器（SSG），目前由 @bep 领衔开发，Hugo 的突出特点是简洁、灵活、高效，目前有很多知名网站都在使用 Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。与目前国内流行的 Hexo 相比，Hugo 的速度可称为飞速🚀——在安装和使用上都是如此。 Hugo 支持Markdown 语法，我们可以将自己的文章写成Markdown 的格式，可以快速方便的创建自己的博客。
+Hugo 安装 Hugo 使用方式比较简单，可参考官方 Quick Start。
+在MacOs 中使用brew 命令安装：
+brew install hugo 使用下面命令查看Hugo 是否安装成功：
+hugo version hugo v0.101.0&#43;extended darwin/arm64 BuildDate=unknown Hugo 使用 创建博客 hugo 安装成功后，使用hugo new site 命令创建博客
+# 博客项目的名字为myblog hugo new site myblog 这个命令会创建一个名为myblog 的目录，这就是博客的根目录。目录结构如下：
+. ├── README.md ├── archetypes # 文章模板 │ └── default.md ├── config."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "博客从Hexo迁移到Hugo",
+      "item": "https://shiqstone.github.io/post/hexo_to_hugo/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "博客从Hexo迁移到Hugo",
+  "name": "博客从Hexo迁移到Hugo",
+  "description": "前言 很久不写文章，最近整理了点东西准备发出来，结果发现原来使用的hexo因为npm版本原因，发布到github page一直出现问题，搜了一圈解决方案基本都是建议npm降级，折腾了半天没有成功，感觉不是很好，于是准备找个替代品迁移一下。\nHugo 简介 Hugo 是一个基于 Go 语言开发的静态网站生成器（SSG），目前由 @bep 领衔开发，Hugo 的突出特点是简洁、灵活、高效，目前有很多知名网站都在使用 Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。与目前国内流行的 Hexo 相比，Hugo 的速度可称为飞速🚀——在安装和使用上都是如此。 Hugo 支持Markdown 语法，我们可以将自己的文章写成Markdown 的格式，可以快速方便的创建自己的博客。\nHugo 安装 Hugo 使用方式比较简单，可参考官方 Quick Start。\n在MacOs 中使用brew 命令安装：\nbrew install hugo 使用下面命令查看Hugo 是否安装成功：\nhugo version hugo v0.101.0+extended darwin/arm64 BuildDate=unknown Hugo 使用 创建博客 hugo 安装成功后，使用hugo new site 命令创建博客\n# 博客项目的名字为myblog hugo new site myblog 这个命令会创建一个名为myblog 的目录，这就是博客的根目录。目录结构如下：\n. ├── README.md ├── archetypes # 文章模板 │ └── default.md ├── config.",
+  "keywords": [
+    "hugo"
+  ],
+  "articleBody": "前言 很久不写文章，最近整理了点东西准备发出来，结果发现原来使用的hexo因为npm版本原因，发布到github page一直出现问题，搜了一圈解决方案基本都是建议npm降级，折腾了半天没有成功，感觉不是很好，于是准备找个替代品迁移一下。\nHugo 简介 Hugo 是一个基于 Go 语言开发的静态网站生成器（SSG），目前由 @bep 领衔开发，Hugo 的突出特点是简洁、灵活、高效，目前有很多知名网站都在使用 Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。与目前国内流行的 Hexo 相比，Hugo 的速度可称为飞速🚀——在安装和使用上都是如此。 Hugo 支持Markdown 语法，我们可以将自己的文章写成Markdown 的格式，可以快速方便的创建自己的博客。\nHugo 安装 Hugo 使用方式比较简单，可参考官方 Quick Start。\n在MacOs 中使用brew 命令安装：\nbrew install hugo 使用下面命令查看Hugo 是否安装成功：\nhugo version hugo v0.101.0+extended darwin/arm64 BuildDate=unknown Hugo 使用 创建博客 hugo 安装成功后，使用hugo new site 命令创建博客\n# 博客项目的名字为myblog hugo new site myblog 这个命令会创建一个名为myblog 的目录，这就是博客的根目录。目录结构如下：\n. ├── README.md ├── archetypes # 文章模板 │ └── default.md ├── config.toml # 配置文件 ├── content # 文章目录 ├── data # Hugo 数据文件 ├── layouts # 布局模板 ├── public # 生成的静态文件 ├── resources # Hugo 缓存 ├── static # 网站的静态文件 └── themes # 主题目录 下载博客主题 创建好博客项目后，接下来是下载hugo博客的主题，这里有很多主题，我们可以任意挑选\n然后在myblog 目录下使用git 命令来下载主题：\ncd myblog git clone https://github.com/vaga/hugo-theme-m10c.git themes/m10c 下载下来的主题会放在themes 目录中, 在配置文件config.toml中添加配置\ntheme = \"m10c\" 启动服务 hugo server -------------------+----- Pages | 16 Paginator pages | 0 Non-page files | 0 Static files | 4 Processed images | 0 Aliases | 4 Sitemaps | 1 Cleaned | 0 Built in 20 ms Watching for changes in ./myblog/{archetypes,content,data,layouts,static,themes} Watching for config changes in ./myblog/config.toml Environment: \"development\" Serving pages from memory Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender Web Server is available at http://localhost:1313/ (bind address 127.0.0.1) Press Ctrl+C to stop 可以看到服务默认会在占用1313 端口，在浏览器中访问http://localhost:1313/ 地址。\n如果一切正常，我们会看到一个像hugo 官网演示一样的页面。\n编写博客文章 使用下面命令新加空博文：\nhugo new posts/test.md 此时 content 文件夹下就多了一个 test.md 文件，打开文件就可以看到时间、文件名等信息已经自动生成了\n--- title: \"Test\" date: 2018-08-05T20:56:47+08:00 draft: true --- 两条 --- 间的信息是文章的配置信息，有的信息是自动生成的 (如：title、date 等)，简单介绍以下各项配置\n以下项目是自动生成的:\ntitle: # 文章标题 date: # 写作时间 draft: # 是否为草稿，如果为 true 需要在命令中加入 --buildDrafts 参数才会生成这个文档 以下项目需要自行添加:\ndescription: # 描述 tags: # 标签，用于文章分类 categories # 指定文章的类别 自动生成 和 执行添加 的内容并不是绝对的，你可以根据自己的喜好配置模板文件 archetypes/default.md\n这个命令会在 content 目录下建立 post 目录，并在 post 下生成 test.md 文件，博文书写就在这个文件里使用 Markdown 语法完成。博文的 front matter 里draft 选项默认为 true，需要改为 false 才能发表博文，也可以直接更改上面说的archetypes 目录下的 default 文件，这样生成的博文就是默认可以发表。\n在博文的 front matter 里面，使用 tags 指定文章的 tag，使用categories 指定文章的类别，示例如下：\ntags: [LaTeX, Hexo, font] categories: [Mac, Linux] 生成网页 为了查看生成的博客的效果，参考启动服务，执行以下命令，就可以预览网页效果。\nhugo server hugo server -t m10c --buildDrafts hugo server --buildDrafts -w 简单介绍一下参数：\n-t m10c：使用m10c主题 --buildDrafts: 生成被标记为 「草稿」 的文档 -w: 监控更改，如果发生更改直接显示到博客上 但此时只能在本地访问 ，如果与期望值不符，可以随时更改，如果想发布到 Github Pages 上需要先将文章配置信息中的 draft: 改为 false 然后执行命令\nhugo 此时你的博客目录下会多出一个 public 文件夹来。这便是 Hugo 生成的网站\n发布到Github Page 因为是迁移，github的注册和项目创建已经就绪，此处略过\n之后每次新写文章准备发布时，在站点目录下执行 hugo 命令后，再到public下执行推送命令：\nhugo cd public git add -A git commit -m \"Site updated\" git push -u origin master 日常操作 1. 新建文章 hugo new post/test_post.md # 在目录 content/post 下找到对应文件进行修改 hugo server -D hugo cd public git add . git commit -m 'commit info' git push -u origin master 2. 修改文章 # 在目录 content/post 下找到对应文件进行修改 hugo server -D # 本地预览 http://localhost:1313 hugo cd public git add . git commit -m 'commit info' git push -u origin master 3. 删除文章 在content/post 和 public 下删除对于文件\nhugo cd public git add . git commit -m 'commit info' git push -u origin master 4. 添加图片 Hugo 的配置文件和文章中引用图片都是从static作为根目录的。（./blog/static） 也就是说首先要将图片放置到 static 文件夹下，以 static 为相对路径，然后进行引用，方式为：![](pic_name.png)，当然这样该 .md 文件中是不会显示，本地预览和部署后是可以看到的 正常做法： 写文章时，在该文章目录下新建文件夹存放照片，引用时采用相对路径。 完成之后，在引用路径前加个 /，比如原来引用方式 ![](imgs/pic_name.png) ，需要修改为 ![](/imgs/pic_name.png) 。 之后将该图片文件夹移动到 static 目录下即可。 注意：如果该文件夹名包含空格可能会不能被显示，支持中文，但是不支持含空格。\n迁移 在迁移中遇到的主要问题：\n在hugo中，categories/tags 这两个属性必须是数组。由于在hexo中categories/tags 可以是数组，也可以是字符串，表示一个元素的数组，导致迁移时出现报错，简单修改就可以 在hugo中，frontmatter 前后需要用 — 包起来，与正文区分；在hexo中只需要 frontmatter 末尾强制用 — 与正文区分，前面的不做要求，迁移时会出现文章没有标题 参考资料 https://www.wuhao.ink/zh-cn/blog/ https://io-oi.me/tech/hugo-vs-hexo/ https://liujiacai.net/blog/2020/12/05/hexo-to-hugo/ https://themes.gohugo.io/ https://github.com/adityatelange/hugo-PaperMod\n",
+  "wordCount" : "473",
+  "inLanguage": "en",
+  "datePublished": "2022-08-02T13:25:20+08:00",
+  "dateModified": "2022-08-02T13:25:20+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/hexo_to_hugo/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      博客从Hexo迁移到Hugo
+    </h1>
+    <div class="post-meta"><span title='2022-08-02 13:25:20 +0800 CST'>August 2, 2022</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e5%89%8d%e8%a8%80" aria-label="前言">前言</a></li>
+                <li>
+                    <a href="#hugo-%e7%ae%80%e4%bb%8b" aria-label="Hugo 简介">Hugo 简介</a></li>
+                <li>
+                    <a href="#hugo-%e5%ae%89%e8%a3%85" aria-label="Hugo 安装">Hugo 安装</a></li>
+                <li>
+                    <a href="#hugo-%e4%bd%bf%e7%94%a8" aria-label="Hugo 使用">Hugo 使用</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%9b%e5%bb%ba%e5%8d%9a%e5%ae%a2" aria-label="创建博客">创建博客</a></li>
+                <li>
+                    <a href="#%e4%b8%8b%e8%bd%bd%e5%8d%9a%e5%ae%a2%e4%b8%bb%e9%a2%98" aria-label="下载博客主题">下载博客主题</a></li>
+                <li>
+                    <a href="#%e5%90%af%e5%8a%a8%e6%9c%8d%e5%8a%a1" aria-label="启动服务">启动服务</a></li>
+                <li>
+                    <a href="#%e7%bc%96%e5%86%99%e5%8d%9a%e5%ae%a2%e6%96%87%e7%ab%a0" aria-label="编写博客文章">编写博客文章</a></li>
+                <li>
+                    <a href="#%e7%94%9f%e6%88%90%e7%bd%91%e9%a1%b5" aria-label="生成网页">生成网页</a></li>
+                <li>
+                    <a href="#%e5%8f%91%e5%b8%83%e5%88%b0github-page" aria-label="发布到Github Page">发布到Github Page</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%97%a5%e5%b8%b8%e6%93%8d%e4%bd%9c" aria-label="日常操作">日常操作</a><ul>
+                        
+                <li>
+                    <a href="#1-%e6%96%b0%e5%bb%ba%e6%96%87%e7%ab%a0" aria-label="1. 新建文章">1. 新建文章</a></li>
+                <li>
+                    <a href="#2-%e4%bf%ae%e6%94%b9%e6%96%87%e7%ab%a0" aria-label="2. 修改文章">2. 修改文章</a></li>
+                <li>
+                    <a href="#3-%e5%88%a0%e9%99%a4%e6%96%87%e7%ab%a0" aria-label="3. 删除文章">3. 删除文章</a></li>
+                <li>
+                    <a href="#4-%e6%b7%bb%e5%8a%a0%e5%9b%be%e7%89%87" aria-label="4. 添加图片">4. 添加图片</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e8%bf%81%e7%a7%bb" aria-label="迁移">迁移</a></li>
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83%e8%b5%84%e6%96%99" aria-label="参考资料">参考资料</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h2 id="前言">前言<a hidden class="anchor" aria-hidden="true" href="#前言">#</a></h2>
+<p>很久不写文章，最近整理了点东西准备发出来，结果发现原来使用的hexo因为npm版本原因，发布到github page一直出现问题，搜了一圈解决方案基本都是建议npm降级，折腾了半天没有成功，感觉不是很好，于是准备找个替代品迁移一下。</p>
+<h2 id="hugo-简介">Hugo 简介<a hidden class="anchor" aria-hidden="true" href="#hugo-简介">#</a></h2>
+<p>Hugo 是一个基于 Go 语言开发的静态网站生成器（SSG），目前由 <a href="https://github.com/bep">@bep</a> 领衔开发，Hugo 的突出特点是简洁、灵活、高效，目前有很多知名网站都在使用 Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。与目前国内流行的 Hexo 相比，Hugo 的速度可称为飞速🚀——在安装和使用上都是如此。
+Hugo 支持Markdown 语法，我们可以将自己的文章写成Markdown 的格式，可以快速方便的创建自己的博客。</p>
+<h2 id="hugo-安装">Hugo 安装<a hidden class="anchor" aria-hidden="true" href="#hugo-安装">#</a></h2>
+<p>Hugo 使用方式比较简单，可参考官方 <a href="https://gohugo.io/getting-started/quick-start/">Quick Start</a>。</p>
+<p>在MacOs 中使用brew 命令安装：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>brew install hugo
+</span></span></code></pre></div><p>使用下面命令查看Hugo 是否安装成功：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo version
+</span></span><span style="display:flex;"><span>hugo v0.101.0+extended darwin/arm64 BuildDate<span style="color:#f92672">=</span>unknown
+</span></span></code></pre></div><h2 id="hugo-使用">Hugo 使用<a hidden class="anchor" aria-hidden="true" href="#hugo-使用">#</a></h2>
+<h3 id="创建博客">创建博客<a hidden class="anchor" aria-hidden="true" href="#创建博客">#</a></h3>
+<p>hugo 安装成功后，使用<code>hugo new site</code> 命令创建博客</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 博客项目的名字为myblog</span>
+</span></span><span style="display:flex;"><span>hugo new site myblog
+</span></span></code></pre></div><p>这个命令会创建一个名为myblog 的目录，这就是博客的根目录。目录结构如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>├── README.md
+</span></span><span style="display:flex;"><span>├── archetypes  <span style="color:#75715e"># 文章模板</span>
+</span></span><span style="display:flex;"><span>│   └── default.md
+</span></span><span style="display:flex;"><span>├── config.toml <span style="color:#75715e"># 配置文件</span>
+</span></span><span style="display:flex;"><span>├── content     <span style="color:#75715e"># 文章目录</span>
+</span></span><span style="display:flex;"><span>├── data        <span style="color:#75715e"># Hugo 数据文件</span>
+</span></span><span style="display:flex;"><span>├── layouts     <span style="color:#75715e"># 布局模板</span>
+</span></span><span style="display:flex;"><span>├── public      <span style="color:#75715e"># 生成的静态文件</span>
+</span></span><span style="display:flex;"><span>├── resources   <span style="color:#75715e"># Hugo 缓存</span>
+</span></span><span style="display:flex;"><span>├── static      <span style="color:#75715e"># 网站的静态文件</span>
+</span></span><span style="display:flex;"><span>└── themes      <span style="color:#75715e"># 主题目录</span>
+</span></span></code></pre></div><h3 id="下载博客主题">下载博客主题<a hidden class="anchor" aria-hidden="true" href="#下载博客主题">#</a></h3>
+<p>创建好博客项目后，接下来是下载<a href="https://link.zhihu.com/?target=https%3A//themes.gohugo.io/">hugo博客的主题</a>，这里有很多主题，我们可以任意挑选</p>
+<p>然后在myblog 目录下使用git 命令来下载主题：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cd myblog
+</span></span><span style="display:flex;"><span>git clone https://github.com/vaga/hugo-theme-m10c.git themes/m10c
+</span></span></code></pre></div><p>下载下来的主题会放在themes 目录中, 在配置文件<code>config.toml</code>中添加配置</p>
+<pre tabindex="0"><code>theme = &#34;m10c&#34;
+</code></pre><h3 id="启动服务">启动服务<a hidden class="anchor" aria-hidden="true" href="#启动服务">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo server
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>-------------------+-----
+</span></span><span style="display:flex;"><span>  Pages            | <span style="color:#ae81ff">16</span>  
+</span></span><span style="display:flex;"><span>  Paginator pages  |  <span style="color:#ae81ff">0</span>  
+</span></span><span style="display:flex;"><span>  Non-page files   |  <span style="color:#ae81ff">0</span>  
+</span></span><span style="display:flex;"><span>  Static files     |  <span style="color:#ae81ff">4</span>  
+</span></span><span style="display:flex;"><span>  Processed images |  <span style="color:#ae81ff">0</span>  
+</span></span><span style="display:flex;"><span>  Aliases          |  <span style="color:#ae81ff">4</span>  
+</span></span><span style="display:flex;"><span>  Sitemaps         |  <span style="color:#ae81ff">1</span>  
+</span></span><span style="display:flex;"><span>  Cleaned          |  <span style="color:#ae81ff">0</span>  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Built in <span style="color:#ae81ff">20</span> ms
+</span></span><span style="display:flex;"><span>Watching <span style="color:#66d9ef">for</span> changes in ./myblog/<span style="color:#f92672">{</span>archetypes,content,data,layouts,static,themes<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>Watching <span style="color:#66d9ef">for</span> config changes in ./myblog/config.toml
+</span></span><span style="display:flex;"><span>Environment: <span style="color:#e6db74">&#34;development&#34;</span>
+</span></span><span style="display:flex;"><span>Serving pages from memory
+</span></span><span style="display:flex;"><span>Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+</span></span><span style="display:flex;"><span>Web Server is available at http://localhost:1313/ <span style="color:#f92672">(</span>bind address 127.0.0.1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Press Ctrl+C to stop
+</span></span></code></pre></div><p>可以看到服务默认会在占用1313 端口，在浏览器中访问http://localhost:1313/ 地址。</p>
+<p>如果一切正常，我们会看到一个像hugo 官网演示一样的页面。</p>
+<h3 id="编写博客文章">编写博客文章<a hidden class="anchor" aria-hidden="true" href="#编写博客文章">#</a></h3>
+<p>使用下面命令新加空博文：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo new posts/test.md
+</span></span></code></pre></div><p>此时 <code>content</code> 文件夹下就多了一个 <code>test.md</code> 文件，打开文件就可以看到时间、文件名等信息已经自动生成了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-md" data-lang="md"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>title: &#34;Test&#34;
+</span></span><span style="display:flex;"><span>date: 2018-08-05T20:56:47+08:00
+</span></span><span style="display:flex;"><span>draft: true
+</span></span><span style="display:flex;"><span>---
+</span></span></code></pre></div><p>两条 <code>---</code> 间的信息是文章的配置信息，有的信息是自动生成的 (如：<code>title</code>、<code>date</code> 等)，简单介绍以下各项配置</p>
+<p><strong>以下项目是自动生成的:</strong></p>
+<ul>
+<li>title: # 文章标题</li>
+<li>date: # 写作时间</li>
+<li>draft: # 是否为草稿，如果为 <code>true</code> 需要在命令中加入 <code>--buildDrafts</code> 参数才会生成这个文档</li>
+</ul>
+<p><strong>以下项目需要自行添加:</strong></p>
+<ul>
+<li>description: # 描述</li>
+<li>tags: # 标签，用于文章分类</li>
+<li>categories # 指定文章的类别</li>
+</ul>
+<p><strong>自动生成</strong> 和 <strong>执行添加</strong> 的内容并不是绝对的，你可以根据自己的喜好配置模板文件 <code>archetypes/default.md</code></p>
+<p>这个命令会在 <code>content</code> 目录下建立 <code>post</code> 目录，并在 <code>post</code> 下生成 <code>test.md</code> 文件，博文书写就在这个文件里使用 <code>Markdown</code> 语法完成。博文的 front matter 里<code>draft</code> 选项默认为 <code>true</code>，需要改为 <code>false</code> 才能发表博文，也可以直接更改上面说的<code>archetypes</code> 目录下的 default 文件，这样生成的博文就是默认可以发表。</p>
+<p>在博文的 front matter 里面，使用 <code>tags</code> 指定文章的 tag，使用<code>categories</code> 指定文章的类别，示例如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#a6e22e">tags</span><span style="color:#960050;background-color:#1e0010">:</span> [<span style="color:#a6e22e">LaTeX</span>, <span style="color:#a6e22e">Hexo</span>, <span style="color:#a6e22e">font</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">categories</span><span style="color:#960050;background-color:#1e0010">:</span> [<span style="color:#a6e22e">Mac</span>, <span style="color:#a6e22e">Linux</span>]
+</span></span></code></pre></div><h3 id="生成网页">生成网页<a hidden class="anchor" aria-hidden="true" href="#生成网页">#</a></h3>
+<p>为了查看生成的博客的效果，参考<a href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1">启动服务</a>，执行以下命令，就可以预览网页效果。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo server
+</span></span><span style="display:flex;"><span>hugo server -t m10c --buildDrafts
+</span></span><span style="display:flex;"><span>hugo server --buildDrafts -w
+</span></span></code></pre></div><p>简单介绍一下参数：</p>
+<ul>
+<li><code>-t m10c</code>：使用<code>m10c</code>主题</li>
+<li><code>--buildDrafts</code>: 生成被标记为 「草稿」 的文档</li>
+<li>-w: 监控更改，如果发生更改直接显示到博客上</li>
+</ul>
+<p>但此时只能在本地访问 ，如果与期望值不符，可以随时更改，如果想发布到 <code>Github Pages</code> 上需要先将文章配置信息中的 <code>draft</code>: 改为 <code>false</code> 然后执行命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo
+</span></span></code></pre></div><p>此时你的博客目录下会多出一个 <code>public</code> 文件夹来。这便是 Hugo 生成的网站</p>
+<h3 id="发布到github-page">发布到Github Page<a hidden class="anchor" aria-hidden="true" href="#发布到github-page">#</a></h3>
+<p>因为是迁移，github的注册和项目创建已经就绪，此处略过</p>
+<p>之后每次新写文章准备发布时，在站点目录下执行 <code>hugo</code> 命令后，再到<code>public</code>下执行推送命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo
+</span></span><span style="display:flex;"><span>cd public
+</span></span><span style="display:flex;"><span>git add -A
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;Site updated&#34;</span>
+</span></span><span style="display:flex;"><span>git push -u origin master
+</span></span></code></pre></div><h2 id="日常操作">日常操作<a hidden class="anchor" aria-hidden="true" href="#日常操作">#</a></h2>
+<h3 id="1-新建文章">1. 新建文章<a hidden class="anchor" aria-hidden="true" href="#1-新建文章">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo new post/test_post.md 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 在目录 content/post 下找到对应文件进行修改</span>
+</span></span><span style="display:flex;"><span>hugo server -D 
+</span></span><span style="display:flex;"><span>hugo 
+</span></span><span style="display:flex;"><span>cd public 
+</span></span><span style="display:flex;"><span>git add . 
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#39;commit info&#39;</span> 
+</span></span><span style="display:flex;"><span>git push -u origin master
+</span></span></code></pre></div><h3 id="2-修改文章">2. 修改文章<a hidden class="anchor" aria-hidden="true" href="#2-修改文章">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 在目录 content/post 下找到对应文件进行修改</span>
+</span></span><span style="display:flex;"><span>hugo server -D 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 本地预览 http://localhost:1313 </span>
+</span></span><span style="display:flex;"><span>hugo 
+</span></span><span style="display:flex;"><span>cd public 
+</span></span><span style="display:flex;"><span>git add . 
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#39;commit info&#39;</span> 
+</span></span><span style="display:flex;"><span>git push -u origin master
+</span></span></code></pre></div><h3 id="3-删除文章">3. 删除文章<a hidden class="anchor" aria-hidden="true" href="#3-删除文章">#</a></h3>
+<p>在<code>content/post</code> 和 <code>public</code> 下删除对于文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hugo 
+</span></span><span style="display:flex;"><span>cd public 
+</span></span><span style="display:flex;"><span>git add . 
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#39;commit info&#39;</span> 
+</span></span><span style="display:flex;"><span>git push -u origin master
+</span></span></code></pre></div><h3 id="4-添加图片">4. 添加图片<a hidden class="anchor" aria-hidden="true" href="#4-添加图片">#</a></h3>
+<p>Hugo 的配置文件和文章中引用图片都是从<code>static</code>作为根目录的。（<code>./blog/static</code>） 也就是说首先要将图片放置到 static 文件夹下，以 static 为相对路径，然后进行引用，方式为：<code>![](pic_name.png)</code>，当然这样该 .md 文件中是不会显示，本地预览和部署后是可以看到的 正常做法： 写文章时，在该文章目录下新建文件夹存放照片，引用时采用相对路径。 完成之后，在引用路径前加个 /，比如原来引用方式 <code>![](imgs/pic_name.png</code>) ，需要修改为 <code>![](/imgs/pic_name.png)</code> 。 之后将该图片文件夹移动到 <code>static</code> 目录下即可。 注意：如果该文件夹名包含空格可能会不能被显示，支持中文，但是不支持含空格。</p>
+<h2 id="迁移">迁移<a hidden class="anchor" aria-hidden="true" href="#迁移">#</a></h2>
+<p>在迁移中遇到的主要问题：</p>
+<ul>
+<li>在hugo中，categories/tags 这两个属性必须是数组。由于在hexo中categories/tags 可以是数组，也可以是字符串，表示一个元素的数组，导致迁移时出现报错，简单修改就可以</li>
+<li>在hugo中，frontmatter 前后需要用 &mdash; 包起来，与正文区分；在hexo中只需要 frontmatter 末尾强制用 &mdash; 与正文区分，前面的不做要求，迁移时会出现文章没有标题</li>
+</ul>
+<h2 id="参考资料">参考资料<a hidden class="anchor" aria-hidden="true" href="#参考资料">#</a></h2>
+<p><a href="https://www.wuhao.ink/zh-cn/blog/">https://www.wuhao.ink/zh-cn/blog/</a>
+<a href="https://io-oi.me/tech/hugo-vs-hexo/">https://io-oi.me/tech/hugo-vs-hexo/</a>
+<a href="https://liujiacai.net/blog/2020/12/05/hexo-to-hugo/">https://liujiacai.net/blog/2020/12/05/hexo-to-hugo/</a>
+<a href="https://themes.gohugo.io/">https://themes.gohugo.io/</a>
+<a href="https://github.com/adityatelange/hugo-PaperMod">https://github.com/adityatelange/hugo-PaperMod</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/blog/">blog</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

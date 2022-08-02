@@ -142,6 +142,23 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>windows环境下php-cgi使用curl请求接口阻塞超时的问题
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>问题 在开发一个新功能，需要在运行的web界面，请求一个远程服务，功能很简单，用curl封转一个远程请求方法调用，对返回结果做简单处理即可；
+功能开发完成，为了测试，临时写了一个demo接口，在页面配置好该接口，结果测试请求时报错，追踪错误日志发现，在请求demo接口时超时未响应。
+分析 首先通过浏览器访问，确认demo接口服务正常；在命令行中使用curl脚本也能获取正常返回结果；
+开发环境使用的是nginx虚拟主机&#43;php-cgi部署，通过本地绑定host的方式访问，初步分析是php进程运行时不能获取系统host设置，于是准备采用在curl请求的header头中添加host的方式绑定域名；（后续回归发现，这个判断是不准确的，域名未绑定返回的错误信息是 Could not resolve host， 而实际返回的错误信息为 Operation timed out）
+在header头添加host设置之后，还是继续提示请求超时的错误，为确认代码无误，将发送远程请求的这段代码截取出来，测试代码如下：
+&lt;?php $header = [ &#34;Host: demo.domain.com&#34;, ]; $params = []; $ch = curl_init(); $defaults[CURLOPT_URL] = &#39;http://127.0.0.1/api/demo&#39;; $defaults[CURLOPT_HEADER] = FALSE; $defaults[CURLOPT_USERAGENT] = &#34;Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.98 Safari/537.36&#34;; $defaults[CURLOPT_FOLLOWLOCATION] = TRUE; $defaults[CURLOPT_RETURNTRANSFER] = TRUE; $defaults[CURLOPT_CONNECTTIMEOUT] = 3; $defaults[CURLOPT_TIMEOUT] = 3; curl_setopt($ch, CURLOPT_HTTPHEADER, array(&#39;Expect:&#39;)); $options = [CURLOPT_HTTPHEADER=&gt;$header]; curl_setopt_array($ch, (array) $options &#43; $defaults); //var_dump($options, $defaults, (array) $options &#43; $defaults); $data = curl_exec($ch); curl_close($ch); echo $data; 在本地命令行执行代码，结果正常响应；通过比对各项请求参数配置，完全一致，说明功能代码应该是没有问题的，于是把注意力再放到环境上；...</p>
+  </div>
+  <footer class="entry-footer"><span title='2019-04-16 23:59:07 +0000 UTC'>April 16, 2019</span></footer>
+  <a class="entry-link" aria-label="post link to windows环境下php-cgi使用curl请求接口阻塞超时的问题" href="https://shiqstone.github.io/post/windows-php-cgi-timeout/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>协作开发的项目配置文件管理
     </h2>
   </header>

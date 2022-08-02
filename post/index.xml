@@ -6,7 +6,23 @@
     <description>Recent content in Posts on 他山笨石</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh_CN</language>
-    <lastBuildDate>Tue, 02 Aug 2022 00:15:51 +0000</lastBuildDate><atom:link href="https://shiqstone.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 02 Aug 2022 13:25:20 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>博客从Hexo迁移到Hugo</title>
+      <link>https://shiqstone.github.io/post/hexo_to_hugo/</link>
+      <pubDate>Tue, 02 Aug 2022 13:25:20 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/hexo_to_hugo/</guid>
+      <description>前言 很久不写文章，最近整理了点东西准备发出来，结果发现原来使用的hexo因为npm版本原因，发布到github page一直出现问题，搜了一圈解决方案基本都是建议npm降级，折腾了半天没有成功，感觉不是很好，于是准备找个替代品迁移一下。
+Hugo 简介 Hugo 是一个基于 Go 语言开发的静态网站生成器（SSG），目前由 @bep 领衔开发，Hugo 的突出特点是简洁、灵活、高效，目前有很多知名网站都在使用 Hugo：Netlify、Let’s Encrypt、IPFS、Cloudflare Developers、DigitalOcean Docs、1Password 等等。与目前国内流行的 Hexo 相比，Hugo 的速度可称为飞速🚀——在安装和使用上都是如此。 Hugo 支持Markdown 语法，我们可以将自己的文章写成Markdown 的格式，可以快速方便的创建自己的博客。
+Hugo 安装 Hugo 使用方式比较简单，可参考官方 Quick Start。
+在MacOs 中使用brew 命令安装：
+brew install hugo 使用下面命令查看Hugo 是否安装成功：
+hugo version hugo v0.101.0+extended darwin/arm64 BuildDate=unknown Hugo 使用 创建博客 hugo 安装成功后，使用hugo new site 命令创建博客
+# 博客项目的名字为myblog hugo new site myblog 这个命令会创建一个名为myblog 的目录，这就是博客的根目录。目录结构如下：
+. ├── README.md ├── archetypes # 文章模板 │ └── default.md ├── config.</description>
+    </item>
+    
     <item>
       <title>Go语言开发效率的小技巧</title>
       <link>https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/</link>
