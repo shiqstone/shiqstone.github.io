@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>根据项目设置不同git配置及修改已提交的信息 | 他山笨石</title>
+<meta name="keywords" content="git">
+<meta name="description" content="0. 前言 通常都会遇到同时有公司项目和个人项目并存的情况，而且一般两种项目的git配置是不一致的。已经不止一次遇到用公司git用户名向个人项目推送代码的问题，个人感觉这样很不专业，所以整理了相关处理操作。
+1. 全局配置用户信息 查看配置信息
+git config --list user.email=xxx@abc.com user.name=xxx 修改全局配置信息
+# 设置用户名 git config --global user.name xxx # 设置作者邮箱 git config --global user.email xxx@abc.com 全局命令实际上是修改了~/.gitconfig这个文件，编辑这个文件可以看到完整配置。
+2. 为不同项目设置不同配置 个人项目提交到github上时，不希望暴露出相关公司信息，就要单独设置每个项目的git配置。
+每个git项目下都有一个.git的隐藏文件夹，该目录下有一个config文件，编辑文件内容，增加如下片段：
+[user] name = xxx email = xxx@abc.com 也可以使用命令行方式实现相同目的，在项目根目录下执行以下命令即可
+git config user.name xxx git config user.email xxx@abc.com 说明：在项目配置和全局配置同时存在的情况下，项目配置会覆盖全局配置。
+3. 修改已push的commit信息 操作步骤如下：
+先git log查看提交 hash，就是 commit-id
+git log 提交记录会按时间倒序展示
+rebase到要修改位置的上一个
+# git rebase -i -p &lt;previous-commit-id&gt; git rebase -i -p 55d4ce7e35ff9a0c5590bc3589160cfd304d3ae5 会看到类似如下的提示">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/git_config_by_project/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="根据项目设置不同git配置及修改已提交的信息" />
+<meta property="og:description" content="0. 前言 通常都会遇到同时有公司项目和个人项目并存的情况，而且一般两种项目的git配置是不一致的。已经不止一次遇到用公司git用户名向个人项目推送代码的问题，个人感觉这样很不专业，所以整理了相关处理操作。
+1. 全局配置用户信息 查看配置信息
+git config --list user.email=xxx@abc.com user.name=xxx 修改全局配置信息
+# 设置用户名 git config --global user.name xxx # 设置作者邮箱 git config --global user.email xxx@abc.com 全局命令实际上是修改了~/.gitconfig这个文件，编辑这个文件可以看到完整配置。
+2. 为不同项目设置不同配置 个人项目提交到github上时，不希望暴露出相关公司信息，就要单独设置每个项目的git配置。
+每个git项目下都有一个.git的隐藏文件夹，该目录下有一个config文件，编辑文件内容，增加如下片段：
+[user] name = xxx email = xxx@abc.com 也可以使用命令行方式实现相同目的，在项目根目录下执行以下命令即可
+git config user.name xxx git config user.email xxx@abc.com 说明：在项目配置和全局配置同时存在的情况下，项目配置会覆盖全局配置。
+3. 修改已push的commit信息 操作步骤如下：
+先git log查看提交 hash，就是 commit-id
+git log 提交记录会按时间倒序展示
+rebase到要修改位置的上一个
+# git rebase -i -p &lt;previous-commit-id&gt; git rebase -i -p 55d4ce7e35ff9a0c5590bc3589160cfd304d3ae5 会看到类似如下的提示" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/git_config_by_project/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-09-02T21:52:22&#43;08:00" />
+<meta property="article:modified_time" content="2022-09-02T21:52:22&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="根据项目设置不同git配置及修改已提交的信息"/>
+<meta name="twitter:description" content="0. 前言 通常都会遇到同时有公司项目和个人项目并存的情况，而且一般两种项目的git配置是不一致的。已经不止一次遇到用公司git用户名向个人项目推送代码的问题，个人感觉这样很不专业，所以整理了相关处理操作。
+1. 全局配置用户信息 查看配置信息
+git config --list user.email=xxx@abc.com user.name=xxx 修改全局配置信息
+# 设置用户名 git config --global user.name xxx # 设置作者邮箱 git config --global user.email xxx@abc.com 全局命令实际上是修改了~/.gitconfig这个文件，编辑这个文件可以看到完整配置。
+2. 为不同项目设置不同配置 个人项目提交到github上时，不希望暴露出相关公司信息，就要单独设置每个项目的git配置。
+每个git项目下都有一个.git的隐藏文件夹，该目录下有一个config文件，编辑文件内容，增加如下片段：
+[user] name = xxx email = xxx@abc.com 也可以使用命令行方式实现相同目的，在项目根目录下执行以下命令即可
+git config user.name xxx git config user.email xxx@abc.com 说明：在项目配置和全局配置同时存在的情况下，项目配置会覆盖全局配置。
+3. 修改已push的commit信息 操作步骤如下：
+先git log查看提交 hash，就是 commit-id
+git log 提交记录会按时间倒序展示
+rebase到要修改位置的上一个
+# git rebase -i -p &lt;previous-commit-id&gt; git rebase -i -p 55d4ce7e35ff9a0c5590bc3589160cfd304d3ae5 会看到类似如下的提示"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "根据项目设置不同git配置及修改已提交的信息",
+      "item": "https://shiqstone.github.io/post/git_config_by_project/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "根据项目设置不同git配置及修改已提交的信息",
+  "name": "根据项目设置不同git配置及修改已提交的信息",
+  "description": "0. 前言 通常都会遇到同时有公司项目和个人项目并存的情况，而且一般两种项目的git配置是不一致的。已经不止一次遇到用公司git用户名向个人项目推送代码的问题，个人感觉这样很不专业，所以整理了相关处理操作。\n1. 全局配置用户信息 查看配置信息\ngit config --list user.email=xxx@abc.com user.name=xxx 修改全局配置信息\n# 设置用户名 git config --global user.name xxx # 设置作者邮箱 git config --global user.email xxx@abc.com 全局命令实际上是修改了~/.gitconfig这个文件，编辑这个文件可以看到完整配置。\n2. 为不同项目设置不同配置 个人项目提交到github上时，不希望暴露出相关公司信息，就要单独设置每个项目的git配置。\n每个git项目下都有一个.git的隐藏文件夹，该目录下有一个config文件，编辑文件内容，增加如下片段：\n[user] name = xxx email = xxx@abc.com 也可以使用命令行方式实现相同目的，在项目根目录下执行以下命令即可\ngit config user.name xxx git config user.email xxx@abc.com 说明：在项目配置和全局配置同时存在的情况下，项目配置会覆盖全局配置。\n3. 修改已push的commit信息 操作步骤如下：\n先git log查看提交 hash，就是 commit-id\ngit log 提交记录会按时间倒序展示\nrebase到要修改位置的上一个\n# git rebase -i -p \u0026lt;previous-commit-id\u0026gt; git rebase -i -p 55d4ce7e35ff9a0c5590bc3589160cfd304d3ae5 会看到类似如下的提示",
+  "keywords": [
+    "git"
+  ],
+  "articleBody": "0. 前言 通常都会遇到同时有公司项目和个人项目并存的情况，而且一般两种项目的git配置是不一致的。已经不止一次遇到用公司git用户名向个人项目推送代码的问题，个人感觉这样很不专业，所以整理了相关处理操作。\n1. 全局配置用户信息 查看配置信息\ngit config --list user.email=xxx@abc.com user.name=xxx 修改全局配置信息\n# 设置用户名 git config --global user.name xxx # 设置作者邮箱 git config --global user.email xxx@abc.com 全局命令实际上是修改了~/.gitconfig这个文件，编辑这个文件可以看到完整配置。\n2. 为不同项目设置不同配置 个人项目提交到github上时，不希望暴露出相关公司信息，就要单独设置每个项目的git配置。\n每个git项目下都有一个.git的隐藏文件夹，该目录下有一个config文件，编辑文件内容，增加如下片段：\n[user] name = xxx email = xxx@abc.com 也可以使用命令行方式实现相同目的，在项目根目录下执行以下命令即可\ngit config user.name xxx git config user.email xxx@abc.com 说明：在项目配置和全局配置同时存在的情况下，项目配置会覆盖全局配置。\n3. 修改已push的commit信息 操作步骤如下：\n先git log查看提交 hash，就是 commit-id\ngit log 提交记录会按时间倒序展示\nrebase到要修改位置的上一个\n# git rebase -i -p git rebase -i -p 55d4ce7e35ff9a0c5590bc3589160cfd304d3ae5 会看到类似如下的提示\npick 55522b0 fixbug pick bff7d93 update pick ff59fc7 fix pick 11d4781 chore(master): release pick c9289d9 Merge pull request # Rebase 55d4ce7..c9289d9 onto 55d4ce7 (5 commands) # # Commands: # p, pick = use commit # r, reword = use commit, but edit the commit message # e, edit = use commit, but stop for amending # s, squash = use commit, but meld into previous commit # f, fixup = like \"squash\", but discard this commit's log message # x, exec = run command (the rest of the line) using shell # d, drop = remove commit # l, label = label current HEAD with a name # t, reset = reset HEAD to a label # m, merge [-C | -c ] [# ] # . create a merge commit using the original merge commit's # . message (or the oneline, if no original merge commit was # . specified). Use -c to reword the commit message. # # These lines can be re-ordered; they are executed from top to bottom. # # If you remove a line here THAT COMMIT WILL BE LOST. # # However, if you remove everything, the rebase will be aborted. # 选择需要修改的提交，将对应pick修改为edit，例如\nedit 55522b0 fixbug edit bff7d93 update edit ff59fc7 fix edit 11d4781 chore(master): release edit c9289d9 Merge pull request 保存后退出编辑\n修改当前提交，并继续下一个\ngit commit --amend --author=\"XXX \" --no-edit git rebase --continue 重复上述操作，直到看到如下提示，表示全部修改完成\n$ Successfully rebased and updated refs/heads/master. 强制提交到远程仓库，完成修改\ngit push -f ps. 最后有一个小问题，git rebase -i ，只能从第二个提交开始修改，如何修改第一个commit的信息呢？\ngit rebase -i --root ",
+  "wordCount" : "331",
+  "inLanguage": "en",
+  "datePublished": "2022-09-02T21:52:22+08:00",
+  "dateModified": "2022-09-02T21:52:22+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/git_config_by_project/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      根据项目设置不同git配置及修改已提交的信息
+    </h1>
+    <div class="post-meta"><span title='2022-09-02 21:52:22 +0800 CST'>September 2, 2022</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#0-%e5%89%8d%e8%a8%80" aria-label="0. 前言">0. 前言</a></li>
+                <li>
+                    <a href="#1-%e5%85%a8%e5%b1%80%e9%85%8d%e7%bd%ae%e7%94%a8%e6%88%b7%e4%bf%a1%e6%81%af" aria-label="1. 全局配置用户信息">1. 全局配置用户信息</a></li>
+                <li>
+                    <a href="#2-%e4%b8%ba%e4%b8%8d%e5%90%8c%e9%a1%b9%e7%9b%ae%e8%ae%be%e7%bd%ae%e4%b8%8d%e5%90%8c%e9%85%8d%e7%bd%ae" aria-label="2. 为不同项目设置不同配置">2. 为不同项目设置不同配置</a></li>
+                <li>
+                    <a href="#3-%e4%bf%ae%e6%94%b9%e5%b7%b2push%e7%9a%84commit%e4%bf%a1%e6%81%af" aria-label="3. 修改已push的commit信息">3. 修改已push的commit信息</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><h2 id="0-前言">0. 前言<a hidden class="anchor" aria-hidden="true" href="#0-前言">#</a></h2>
+<p>通常都会遇到同时有公司项目和个人项目并存的情况，而且一般两种项目的git配置是不一致的。已经不止一次遇到用公司git用户名向个人项目推送代码的问题，个人感觉这样很不专业，所以整理了相关处理操作。</p>
+<h2 id="1-全局配置用户信息">1. 全局配置用户信息<a hidden class="anchor" aria-hidden="true" href="#1-全局配置用户信息">#</a></h2>
+<p>查看配置信息</p>
+<pre tabindex="0"><code>git config --list
+
+user.email=xxx@abc.com
+user.name=xxx
+</code></pre><p>修改全局配置信息</p>
+<pre tabindex="0"><code># 设置用户名
+git config --global user.name xxx
+# 设置作者邮箱
+git config --global user.email xxx@abc.com
+</code></pre><p>全局命令实际上是修改了<code>~/.gitconfig</code>这个文件，编辑这个文件可以看到完整配置。</p>
+<h2 id="2-为不同项目设置不同配置">2. 为不同项目设置不同配置<a hidden class="anchor" aria-hidden="true" href="#2-为不同项目设置不同配置">#</a></h2>
+<p>个人项目提交到github上时，不希望暴露出相关公司信息，就要单独设置每个项目的git配置。</p>
+<p>每个git项目下都有一个<code>.git</code>的隐藏文件夹，该目录下有一个config文件，编辑文件内容，增加如下片段：</p>
+<pre tabindex="0"><code>[user]
+    name = xxx
+    email = xxx@abc.com
+</code></pre><p>也可以使用命令行方式实现相同目的，在项目根目录下执行以下命令即可</p>
+<pre tabindex="0"><code>git config user.name xxx
+git config user.email xxx@abc.com
+</code></pre><p>说明：在项目配置和全局配置同时存在的情况下，项目配置会覆盖全局配置。</p>
+<h2 id="3-修改已push的commit信息">3. 修改已push的commit信息<a hidden class="anchor" aria-hidden="true" href="#3-修改已push的commit信息">#</a></h2>
+<p>操作步骤如下：</p>
+<ol>
+<li>
+<p>先<code>git log</code>查看提交 hash，就是 commit-id</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git log
+</span></span></code></pre></div><p>提交记录会按时间倒序展示</p>
+</li>
+<li>
+<p><code>rebase</code>到要修改位置的上一个</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># git rebase -i -p &lt;previous-commit-id&gt;</span>
+</span></span><span style="display:flex;"><span>git rebase -i -p 55d4ce7e35ff9a0c5590bc3589160cfd304d3ae5
+</span></span></code></pre></div><p>会看到类似如下的提示</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pick 55522b0 fixbug
+</span></span><span style="display:flex;"><span>pick bff7d93 update
+</span></span><span style="display:flex;"><span>pick ff59fc7 fix
+</span></span><span style="display:flex;"><span>pick 11d4781 chore<span style="color:#f92672">(</span>master<span style="color:#f92672">)</span>: release
+</span></span><span style="display:flex;"><span>pick c9289d9 Merge pull request 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Rebase 55d4ce7..c9289d9 onto 55d4ce7 (5 commands)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Commands:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># p, pick &lt;commit&gt; = use commit</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># r, reword &lt;commit&gt; = use commit, but edit the commit message</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># e, edit &lt;commit&gt; = use commit, but stop for amending</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># s, squash &lt;commit&gt; = use commit, but meld into previous commit</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># f, fixup &lt;commit&gt; = like &#34;squash&#34;, but discard this commit&#39;s log message</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># x, exec &lt;commit&gt; = run command (the rest of the line) using shell</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># d, drop &lt;commit&gt; = remove commit</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># l, label &lt;label&gt; = label current HEAD with a name</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># t, reset &lt;label&gt; = reset HEAD to a label</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># m, merge [-C &lt;commit&gt; | -c &lt;commit&gt;] &lt;label&gt; [# &lt;oneline&gt;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># .       create a merge commit using the original merge commit&#39;s</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># .       message (or the oneline, if no original merge commit was</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># .       specified). Use -c &lt;commit&gt; to reword the commit message.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># These lines can be re-ordered; they are executed from top to bottom.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># If you remove a line here THAT COMMIT WILL BE LOST.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># However, if you remove everything, the rebase will be aborted.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span></code></pre></div></li>
+<li>
+<p>选择需要修改的提交，将对应<code>pick</code>修改为<code>edit</code>，例如</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>edit 55522b0 fixbug
+</span></span><span style="display:flex;"><span>edit bff7d93 update
+</span></span><span style="display:flex;"><span>edit ff59fc7 fix
+</span></span><span style="display:flex;"><span>edit 11d4781 chore<span style="color:#f92672">(</span>master<span style="color:#f92672">)</span>: release
+</span></span><span style="display:flex;"><span>edit c9289d9 Merge pull request 
+</span></span></code></pre></div><p>保存后退出编辑</p>
+</li>
+<li>
+<p>修改当前提交，并继续下一个</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git commit --amend --author<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;XXX &lt;xxx@abc.com&gt;&#34;</span> --no-edit
+</span></span><span style="display:flex;"><span>git rebase --continue
+</span></span></code></pre></div><p>重复上述操作，直到看到如下提示，表示全部修改完成</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ Successfully rebased and updated refs/heads/master.
+</span></span></code></pre></div></li>
+<li>
+<p>强制提交到远程仓库，完成修改</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git push -f
+</span></span></code></pre></div></li>
+</ol>
+<p>ps. 最后有一个小问题，<code>git rebase -i &lt;previous-commit-id&gt;</code>，只能从第二个提交开始修改，如何修改第一个commit的信息呢？</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git rebase -i --root
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/git/">git</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

@@ -2,16 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://shiqstone.github.io/tags/blog/</loc>
-    <lastmod>2022-08-02T13:25:20+08:00</lastmod>
+    <loc>https://shiqstone.github.io/tags/git/</loc>
+    <lastmod>2022-09-02T21:52:22+08:00</lastmod>
   </url><url>
     <loc>https://shiqstone.github.io/post/</loc>
-    <lastmod>2022-08-02T13:25:20+08:00</lastmod>
+    <lastmod>2022-09-02T21:52:22+08:00</lastmod>
   </url><url>
     <loc>https://shiqstone.github.io/tags/</loc>
-    <lastmod>2022-08-02T13:25:20+08:00</lastmod>
+    <lastmod>2022-09-02T21:52:22+08:00</lastmod>
   </url><url>
     <loc>https://shiqstone.github.io/</loc>
+    <lastmod>2022-09-02T21:52:22+08:00</lastmod>
+  </url><url>
+    <loc>https://shiqstone.github.io/post/git_config_by_project/</loc>
+    <lastmod>2022-09-02T21:52:22+08:00</lastmod>
+  </url><url>
+    <loc>https://shiqstone.github.io/tags/blog/</loc>
     <lastmod>2022-08-02T13:25:20+08:00</lastmod>
   </url><url>
     <loc>https://shiqstone.github.io/post/hexo_to_hugo/</loc>
@@ -61,9 +67,6 @@
   </url><url>
     <loc>https://shiqstone.github.io/post/http-101/</loc>
     <lastmod>2019-08-03T18:40:38+00:00</lastmod>
-  </url><url>
-    <loc>https://shiqstone.github.io/tags/git/</loc>
-    <lastmod>2019-04-24T00:06:23+00:00</lastmod>
   </url><url>
     <loc>https://shiqstone.github.io/post/git-lf-crlf/</loc>
     <lastmod>2019-04-24T00:06:23+00:00</lastmod>
