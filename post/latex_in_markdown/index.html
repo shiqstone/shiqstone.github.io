@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>MarkDown 中使用 LaTeX 数学式 | 他山笨石</title>
+<meta name="keywords" content="LaTeX">
+<meta name="description" content="在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown &#43; LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。
+在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。
+行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。 行内公式 $...$
+行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。 行间公式 $$...$$
+行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$ 行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$ 行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$
+行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$
+LaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，莱斯大学LaTex Math在线PDF手册。
+当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。
+希腊字母 使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:
+α \alpha κ \kappa ψ \psi z \digamma ∆ \Delta Θ \Theta β \beta λ \lambda ρ \rho ε \varepsilon Γ \Gamma Υ \Upsilon χ \chi µ \mu σ \sigma κ \varkappa Λ \Lambda Ξ \Xi δ \delta ν \nu τ \tau ϕ \varphi Ω \Omega ϵ \epsilon o o θ \theta $ \varpi Φ \Phi ℵ \aleph η \eta ω \omega υ \upsilon % \varrho Π \Pi i \beth γ \gamma φ \phi ξ \xi ς \varsigma Ψ \Psi k \daleth ι \iota π \pi ζ \zeta ϑ \vartheta Σ \Sigma 值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/latex_in_markdown/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    svg: {
+      fontCache: "global",
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+
+  window.addEventListener('load', (event) => {
+      document.querySelectorAll("mjx-container").forEach(function(x){
+        x.parentElement.classList += 'has-jax'})
+    });
+
+</script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+<meta property="og:title" content="MarkDown 中使用 LaTeX 数学式" />
+<meta property="og:description" content="在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown &#43; LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。
+在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。
+行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。 行内公式 $...$
+行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。 行间公式 $$...$$
+行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$ 行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$ 行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$
+行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$
+LaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，莱斯大学LaTex Math在线PDF手册。
+当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。
+希腊字母 使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:
+α \alpha κ \kappa ψ \psi z \digamma ∆ \Delta Θ \Theta β \beta λ \lambda ρ \rho ε \varepsilon Γ \Gamma Υ \Upsilon χ \chi µ \mu σ \sigma κ \varkappa Λ \Lambda Ξ \Xi δ \delta ν \nu τ \tau ϕ \varphi Ω \Omega ϵ \epsilon o o θ \theta $ \varpi Φ \Phi ℵ \aleph η \eta ω \omega υ \upsilon % \varrho Π \Pi i \beth γ \gamma φ \phi ξ \xi ς \varsigma Ψ \Psi k \daleth ι \iota π \pi ζ \zeta ϑ \vartheta Σ \Sigma 值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/latex_in_markdown/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-10-12T16:25:27&#43;08:00" />
+<meta property="article:modified_time" content="2022-10-12T16:25:27&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MarkDown 中使用 LaTeX 数学式"/>
+<meta name="twitter:description" content="在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown &#43; LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。
+在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。
+行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。 行内公式 $...$
+行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。 行间公式 $$...$$
+行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$ 行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$ 行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$
+行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$
+LaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，莱斯大学LaTex Math在线PDF手册。
+当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。
+希腊字母 使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:
+α \alpha κ \kappa ψ \psi z \digamma ∆ \Delta Θ \Theta β \beta λ \lambda ρ \rho ε \varepsilon Γ \Gamma Υ \Upsilon χ \chi µ \mu σ \sigma κ \varkappa Λ \Lambda Ξ \Xi δ \delta ν \nu τ \tau ϕ \varphi Ω \Omega ϵ \epsilon o o θ \theta $ \varpi Φ \Phi ℵ \aleph η \eta ω \omega υ \upsilon % \varrho Π \Pi i \beth γ \gamma φ \phi ξ \xi ς \varsigma Ψ \Psi k \daleth ι \iota π \pi ζ \zeta ϑ \vartheta Σ \Sigma 值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "MarkDown 中使用 LaTeX 数学式",
+      "item": "https://shiqstone.github.io/post/latex_in_markdown/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MarkDown 中使用 LaTeX 数学式",
+  "name": "MarkDown 中使用 LaTeX 数学式",
+  "description": "在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown + LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。\n在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。\n行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。 行内公式 $...$\n行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。 行间公式 $$...$$\n行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots$ 行间 $${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots \\tag{1.1}$$ 行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots$\n行间 $${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots \\tag{1.1}$$\nLaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，莱斯大学LaTex Math在线PDF手册。\n当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。\n希腊字母 使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:\nα \\alpha κ \\kappa ψ \\psi z \\digamma ∆ \\Delta Θ \\Theta β \\beta λ \\lambda ρ \\rho ε \\varepsilon Γ \\Gamma Υ \\Upsilon χ \\chi µ \\mu σ \\sigma κ \\varkappa Λ \\Lambda Ξ \\Xi δ \\delta ν \\nu τ \\tau ϕ \\varphi Ω \\Omega ϵ \\epsilon o o θ \\theta $ \\varpi Φ \\Phi ℵ \\aleph η \\eta ω \\omega υ \\upsilon % \\varrho Π \\Pi i \\beth γ \\gamma φ \\phi ξ \\xi ς \\varsigma Ψ \\Psi k \\daleth ι \\iota π \\pi ζ \\zeta ϑ \\vartheta Σ \\Sigma 值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。",
+  "keywords": [
+    "LaTeX"
+  ],
+  "articleBody": "在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown + LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。\n在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。\n行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。 行内公式 $...$\n行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。 行间公式 $$...$$\n行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots$ 行间 $${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots \\tag{1.1}$$ 行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots$\n行间 $${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\\cdots \\tag{1.1}$$\nLaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，莱斯大学LaTex Math在线PDF手册。\n当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。\n希腊字母 使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:\nα \\alpha κ \\kappa ψ \\psi z \\digamma ∆ \\Delta Θ \\Theta β \\beta λ \\lambda ρ \\rho ε \\varepsilon Γ \\Gamma Υ \\Upsilon χ \\chi µ \\mu σ \\sigma κ \\varkappa Λ \\Lambda Ξ \\Xi δ \\delta ν \\nu τ \\tau ϕ \\varphi Ω \\Omega ϵ \\epsilon o o θ \\theta $ \\varpi Φ \\Phi ℵ \\aleph η \\eta ω \\omega υ \\upsilon % \\varrho Π \\Pi i \\beth γ \\gamma φ \\phi ξ \\xi ς \\varsigma Ψ \\Psi k \\daleth ι \\iota π \\pi ζ \\zeta ϑ \\vartheta Σ \\Sigma 值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。\n输入上下标 ^ 表示上标, _ 表示下标。如果上下标的内容多于一个字符，要用大括号 { } 把这些内容括起来当成一个整体。上下标是可以嵌套的，也可以同时使用。\n$\\sum_i^na_i$\n$\\sum_i^na_i$\n输入分数 分数的输入形式为 \\frac{分子}{分母}\n$P(v)=\\frac{1}{1+exp(-v/T)}$\n$P(v)=\\frac{1}{1+exp(-v/T)}$\n上下划线与花括号 $$ \\begin{align*} \\overline{a+b+c} \\\\ \\underline{a+b+c} \\\\ \\overleftarrow{a+b} \\\\ \\underleftarrow{a+b} \\\\ \\underleftrightarrow{a+b} \\\\ \\vec x = \\vec{AB} \\\\ \\overbrace {a+b}^\\text{a,b} \\\\ \\underbrace{abc} \\\\ \\end{align*} $$ $$ \\begin{align*} \\overline{a+b+c} \\\\ \\underline{a+b+c} \\\\ \\overleftarrow{a+b} \\\\ \\underleftarrow{a+b} \\\\ \\underleftrightarrow{a+b} \\\\ \\vec x = \\vec{AB} \\\\ \\overbrace {a+b}^\\text{a,b} \\\\ \\underbrace{abc} \\\\ \\end{align*} $$\n输入根号 $$ \\begin{align*} \\sqrt {12} \\\\ \\sqrt[n]{12} \\end{align*} $$ $$ \\begin{align*} \\sqrt {12} \\\\ \\sqrt[n]{12} \\end{align*} $$\n输入括号与分隔符 (), [] , | 分别表示原尺寸的形状，由于大括号 {} 在 LaTeX 中有特定含义, 所以使用需要转义, 即\\{ 和 \\} 分别表示表示{ }。当需要显示大尺寸的上述符号时, 在上述符号前加上 \\left 和 \\right 命令.\n| | { \\{ $\\lfloor$ \\lfloor $/$ / $\\Uparrow$ \\Uparrow $\\llcorner$ \\llcorner $\\vert$ \\vert } \\} $\\rfloor$ \\rfloor $\\backslash$ \\backslash $\\uparrow$ \\uparrow $\\lrcorner$ \\lrcorner $|$ | $\\langle$ \\langle $\\lceil$ \\lceil $[$ [ $\\Downarrow$ \\Downarrow $\\ulcorner$ \\ulcorner $\\Vert$ \\Vert $\\rangle$ \\rangle $\\rceil$ \\rceil $]$ ] $\\downarrow$ \\downarrow $\\urcorner$ \\urcorner $\\{a\\}$ $f(x,y,z) = 3y^2z3+(\\frac{7x+5}{1+y^2}) $ $f(x,y,z) = 3y^2z + \\left( 3 +\\frac{7x+5}{1+y^2} \\right)$ $${a}$$ $$f(x,y,z) = 3y^2z3+(\\frac{7x+5}{1+y^2}) $$ $$f(x,y,z) = 3y^2z+\\left(3+\\frac{7x+5}{1+y^2} \\right)$$\n省略号 \\ldots $\\ldots$ \\cdots $\\cdots$ \\vdots $\\vdots$ \\ddots $\\ddots$ 三角函数、对数、指数 三角函数、对数、指数的写法以及其他符号的语法和字母是一样的，也是使用LaTex符号，也就是将LaTex的希腊字母语法用两个美元符号围住即可，我们来看下面的案例：\n$\\sin$ \\sin $\\cos$ \\cos $\\cot$ \\cot $\\tan$ \\tan $\\log$ \\log $\\exp$ \\exp $\\max$ \\max $\\min$ \\min 运算符、关系符 $+$ + $-$ - $\\times$ \\times $\\div$ \\div $=$ = $\u003e$ \u003e $\u003c$ \u003c $\\div$ \\div $\\equiv$ \\equiv $\\leq$ \\leq $\\geq$ \\geq $\\neq$ \\neq $\\cup$ \\cup $\\cap$ \\cap $\\in$ \\in $\\notin$ \\notin $\\subset$ \\subset $\\subseteq$ \\subseteq $\\supset$ \\supset $\\supseteq$ \\supseteq $\\infty$ \\infty 矩阵 矩阵中，不同的列使用\u0026分割，行使用\\\\分割 下面展示一系列矩阵环境排版, 区别在于外面的括号不同\n$$ \\begin{pmatrix} a \u0026 b \u0026 c \\\\ d \u0026 e \u0026 f \\\\ g \u0026 h \u0026 i \\end{pmatrix} $$ $$ \\chi(\\lambda) = \\begin{vmatrix} \\lambda - a \u0026 -b \u0026 -c \\\\ -d \u0026 \\lambda - e \u0026 -f \\\\ -g \u0026 -h \u0026 \\lambda - i \\end{vmatrix} $$ $$ \\begin{pmatrix} a \u0026 b \u0026 c \\\\ d \u0026 e \u0026 f \\\\ g \u0026 h \u0026 i \\end{pmatrix} $$\n$$ \\chi(\\lambda) =\n\\begin{vmatrix} \\lambda - a \u0026 -b \u0026 -c \\\\ -d \u0026 \\lambda - e \u0026 -f \\\\ -g \u0026 -h \u0026 \\lambda - i \\end{vmatrix} $$\n单行公式和多行公式 equation 环境用来输入单行公式, 自动生成编号, 也可以使用 \\tag{...} 自己对公式编号; 使用 equation* 环境, 不会自动生成公式编号, 后续介绍的公式输入环境都是在自动编号后面加上 * 便是不自动编号环境.\n$$ \\begin{equation} (a+b) \\times c = a\\times c + b \\times c \\\\ \\end{equation} $$ $$ \\begin{equation} (a+b) \\times c = a\\times c + b \\times c \\\\ \\end{equation} $$\n$$ \\begin{equation*} (a+b) \\times c = a\\times c + b \\times c \\\\ \\end{equation*} $$ $$ \\begin{equation*} (a+b) \\times c = a\\times c + b \\times c \\ \\end{equation*} $$\n输入多行公式, gather 环境得到的公式是每行居中的, align环境则允许公式按照等号或者其他关系符对齐, 在关系符前加\u0026表示对齐\n$$ \\begin{gather} (a+b) \\times c = a\\times c + b \\times c \\notag \\\\ ac= a\\times c \\\\ \\end{gather} $$ $$ \\begin{align} y \u0026= \\cos t + 1 \\\\ y \u0026= 2sin t \\\\ \\end{align} $$ $$ \\begin{gather} (a+b) \\times c = a\\times c + b \\times c \\notag \\\\ ac= a\\times c \\\\ \\end{gather} $$\n$$ \\begin{align} y \u0026= \\cos t + 1 \\\\ y \u0026= 2sin t \\\\ \\end{align} $$\nalign 环境还允许排列多列对齐公式, 列与列之间使用\u0026分割\n$$ \\begin{align*} x \u0026= t \u0026 x \u0026= \\cos t \u0026 x \u0026= t \\\\ y \u0026= 2t \u0026 y \u0026= \\sin (t+1) \u0026 y \u0026= \\sin t \\\\ \\end{align*} $$ $$ \\begin{align*} \u0026 (a+b)(a^2-ab+b^2) \\\\ = {}\u0026 a^3-a^2b+ab^2+a^2b-ab^2+b^2 \\\\ = {}\u0026 a^3 + b^3 \\end{align*} $$ $$ \\begin{align*} x \u0026= t \u0026 x \u0026= \\cos t \u0026 x \u0026= t \\\\ y \u0026= 2t \u0026 y \u0026= \\sin (t+1) \u0026 y \u0026= \\sin t \\\\ \\end{align*} $$\n$$ \\begin{align*} \u0026 (a+b)(a^2-ab+b^2) \\\\ = {}\u0026 a^3-a^2b+ab^2+a^2b-ab^2+b^2 \\\\ = {}\u0026 a^3 + b^3 \\end{align*} $$\nalign 环境中列分隔符 \u0026 一般放在关系符前面, 如果个别需要再关系符后面或者别的地方对齐的, 则应该注意使用的符号类型\n$$ % 关系符后对齐，需要使用空的分组 % 代替关系符右侧符号，保证间距 \\begin{align*} \u0026 (a+b)(a^2-ab+b^2) \\notag \\\\ ={ } \u0026 a^3 - a^2b + ab^2 + a^2b - ab^2 + b^2 \\notag \\\\ ={ } \u0026 a^3 + b^3 \\end{align*} $$ $$ % 关系符后对齐，需要使用空的分组 % 代替关系符右侧符号，保证间距 \\begin{align*} \u0026 (a+b)(a^2-ab+b^2) \\notag \\ ={ } \u0026 a^3 - a^2b + ab^2 + a^2b - ab^2 + b^2 \\notag \\ ={ } \u0026 a^3 + b^3 \\end{align*} $$\n跨多行的单个公式 单个公式很长的时候需要换行，但仅允许生成一个编号时，可以用 split 环境包围公式代码，在需要转行的地方使用 \\. split 环境一般用在 equation, gather 环境里面, 可以把单个公式拆成多行, 同时支持 align 那样对齐公式.\nsplit 环境不产生编号, 编号由外面的数学环境产生; 每行需要使用1个\u0026来标识对齐的位置，结束后可使用 \\tag{...} 标签编号。 如果 split 环境中某一行不是在二元关系符前面对齐, 需要通过 \\quad 等手段设置间距或对齐方式.\n$$ % 注意 \\tag{...} 编号的位置 \\begin{equation} \\begin{split} \\cos 2x \u0026= \\cos^2 x - \\sin^2 x \\\\ \u0026= 2\\cos^2 x - 1 \\end{split} \\tag{3.1} \\end{equation} $$ $$ \\begin{equation}\\label{eq:trigonometric} \\begin{split} \\frac12 (\\sin(x+y) + \\sin(x-y)) \u0026= \\frac12(\\sin x\\cos y + \\cos x\\sin y) \\\\ \u0026 \\quad + \\frac12(\\sin x\\cos y - \\cos x\\sin y) \\\\ \u0026= \\sin x\\cos y \\end{split} \\end{equation} $$ $$ % 注意 \\tag{…} 编号的位置 \\begin{equation} \\begin{split} \\cos 2x \u0026= \\cos^2 x - \\sin^2 x \\\\ \u0026= 2\\cos^2 x - 1\n\\end{split} \\tag{3.1} \\end{equation}\n$$\n$$ \\begin{equation} \\begin{split} \\frac12 (\\sin(x+y) + \\sin(x-y)) \u0026= \\frac12(\\sin x\\cos y + \\cos x\\sin y) \\\\ \u0026 \\quad + \\frac12(\\sin x\\cos y - \\cos x\\sin y) \\\\ \u0026= \\sin x\\cos y \\end{split} \\end{equation} $$\n将公式组合为块 最常见的是 case 环境, 他在几行公式前面用花括号括起来, 表示几种不同的情况; 每行公式使用 \u0026 分隔, 便是表达式与条件, 例如\n$$ \\begin{equation} D(x) = \\begin{cases} 1, \u0026 \\text{if } x \\in \\mathbb{Q}; \\\\ 0, \u0026 \\text{if } x \\in \\mathbb{R}\\setminus\\mathbb{Q}. \\end{cases} \\end{equation} $$ $$ \\begin{equation} D(x) = \\begin{cases} 1, \u0026 \\text{if } x \\in \\mathbb{Q}; \\\\ 0, \u0026 \\text{if } x \\in \\mathbb{R}\\setminus\\mathbb{Q}. \\end{cases} \\end{equation} $$\ngathered环境 将几行公式居中排列, 组合为一个整体;\n$$ \\left. \\begin{gathered} S \\subseteq T \\\\ S \\supseteq T \\end{gathered} \\right\\} \\implies S = T $$ $$ \\left. \\begin{gathered} S \\subseteq T \\\\ S \\supseteq T \\end{gathered} \\right\\} \\implies S = T\n$$\n说明\n注意由于hugo会对字符进行转译，直接使用\\\\\\编辑，在网页展示时会被替换成\\，不能正常展示latex换行，而需要使用\\\\\\\\\\\\替换。\n参考 https://www.cnblogs.com/nowgood/p/Latexstart.html https://zhuanlan.zhihu.com/p/59412540 https://www.cmor-faculty.rice.edu/~heinken/latex/symbols.pdf ",
+  "wordCount" : "1046",
+  "inLanguage": "en",
+  "datePublished": "2022-10-12T16:25:27+08:00",
+  "dateModified": "2022-10-12T16:25:27+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/latex_in_markdown/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      MarkDown 中使用 LaTeX 数学式
+    </h1>
+    <div class="post-meta"><span title='2022-10-12 16:25:27 +0800 CST'>October 12, 2022</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul><ul>
+                <li>
+                    <a href="#%e5%b8%8c%e8%85%8a%e5%ad%97%e6%af%8d" aria-label="希腊字母">希腊字母</a></li>
+                <li>
+                    <a href="#%e8%be%93%e5%85%a5%e4%b8%8a%e4%b8%8b%e6%a0%87" aria-label="输入上下标">输入上下标</a></li>
+                <li>
+                    <a href="#%e8%be%93%e5%85%a5%e5%88%86%e6%95%b0" aria-label="输入分数">输入分数</a></li>
+                <li>
+                    <a href="#%e4%b8%8a%e4%b8%8b%e5%88%92%e7%ba%bf%e4%b8%8e%e8%8a%b1%e6%8b%ac%e5%8f%b7" aria-label="上下划线与花括号">上下划线与花括号</a></li>
+                <li>
+                    <a href="#%e8%be%93%e5%85%a5%e6%a0%b9%e5%8f%b7" aria-label="输入根号">输入根号</a></li>
+                <li>
+                    <a href="#%e8%be%93%e5%85%a5%e6%8b%ac%e5%8f%b7%e4%b8%8e%e5%88%86%e9%9a%94%e7%ac%a6" aria-label="输入括号与分隔符">输入括号与分隔符</a></li>
+                <li>
+                    <a href="#%e7%9c%81%e7%95%a5%e5%8f%b7" aria-label="省略号">省略号</a></li>
+                <li>
+                    <a href="#%e4%b8%89%e8%a7%92%e5%87%bd%e6%95%b0%e5%af%b9%e6%95%b0%e6%8c%87%e6%95%b0" aria-label="三角函数、对数、指数">三角函数、对数、指数</a></li>
+                <li>
+                    <a href="#%e8%bf%90%e7%ae%97%e7%ac%a6%e5%85%b3%e7%b3%bb%e7%ac%a6" aria-label="运算符、关系符">运算符、关系符</a></li>
+                <li>
+                    <a href="#%e7%9f%a9%e9%98%b5" aria-label="矩阵">矩阵</a></li>
+                <li>
+                    <a href="#%e5%8d%95%e8%a1%8c%e5%85%ac%e5%bc%8f%e5%92%8c%e5%a4%9a%e8%a1%8c%e5%85%ac%e5%bc%8f" aria-label="单行公式和多行公式">单行公式和多行公式</a></li>
+                <li>
+                    <a href="#%e8%b7%a8%e5%a4%9a%e8%a1%8c%e7%9a%84%e5%8d%95%e4%b8%aa%e5%85%ac%e5%bc%8f" aria-label="跨多行的单个公式">跨多行的单个公式</a></li>
+                <li>
+                    <a href="#%e5%b0%86%e5%85%ac%e5%bc%8f%e7%bb%84%e5%90%88%e4%b8%ba%e5%9d%97" aria-label="将公式组合为块">将公式组合为块</a></li></ul>
+                    
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83" aria-label="参考">参考</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><p>在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown + LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。</p>
+<p>在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。</p>
+<p>行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。
+行内公式 <code>$...$</code></p>
+<p>行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。
+行间公式 <code>$$...$$</code></p>
+<pre tabindex="0"><code>行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots$
+行间 $${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots \tag{1.1}$$
+</code></pre><p>行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots$</p>
+<p>行间
+$${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots \tag{1.1}$$</p>
+<p>LaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，<a href="https://link.zhihu.com/?target=https%3A//www.caam.rice.edu/~heinken/latex/symbols.pdf">莱斯大学LaTex Math在线PDF手册</a>。</p>
+<p>当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。</p>
+<h3 id="希腊字母">希腊字母<a hidden class="anchor" aria-hidden="true" href="#希腊字母">#</a></h3>
+<p>使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>α</td>
+<td>\alpha</td>
+<td>κ</td>
+<td>\kappa</td>
+<td>ψ</td>
+<td>\psi</td>
+<td>z</td>
+<td>\digamma</td>
+<td>∆</td>
+<td>\Delta</td>
+<td>Θ</td>
+<td>\Theta</td>
+</tr>
+<tr>
+<td>β</td>
+<td>\beta</td>
+<td>λ</td>
+<td>\lambda</td>
+<td>ρ</td>
+<td>\rho</td>
+<td>ε</td>
+<td>\varepsilon</td>
+<td>Γ</td>
+<td>\Gamma</td>
+<td>Υ</td>
+<td>\Upsilon</td>
+</tr>
+<tr>
+<td>χ</td>
+<td>\chi</td>
+<td>µ</td>
+<td>\mu</td>
+<td>σ</td>
+<td>\sigma</td>
+<td>κ</td>
+<td>\varkappa</td>
+<td>Λ</td>
+<td>\Lambda</td>
+<td>Ξ</td>
+<td>\Xi</td>
+</tr>
+<tr>
+<td>δ</td>
+<td>\delta</td>
+<td>ν</td>
+<td>\nu</td>
+<td>τ</td>
+<td>\tau</td>
+<td>ϕ</td>
+<td>\varphi</td>
+<td>Ω</td>
+<td>\Omega</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ϵ</td>
+<td>\epsilon</td>
+<td>o</td>
+<td>o</td>
+<td>θ</td>
+<td>\theta</td>
+<td>$</td>
+<td>\varpi</td>
+<td>Φ</td>
+<td>\Phi</td>
+<td>ℵ</td>
+<td>\aleph</td>
+</tr>
+<tr>
+<td>η</td>
+<td>\eta</td>
+<td>ω</td>
+<td>\omega</td>
+<td>υ</td>
+<td>\upsilon</td>
+<td>%</td>
+<td>\varrho</td>
+<td>Π</td>
+<td>\Pi</td>
+<td>i</td>
+<td>\beth</td>
+</tr>
+<tr>
+<td>γ</td>
+<td>\gamma</td>
+<td>φ</td>
+<td>\phi</td>
+<td>ξ</td>
+<td>\xi</td>
+<td>ς</td>
+<td>\varsigma</td>
+<td>Ψ</td>
+<td>\Psi</td>
+<td>k</td>
+<td>\daleth</td>
+</tr>
+<tr>
+<td>ι</td>
+<td>\iota</td>
+<td>π</td>
+<td>\pi</td>
+<td>ζ</td>
+<td>\zeta</td>
+<td>ϑ</td>
+<td>\vartheta</td>
+<td>Σ</td>
+<td>\Sigma</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。</strong></p>
+<h3 id="输入上下标">输入上下标<a hidden class="anchor" aria-hidden="true" href="#输入上下标">#</a></h3>
+<p><code>^</code> 表示上标, <code>_</code> 表示下标。如果上下标的内容多于一个字符，要用大括号 { } 把这些内容括起来当成一个整体。上下标是可以嵌套的，也可以同时使用。</p>
+<blockquote>
+<p><code>$\sum_i^na_i$</code></p>
+</blockquote>
+<p>$\sum_i^na_i$</p>
+<h3 id="输入分数">输入分数<a hidden class="anchor" aria-hidden="true" href="#输入分数">#</a></h3>
+<p>分数的输入形式为 <code>\frac{分子}{分母}</code></p>
+<blockquote>
+<p><code>$P(v)=\frac{1}{1+exp(-v/T)}$</code></p>
+</blockquote>
+<p>$P(v)=\frac{1}{1+exp(-v/T)}$</p>
+<h3 id="上下划线与花括号">上下划线与花括号<a hidden class="anchor" aria-hidden="true" href="#上下划线与花括号">#</a></h3>
+<pre tabindex="0"><code>$$
+\begin{align*}
+\overline{a+b+c} \\
+\underline{a+b+c} \\
+\overleftarrow{a+b} \\
+\underleftarrow{a+b} \\
+\underleftrightarrow{a+b} \\
+\vec x = \vec{AB} \\
+\overbrace {a+b}^\text{a,b} \\
+\underbrace{abc} \\
+\end{align*}
+$$
+</code></pre><p>$$
+\begin{align*}
+\overline{a+b+c} \\
+\underline{a+b+c} \\
+\overleftarrow{a+b} \\
+\underleftarrow{a+b} \\
+\underleftrightarrow{a+b} \\
+\vec x = \vec{AB} \\
+\overbrace {a+b}^\text{a,b} \\
+\underbrace{abc} \\
+\end{align*}
+$$</p>
+<h3 id="输入根号">输入根号<a hidden class="anchor" aria-hidden="true" href="#输入根号">#</a></h3>
+<pre tabindex="0"><code>$$
+\begin{align*}
+\sqrt {12} \\
+\sqrt[n]{12} 
+\end{align*}
+$$
+</code></pre><p>$$
+\begin{align*}
+\sqrt {12} \\
+\sqrt[n]{12}
+\end{align*}
+$$</p>
+<h3 id="输入括号与分隔符">输入括号与分隔符<a hidden class="anchor" aria-hidden="true" href="#输入括号与分隔符">#</a></h3>
+<p><code>()</code>, <code>[]</code> , <code>|</code> 分别表示原尺寸的形状，由于大括号 {} 在 LaTeX 中有特定含义, 所以使用需要转义, 即<code>\{</code> 和 <code>\}</code> 分别表示表示{ }。当需要显示大尺寸的上述符号时, 在上述符号前加上 <code>\left</code> 和 <code>\right</code> 命令.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>|</td>
+<td><code>|</code></td>
+<td>{</td>
+<td><code>\{</code></td>
+<td>$\lfloor$</td>
+<td>\lfloor</td>
+<td>$/$</td>
+<td>/</td>
+<td>$\Uparrow$</td>
+<td>\Uparrow</td>
+<td>$\llcorner$</td>
+<td>\llcorner</td>
+</tr>
+<tr>
+<td>$\vert$</td>
+<td><code>\vert</code></td>
+<td>}</td>
+<td><code>\}</code></td>
+<td>$\rfloor$</td>
+<td>\rfloor</td>
+<td>$\backslash$</td>
+<td>\backslash</td>
+<td>$\uparrow$</td>
+<td>\uparrow</td>
+<td>$\lrcorner$</td>
+<td>\lrcorner</td>
+</tr>
+<tr>
+<td>$|$</td>
+<td><code>|</code></td>
+<td>$\langle$</td>
+<td>\langle</td>
+<td>$\lceil$</td>
+<td>\lceil</td>
+<td>$[$</td>
+<td><code>[</code></td>
+<td>$\Downarrow$</td>
+<td>\Downarrow</td>
+<td>$\ulcorner$</td>
+<td>\ulcorner</td>
+</tr>
+<tr>
+<td>$\Vert$</td>
+<td>\Vert</td>
+<td>$\rangle$</td>
+<td>\rangle</td>
+<td>$\rceil$</td>
+<td>\rceil</td>
+<td>$]$</td>
+<td><code>]</code></td>
+<td>$\downarrow$</td>
+<td>\downarrow</td>
+<td>$\urcorner$</td>
+<td>\urcorner</td>
+</tr>
+</tbody>
+</table>
+<pre tabindex="0"><code>$\{a\}$
+$f(x,y,z) = 3y^2z3+(\frac{7x+5}{1+y^2}) $
+$f(x,y,z) = 3y^2z + \left( 3 +\frac{7x+5}{1+y^2} \right)$
+</code></pre><p>$${a}$$
+$$f(x,y,z) = 3y^2z3+(\frac{7x+5}{1+y^2}) $$
+$$f(x,y,z) = 3y^2z+\left(3+\frac{7x+5}{1+y^2} \right)$$</p>
+<h3 id="省略号">省略号<a hidden class="anchor" aria-hidden="true" href="#省略号">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\ldots</code></td>
+<td>$\ldots$</td>
+<td></td>
+<td><code>\cdots</code></td>
+<td>$\cdots$</td>
+</tr>
+<tr>
+<td><code>\vdots</code></td>
+<td>$\vdots$</td>
+<td></td>
+<td><code>\ddots</code></td>
+<td>$\ddots$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="三角函数对数指数">三角函数、对数、指数<a hidden class="anchor" aria-hidden="true" href="#三角函数对数指数">#</a></h3>
+<p>三角函数、对数、指数的写法以及其他符号的语法和字母是一样的，也是使用LaTex符号，也就是将LaTex的希腊字母语法用两个美元符号围住即可，我们来看下面的案例：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\sin$</td>
+<td>\sin</td>
+<td>$\cos$</td>
+<td>\cos</td>
+<td>$\cot$</td>
+<td>\cot</td>
+<td>$\tan$</td>
+<td>\tan</td>
+</tr>
+<tr>
+<td>$\log$</td>
+<td>\log</td>
+<td>$\exp$</td>
+<td>\exp</td>
+<td>$\max$</td>
+<td>\max</td>
+<td>$\min$</td>
+<td>\min</td>
+</tr>
+</tbody>
+</table>
+<h3 id="运算符关系符">运算符、关系符<a hidden class="anchor" aria-hidden="true" href="#运算符关系符">#</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$+$</td>
+<td>+</td>
+<td>$-$</td>
+<td>-</td>
+<td>$\times$</td>
+<td>\times</td>
+<td>$\div$</td>
+<td>\div</td>
+</tr>
+<tr>
+<td>$=$</td>
+<td>=</td>
+<td>$&gt;$</td>
+<td>&gt;</td>
+<td>$&lt;$</td>
+<td>&lt;</td>
+<td>$\div$</td>
+<td>\div</td>
+</tr>
+<tr>
+<td>$\equiv$</td>
+<td>\equiv</td>
+<td>$\leq$</td>
+<td>\leq</td>
+<td>$\geq$</td>
+<td>\geq</td>
+<td>$\neq$</td>
+<td>\neq</td>
+</tr>
+<tr>
+<td>$\cup$</td>
+<td>\cup</td>
+<td>$\cap$</td>
+<td>\cap</td>
+<td>$\in$</td>
+<td>\in</td>
+<td>$\notin$</td>
+<td>\notin</td>
+</tr>
+<tr>
+<td>$\subset$</td>
+<td>\subset</td>
+<td>$\subseteq$</td>
+<td>\subseteq</td>
+<td>$\supset$</td>
+<td>\supset</td>
+<td>$\supseteq$</td>
+<td>\supseteq</td>
+</tr>
+<tr>
+<td>$\infty$</td>
+<td>\infty</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="矩阵">矩阵<a hidden class="anchor" aria-hidden="true" href="#矩阵">#</a></h3>
+<p>矩阵中，不同的列使用<code>&amp;</code>分割，行使用<code>\\</code>分割
+下面展示一系列矩阵环境排版, 区别在于外面的括号不同</p>
+<pre tabindex="0"><code>$$
+\begin{pmatrix}
+a &amp; b &amp; c \\
+d &amp; e &amp; f \\
+g &amp; h &amp; i 
+\end{pmatrix} 
+$$
+
+$$
+\chi(\lambda) =  
+\begin{vmatrix}
+\lambda - a &amp; -b &amp; -c \\
+-d &amp; \lambda - e &amp; -f \\
+-g &amp; -h &amp; \lambda - i 
+\end{vmatrix}
+$$
+</code></pre><p>$$
+\begin{pmatrix}
+a &amp; b &amp; c \\
+d &amp; e &amp; f \\
+g &amp; h &amp; i
+\end{pmatrix}
+$$</p>
+<p>$$
+\chi(\lambda) =<br>
+\begin{vmatrix}
+\lambda - a &amp; -b &amp; -c \\
+-d &amp; \lambda - e &amp; -f \\
+-g &amp; -h &amp; \lambda - i
+\end{vmatrix}
+$$</p>
+<h3 id="单行公式和多行公式">单行公式和多行公式<a hidden class="anchor" aria-hidden="true" href="#单行公式和多行公式">#</a></h3>
+<p><code>equation</code> 环境用来输入单行公式, 自动生成编号, 也可以使用 <code>\tag{...}</code> 自己对公式编号; 使用 <code>equation*</code> 环境, 不会自动生成公式编号, 后续介绍的公式输入环境都是在自动编号后面加上 <code>*</code> 便是不自动编号环境.</p>
+<pre tabindex="0"><code>$$
+\begin{equation}
+(a+b) \times c = a\times c + b \times c \\
+\end{equation}
+$$
+</code></pre><p>$$
+\begin{equation}
+(a+b) \times c = a\times c + b \times c \\
+\end{equation}
+$$</p>
+<pre tabindex="0"><code>$$
+\begin{equation*}
+(a+b) \times c = a\times c + b \times c \\
+\end{equation*}
+$$
+</code></pre><p>$$
+\begin{equation*}
+(a+b) \times c = a\times c + b \times c \
+\end{equation*}
+$$</p>
+<p>输入多行公式, <code>gather</code> 环境得到的公式是每行居中的, <code>align</code>环境则允许公式按照等号或者其他关系符对齐, 在关系符前加<code>&amp;</code>表示对齐</p>
+<pre tabindex="0"><code>$$
+\begin{gather}
+(a+b) \times c = a\times c + b \times c \notag \\
+ac= a\times c \\
+\end{gather}
+$$
+
+$$
+\begin{align}
+y &amp;= \cos t + 1 \\
+y &amp;= 2sin t \\
+\end{align}
+$$
+</code></pre><p>$$
+\begin{gather}
+(a+b) \times c = a\times c + b \times c \notag \\
+ac= a\times c \\
+\end{gather}
+$$</p>
+<p>$$
+\begin{align}
+y &amp;= \cos t + 1 \\
+y &amp;= 2sin t \\
+\end{align}
+$$</p>
+<p><code>align</code> 环境还允许排列多列对齐公式, 列与列之间使用<code>&amp;</code>分割</p>
+<pre tabindex="0"><code>$$
+\begin{align*}
+ x &amp;= t &amp; x &amp;= \cos t &amp;  x &amp;= t \\
+ y &amp;= 2t &amp; y &amp;= \sin (t+1) &amp; y &amp;= \sin t \\
+\end{align*}
+$$
+
+$$
+\begin{align*}
+&amp; (a+b)(a^2-ab+b^2) \\
+= {}&amp; a^3-a^2b+ab^2+a^2b-ab^2+b^2 \\
+= {}&amp; a^3 + b^3
+\end{align*}
+$$
+</code></pre><p>$$
+\begin{align*}
+x &amp;= t &amp; x &amp;= \cos t &amp;  x &amp;= t \\
+y &amp;= 2t &amp; y &amp;= \sin (t+1) &amp; y &amp;= \sin t \\
+\end{align*}
+$$</p>
+<p>$$
+\begin{align*}
+&amp; (a+b)(a^2-ab+b^2) \\
+= {}&amp; a^3-a^2b+ab^2+a^2b-ab^2+b^2 \\
+= {}&amp; a^3 + b^3
+\end{align*}
+$$</p>
+<p><code>align</code> 环境中列分隔符 <code>&amp;</code> 一般放在关系符前面, 如果个别需要再关系符后面或者别的地方对齐的, 则应该注意使用的符号类型</p>
+<pre tabindex="0"><code>$$
+% 关系符后对齐，需要使用空的分组
+% 代替关系符右侧符号，保证间距
+\begin{align*}
+    &amp; (a+b)(a^2-ab+b^2) \notag \\
+={ } &amp; a^3 - a^2b + ab^2 + a^2b
+      - ab^2 + b^2 \notag \\
+={ } &amp; a^3 + b^3 
+\end{align*}
+$$
+</code></pre><p>$$
+% 关系符后对齐，需要使用空的分组
+% 代替关系符右侧符号，保证间距
+\begin{align*}
+&amp; (a+b)(a^2-ab+b^2) \notag \
+={ } &amp; a^3 - a^2b + ab^2 + a^2b
+- ab^2 + b^2 \notag \
+={ } &amp; a^3 + b^3
+\end{align*}
+$$</p>
+<h3 id="跨多行的单个公式">跨多行的单个公式<a hidden class="anchor" aria-hidden="true" href="#跨多行的单个公式">#</a></h3>
+<p>单个公式很长的时候需要换行，但仅允许生成一个编号时，可以用 <code>split</code> 环境包围公式代码，在需要转行的地方使用 <code>\. split</code> 环境一般用在 <code>equation</code>, <code>gather</code> 环境里面, 可以把单个公式拆成多行, 同时支持 <code>align</code> 那样对齐公式.</p>
+<p><code>split</code> 环境不产生编号, 编号由外面的数学环境产生; 每行需要使用1个&amp;来标识对齐的位置，结束后可使用 <code>\tag{...}</code> 标签编号。 如果 <code>split</code> 环境中某一行不是在二元关系符前面对齐, 需要通过 <code>\quad</code> 等手段设置间距或对齐方式.</p>
+<pre tabindex="0"><code>$$
+% 注意 \tag{...} 编号的位置
+\begin{equation}
+\begin{split}
+\cos 2x &amp;= \cos^2 x - \sin^2 x \\
+        &amp;= 2\cos^2 x - 1  
+\end{split} \tag{3.1}
+\end{equation}  
+$$
+
+$$
+\begin{equation}\label{eq:trigonometric}
+\begin{split}
+\frac12 (\sin(x+y) + \sin(x-y))
+  &amp;= \frac12(\sin x\cos y + \cos x\sin y) \\
+  &amp; \quad + \frac12(\sin x\cos y - \cos x\sin y) \\
+  &amp;= \sin x\cos y
+\end{split}
+\end{equation}
+$$
+</code></pre><p>$$
+% 注意 \tag{&hellip;} 编号的位置
+\begin{equation}
+\begin{split}
+\cos 2x &amp;= \cos^2 x - \sin^2 x \\
+&amp;= 2\cos^2 x - 1<br>
+\end{split} \tag{3.1}
+\end{equation}<br>
+$$</p>
+<p>$$
+\begin{equation}
+\begin{split}
+\frac12 (\sin(x+y) + \sin(x-y))
+&amp;= \frac12(\sin x\cos y + \cos x\sin y) \\
+&amp; \quad + \frac12(\sin x\cos y - \cos x\sin y) \\
+&amp;= \sin x\cos y
+\end{split}
+\end{equation}
+$$</p>
+<h3 id="将公式组合为块">将公式组合为块<a hidden class="anchor" aria-hidden="true" href="#将公式组合为块">#</a></h3>
+<p>最常见的是 <code>case</code> 环境, 他在几行公式前面用花括号括起来, 表示几种不同的情况; 每行公式使用 <code>&amp;</code> 分隔, 便是表达式与条件, 例如</p>
+<pre tabindex="0"><code>$$
+\begin{equation}
+D(x) = \begin{cases}
+1, &amp; \text{if } x \in \mathbb{Q}; \\
+0, &amp; \text{if } x \in
+     \mathbb{R}\setminus\mathbb{Q}.
+\end{cases}
+\end{equation}
+$$
+</code></pre><p>$$
+\begin{equation}
+D(x) = \begin{cases}
+1, &amp; \text{if } x \in \mathbb{Q}; \\
+0, &amp; \text{if } x \in
+\mathbb{R}\setminus\mathbb{Q}.
+\end{cases}
+\end{equation}
+$$</p>
+<p><code>gathered</code>环境 将几行公式居中排列, 组合为一个整体;</p>
+<pre tabindex="0"><code>$$
+\left. \begin{gathered}
+S \subseteq T \\
+S \supseteq T
+\end{gathered} \right\}
+\implies S = T  
+$$
+</code></pre><p>$$
+\left. \begin{gathered}
+S \subseteq T \\
+S \supseteq T
+\end{gathered}
+\right\} \implies S = T<br>
+$$</p>
+<p><strong>说明</strong></p>
+<blockquote>
+<p>注意由于hugo会对字符进行转译，直接使用<code>\\\</code>编辑，在网页展示时会被替换成<code>\</code>，不能正常展示latex换行，而需要使用<code>\\\\\\</code>替换。</p>
+</blockquote>
+<h2 id="参考">参考<a hidden class="anchor" aria-hidden="true" href="#参考">#</a></h2>
+<ul>
+<li><a href="https://www.cnblogs.com/nowgood/p/Latexstart.html">https://www.cnblogs.com/nowgood/p/Latexstart.html</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/59412540">https://zhuanlan.zhihu.com/p/59412540</a></li>
+<li><a href="https://www.cmor-faculty.rice.edu/~heinken/latex/symbols.pdf">https://www.cmor-faculty.rice.edu/~heinken/latex/symbols.pdf</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/latex/">LaTeX</a></li>
+      <li><a href="https://shiqstone.github.io/tags/markdown/">MarkDown</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

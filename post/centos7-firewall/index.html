@@ -59,7 +59,12 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="centos7 防火墙和端口" />
+</noscript>
+
+
+
+
+<meta property="og:title" content="centos7 防火墙和端口" />
 <meta property="og:description" content="首先检查某端口是否开启： firewall-cmd --query-port=80/tcp --zone=public #查询80端口是否开启 返回no即未开启，显示yes为已开启
 开启某端口 firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口 修改完成后需要重启防火墙服务才能生效
 查看防火墙状态 systemctl status firewalld 有如下提示表示未开启 FirewallD is not running

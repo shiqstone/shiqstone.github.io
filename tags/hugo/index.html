@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>hexo | 他山笨石</title>
+<title>Hugo | 他山笨石</title>
 <meta name="keywords" content="">
 <meta name="description" content="Show no remorse">
 <meta name="author" content="">
-<link rel="canonical" href="https://shiqstone.github.io/tags/hexo/">
+<link rel="canonical" href="https://shiqstone.github.io/tags/hugo/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://shiqstone.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
@@ -18,7 +18,7 @@
 <link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/hexo/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/hugo/index.xml">
 <noscript>
     <style>
         #theme-toggle,
@@ -60,13 +60,13 @@
 
 
 
-<meta property="og:title" content="hexo" />
+<meta property="og:title" content="Hugo" />
 <meta property="og:description" content="Show no remorse" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://shiqstone.github.io/tags/hexo/" />
+<meta property="og:url" content="https://shiqstone.github.io/tags/hugo/" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="hexo"/>
+<meta name="twitter:title" content="Hugo"/>
 <meta name="twitter:description" content="Show no remorse"/>
 
 </head>
@@ -132,31 +132,23 @@
 <main class="main"> 
 <header class="page-header">
   <h1>
-    hexo
+    Hugo
   </h1>
 </header>
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
-    <h2>使用Hexo&#43;github搭建博客（基础）
+    <h2>让Hugo支持LaTex
     </h2>
   </header>
   <div class="entry-content">
-    <p>前提 安装Node.js，配置node环境 安装和配置git 注册github账号，新建项目，项目名设定为：{username}.github.io，并且勾选Initialize this repository with a README 安装Hexo 新建文件夹
-mkdir blog cd blog 安装Hexo
-npm install hexo -g 检查安装结果
-hexo -v 初始化
-hexo init 安装所有依赖组件
-npm install 生成blog网站代码
-hexo g 启动本地服务
-hexo s 如果启动成功，可访问http://localhost:4000 进行预览 如果页面无法访问，可能是本地端口被占用，可使用以下命令更改端口启动服务
-hexo server -p port 当出现如下界面表示服务启动成功 将hexo与github page关联起来 设置git的user和email
-git config --global user.name &#34;you name&#34; git config --global user.email &#34;you email&#34; 设置git免密信任授权，将本地~/.ssh/id_rsa.pub 文件的内容添加到github settings-&gt;SSH keys 测试ssh信任是否成功
-ssh -T git@github.com 配置Deployment，在文件夹中找到_config.yml配置文件，修改repo的值
-deploy: type: git repository: git@github....</p>
+    <p>Hugo本身不支持渲染数学公式，只能使用前端方式来处理。
+在已经生成的html页面中，使用javascript来渲染LaTex公式是一个可行思路，Mathjax是这方面最流行的库。
+方案 按以下步骤引入mathjax：
+在所使用的theme目录下新建layouts/partials/mathjax.html，添加内容 {{ if or .Params.math .Site.Params.math }} &lt;script&gt; MathJax = { tex: { inlineMath: [[&#39;$&#39;, &#39;$&#39;], [&#39;\\(&#39;, &#39;\\)&#39;]], displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\\[&#39;, &#39;\\]&#39;]], processEscapes: true, processEnvironments: true }, svg: { fontCache: &#34;global&#34;, }, options: { skipHtmlTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] } }; window.addEventListener(&#39;load&#39;, (event) =&gt; { document.querySelectorAll(&#34;mjx-container&#34;).forEach(function(x){ x.parentElement.classList &#43;= &#39;has-jax&#39;}) }); &lt;/script&gt; &lt;script src=&#34;https://polyfill.io/v3/polyfill.min.js?features=es6&#34;&gt;&lt;/script&gt; &lt;script type=&#34;text/javascript&#34; id=&#34;MathJax-script&#34; async src=&#34;https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js&#34;&gt;&lt;/script&gt; &lt;style&gt; code.has-jax { font: inherit; font-size: 100%; background: inherit; border: inherit; color: #515151; } &lt;/style&gt; {{- end }} &lt;!...</p>
   </div>
-  <footer class="entry-footer"><span title='2019-04-13 16:22:54 +0000 UTC'>April 13, 2019</span></footer>
-  <a class="entry-link" aria-label="post link to 使用Hexo&#43;github搭建博客（基础）" href="https://shiqstone.github.io/post/first-hexo/"></a>
+  <footer class="entry-footer"><span title='2022-11-03 11:18:20 +0800 CST'>November 3, 2022</span></footer>
+  <a class="entry-link" aria-label="post link to 让Hugo支持LaTex" href="https://shiqstone.github.io/post/latex_for_hugo/"></a>
 </article>
     </main>
     

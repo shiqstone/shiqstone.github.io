@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>MarkDown on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/markdown/</link>
+    <description>Recent content in MarkDown on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Thu, 03 Nov 2022 11:18:20 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/markdown/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>让Hugo支持LaTex</title>
+      <link>https://shiqstone.github.io/post/latex_for_hugo/</link>
+      <pubDate>Thu, 03 Nov 2022 11:18:20 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/latex_for_hugo/</guid>
+      <description>Hugo本身不支持渲染数学公式，只能使用前端方式来处理。
+在已经生成的html页面中，使用javascript来渲染LaTex公式是一个可行思路，Mathjax是这方面最流行的库。
+方案 按以下步骤引入mathjax：
+在所使用的theme目录下新建layouts/partials/mathjax.html，添加内容 {{ if or .Params.math .Site.Params.math }} &amp;lt;script&amp;gt; MathJax = { tex: { inlineMath: [[&amp;#39;$&amp;#39;, &amp;#39;$&amp;#39;], [&amp;#39;\\(&amp;#39;, &amp;#39;\\)&amp;#39;]], displayMath: [[&amp;#39;$$&amp;#39;,&amp;#39;$$&amp;#39;], [&amp;#39;\\[&amp;#39;, &amp;#39;\\]&amp;#39;]], processEscapes: true, processEnvironments: true }, svg: { fontCache: &amp;#34;global&amp;#34;, }, options: { skipHtmlTags: [&amp;#39;script&amp;#39;, &amp;#39;noscript&amp;#39;, &amp;#39;style&amp;#39;, &amp;#39;textarea&amp;#39;, &amp;#39;pre&amp;#39;] } }; window.addEventListener(&amp;#39;load&amp;#39;, (event) =&amp;gt; { document.querySelectorAll(&amp;#34;mjx-container&amp;#34;).forEach(function(x){ x.parentElement.classList += &amp;#39;has-jax&amp;#39;}) }); &amp;lt;/script&amp;gt; &amp;lt;script src=&amp;#34;https://polyfill.io/v3/polyfill.min.js?features=es6&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script type=&amp;#34;text/javascript&amp;#34; id=&amp;#34;MathJax-script&amp;#34; async src=&amp;#34;https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;style&amp;gt; code.has-jax { font: inherit; font-size: 100%; background: inherit; border: inherit; color: #515151; } &amp;lt;/style&amp;gt; {{- end }} &amp;lt;!</description>
+    </item>
+    
+    <item>
+      <title>MarkDown 中使用 LaTeX 数学式</title>
+      <link>https://shiqstone.github.io/post/latex_in_markdown/</link>
+      <pubDate>Wed, 12 Oct 2022 16:25:27 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/latex_in_markdown/</guid>
+      <description>在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown + LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。
+在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。
+行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。 行内公式 $...$
+行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。 行间公式 $$...$$
+行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots$ 行间 $${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots \tag{1.1}$$ 行内 ${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots$
+行间 $${f(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}}+\cdots \tag{1.1}$$
+LaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，莱斯大学LaTex Math在线PDF手册。
+当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。
+希腊字母 使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:
+α \alpha κ \kappa ψ \psi z \digamma ∆ \Delta Θ \Theta β \beta λ \lambda ρ \rho ε \varepsilon Γ \Gamma Υ \Upsilon χ \chi µ \mu σ \sigma κ \varkappa Λ \Lambda Ξ \Xi δ \delta ν \nu τ \tau ϕ \varphi Ω \Omega ϵ \epsilon o o θ \theta $ \varpi Φ \Phi ℵ \aleph η \eta ω \omega υ \upsilon % \varrho Π \Pi i \beth γ \gamma φ \phi ξ \xi ς \varsigma Ψ \Psi k \daleth ι \iota π \pi ζ \zeta ϑ \vartheta Σ \Sigma 值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。</description>
+    </item>
+    
+  </channel>
+</rss>

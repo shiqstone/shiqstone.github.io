@@ -57,7 +57,12 @@ ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 packag
         }
 
     </style>
-</noscript><meta property="og:title" content="尝试使用Go截取视频生成缩略图" />
+</noscript>
+
+
+
+
+<meta property="og:title" content="尝试使用Go截取视频生成缩略图" />
 <meta property="og:description" content="1 基本命令 使用ffmpeg截取视频生成图片，原始命令为
 ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( &#34;bytes&#34; &#34;fmt&#34; &#34;os/exec&#34; ) func main() { filename := &#34;test.mp4&#34; width := 288 height := 512 output := &#34;output.jpg&#34; cmd := exec.Command(&#34;ffmpeg&#34;, &#34;-i&#34;, filename, &#34;-vframes&#34;, &#34;1&#34;, &#34;-s&#34;, fmt.Sprintf(&#34;%dx%d&#34;, width, height), &#34;-f&#34;, &#34;singlejpeg&#34;, output) var buffer bytes.Buffer cmd.Stdout = &amp;buffer if cmd.Run() != nil { panic(&#34;could not generate frame&#34;) } } 3 查询数据库 增加从mysql数据库读取视频路径" />
 <meta property="og:type" content="article" />

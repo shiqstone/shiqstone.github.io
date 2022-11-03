@@ -64,7 +64,12 @@ location ^~/A { alias /XX/A;//此处为A的路径 index index.html; try_files $u
         }
 
     </style>
-</noscript><meta property="og:title" content="vue-router&#43;nginx 路径配置方法" />
+</noscript>
+
+
+
+
+<meta property="og:title" content="vue-router&#43;nginx 路径配置方法" />
 <meta property="og:description" content="vue-router 的默认数据hash模式-使用url的hash来模拟一个完整的URL，于是当URL改变时，页面不会重新加载。
 一般情况下，我们不喜欢丑丑的hash，类似于index.html#/matchResult，可以使用路由的history模式。history模式是利用history.pushState API来实现页面跳转。
 但是有个问题，在使用nginx的时候，我们需要添加一些配置。

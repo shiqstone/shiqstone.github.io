@@ -63,7 +63,12 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="在Linux下如何防止定时脚本重复执行" />
+</noscript>
+
+
+
+
+<meta property="og:title" content="在Linux下如何防止定时脚本重复执行" />
 <meta property="og:description" content="场景 好多系统中会用到邮件系统，我们假设有一个 PHP 脚本用来发送邮件。使用 Linux cron 每分钟执行一次 我们暂时不引入队列系统，其实使用队列处理此方式更优。
 我们得到下面的基本配置
 * * * * * php /home/app/email.php 问题分析和解决 异常问题 如果这个邮件服务出现异常，进程僵死怎么办？ 假设由于未知因素， email.php 脚本一直执行，没有退出。极端的情况，进入一个 while 死循环。 这下倒好，原来说好的一分钟执行一次，现在一直死这边了，后面的脚本也不能跑了

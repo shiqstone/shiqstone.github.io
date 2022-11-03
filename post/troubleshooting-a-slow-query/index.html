@@ -60,7 +60,12 @@ mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconne
         }
 
     </style>
-</noscript><meta property="og:title" content="一次慢查询问题的排查" />
+</noscript>
+
+
+
+
+<meta property="og:title" content="一次慢查询问题的排查" />
 <meta property="og:description" content="问题发现 某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒 结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢
 问题分析 有问题的sql如下
 mysql&gt; select count(*) from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null; &#43;----------&#43; | count(*) | &#43;----------&#43; | 229330 | &#43;----------&#43; 1 row in set (41.34 sec) 首先看了一下全表数据，接近千万级，但是有趣的是耗时只有不到4s，对于千万级的表，勉强可以接收
