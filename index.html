@@ -2,7 +2,7 @@
 <html lang="en" dir="auto">
 
 <head>
-	<meta name="generator" content="Hugo 0.101.0" /><meta charset="utf-8">
+	<meta name="generator" content="Hugo 0.102.3" /><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
@@ -146,6 +146,23 @@
 <main class="main"> 
 
 <article class="first-entry"> 
+  <header class="entry-header">
+    <h2>命令行的艺术
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>命令行的艺术 转自：GitHub github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md
+这篇文章是许多作者和译者共同的成果。 这里的部分内容 首次 出现 于 Quora， 但已经迁移到了 Github，并由众多高手做出了许多改进。 如果你在本文中发现了错误或者存在可以改善的地方，请贡献你的一份力量。
+前言 涵盖范围：
+这篇文章不仅能帮助刚接触命令行的新手，而且对具有经验的人也大有裨益。本文致力于做到覆盖面广（涉及所有重要的内容），具体（给出具体的最常用的例子），以及简洁（避免冗余的内容，或是可以在其他地方轻松查到的细枝末节）。在特定应用场景下，本文的内容属于基本功或者能帮助您节约大量的时间。 本文主要为 Linux 所写，但在仅限 OS X 系统章节和仅限 Windows 系统章节中也包含有对应操作系统的内容。除去这两个章节外，其它的内容大部分均可在其他类 Unix 系统或 OS X，甚至 Cygwin 中得到应用。 本文主要关注于交互式 Bash，但也有很多技巧可以应用于其他 shell 和 Bash 脚本当中。 除去“标准的”Unix 命令，本文还包括了一些依赖于特定软件包的命令（前提是它们具有足够的价值）。 注意事项：
+为了能在一页内展示尽量多的东西，一些具体的信息可以在引用的页面中找到。我们相信机智的你知道如何使用 Google 或者其他搜索引擎来查阅到更多的详细信息。文中部分命令需要您使用 apt-get，yum，dnf，pacman， pip 或 brew（以及其它合适的包管理器）来安装依赖的程序。 遇到问题的话，请尝试使用 Explainshell 去获取相关命令、参数、管道等内容的解释。 基础 学习 Bash 的基础知识。具体地，在命令行中输入 man bash 并至少全文浏览一遍; 它理解起来很简单并且不冗长。其他的 shell 可能很好用，但 Bash 的功能已经足够强大并且到几乎总是可用的（ 如果你只学习 zsh，fish 或其他的 shell 的话，在你自己的设备上会显得很方便，但过度依赖这些功能会给您带来不便，例如当你需要在服务器上工作时）。
+熟悉至少一个基于文本的编辑器。通常而言 Vim （vi） 会是你最好的选择，毕竟在终端中编辑文本时 Vim 是最好用的工具（甚至大部分情况下 Vim 要比 Emacs、大型 IDE 或是炫酷的编辑器更好用）。...</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-02-08 15:08:29 +0800 CST'>February 8, 2023</span></footer>
+  <a class="entry-link" aria-label="post link to 命令行的艺术" href="https://shiqstone.github.io/post/the-art-of-command-line/"></a>
+</article>
+
+<article class="post-entry"> 
   <header class="entry-header">
     <h2>让Hugo支持LaTex
     </h2>
@@ -304,18 +321,6 @@ ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 packag
   <footer class="entry-footer"><span title='2020-01-31 18:44:26 +0000 UTC'>January 31, 2020</span></footer>
   <a class="entry-link" aria-label="post link to 尝试使用Go截取视频生成缩略图" href="https://shiqstone.github.io/post/try-golang-snapshot-video-thumb/"></a>
 </article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>windows程序员常见乱码问题汇总
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p> 名称 示例 特点 产生原因 古文码 鍝堝搱鐪嬪埌瀹堕噷鐫″ぇ瑙� 大都为不认识的古文，夹杂日韩文 以GBK方式读取UTF-8编码的中文 口子码 ����������� 大部分字符为小方块 以UTF-8方式读取GBK编码的中文 符号码 å“ˆå“ˆçœ‹åˆ°å®¶é‡Œç¡å¤§è§‰ 大部分字符为各种符号 以ISO8859-1方式读取UTF-8编码的中文 拼音码 ¿¨·É»úÉÏµÄ 大部分字符为头顶带各种类似声调符号的字母 以ISO8859-1方式读取GBK编码的中文 问句码 幽月要好好学习天天向?? 字符串长度为偶数时正常，长度为奇数时最后几个字符变为问号 以GBK的方式读取UTF-8编码的中文，然后用UTF-8格式再次读取 锟拷码 锟斤拷锟斤拷锟斤拷锟 全中文字符，且大部分文字为“锟斤拷”几个字符 以UTF-8方式读取GBK编码的中文，然后用GBK格式再次读取 </p>
-  </div>
-  <footer class="entry-footer"><span title='2019-08-18 13:14:45 +0000 UTC'>August 18, 2019</span></footer>
-  <a class="entry-link" aria-label="post link to windows程序员常见乱码问题汇总" href="https://shiqstone.github.io/post/gibberish/"></a>
-</article>
 <footer class="page-footer">
   <nav class="pagination">
     <a class="next" href="https://shiqstone.github.io/page/2/">Next »</a>
@@ -324,7 +329,7 @@ ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 packag
     </main>
     
 <footer class="footer">
-    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>&copy; 2023 <a href="https://shiqstone.github.io">他山笨石</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &

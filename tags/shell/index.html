@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>nginx | 他山笨石</title>
+<title>shell | 他山笨石</title>
 <meta name="keywords" content="">
 <meta name="description" content="Show no remorse">
 <meta name="author" content="">
-<link rel="canonical" href="https://shiqstone.github.io/tags/nginx/">
+<link rel="canonical" href="https://shiqstone.github.io/tags/shell/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://shiqstone.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
@@ -18,7 +18,7 @@
 <link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/nginx/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/shell/index.xml">
 <noscript>
     <style>
         #theme-toggle,
@@ -60,13 +60,13 @@
 
 
 
-<meta property="og:title" content="nginx" />
+<meta property="og:title" content="shell" />
 <meta property="og:description" content="Show no remorse" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://shiqstone.github.io/tags/nginx/" />
+<meta property="og:url" content="https://shiqstone.github.io/tags/shell/" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="nginx"/>
+<meta name="twitter:title" content="shell"/>
 <meta name="twitter:description" content="Show no remorse"/>
 
 </head>
@@ -132,28 +132,25 @@
 <main class="main"> 
 <header class="page-header">
   <h1>
-    nginx
+    shell
   </h1>
 </header>
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
-    <h2>vue-router&#43;nginx 路径配置方法
+    <h2>命令行的艺术
     </h2>
   </header>
   <div class="entry-content">
-    <p>vue-router 的默认数据hash模式-使用url的hash来模拟一个完整的URL，于是当URL改变时，页面不会重新加载。
-一般情况下，我们不喜欢丑丑的hash，类似于index.html#/matchResult，可以使用路由的history模式。history模式是利用history.pushState API来实现页面跳转。
-但是有个问题，在使用nginx的时候，我们需要添加一些配置。
-直接配置在根路径下 直接配置在根路径下，访问的时候只用输入http://yoursite.com，在nginx的配置如下
-location / { try_files $uri $uri/ /index.html; } 非根路径配置 如果一个域名下有多个项目，那么使用根路径配置就不合适了，我们需要在根路径下指定一层路径，比如说
-A项目
-http://yoursite.com/A B项目
-http://yoursite.com/B nginx的配置
-location ^~/A { alias /XX/A;//此处为A的路径 index index.html; try_files $uri $uri/ /A/index.html; } location ^~/B { alias /XX/B;//此处为B的路径 index index.html; try_files $uri $uri/ /B/index.html; } tip: 注意要用alias不能用root</p>
+    <p>命令行的艺术 转自：GitHub github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md
+这篇文章是许多作者和译者共同的成果。 这里的部分内容 首次 出现 于 Quora， 但已经迁移到了 Github，并由众多高手做出了许多改进。 如果你在本文中发现了错误或者存在可以改善的地方，请贡献你的一份力量。
+前言 涵盖范围：
+这篇文章不仅能帮助刚接触命令行的新手，而且对具有经验的人也大有裨益。本文致力于做到覆盖面广（涉及所有重要的内容），具体（给出具体的最常用的例子），以及简洁（避免冗余的内容，或是可以在其他地方轻松查到的细枝末节）。在特定应用场景下，本文的内容属于基本功或者能帮助您节约大量的时间。 本文主要为 Linux 所写，但在仅限 OS X 系统章节和仅限 Windows 系统章节中也包含有对应操作系统的内容。除去这两个章节外，其它的内容大部分均可在其他类 Unix 系统或 OS X，甚至 Cygwin 中得到应用。 本文主要关注于交互式 Bash，但也有很多技巧可以应用于其他 shell 和 Bash 脚本当中。 除去“标准的”Unix 命令，本文还包括了一些依赖于特定软件包的命令（前提是它们具有足够的价值）。 注意事项：
+为了能在一页内展示尽量多的东西，一些具体的信息可以在引用的页面中找到。我们相信机智的你知道如何使用 Google 或者其他搜索引擎来查阅到更多的详细信息。文中部分命令需要您使用 apt-get，yum，dnf，pacman， pip 或 brew（以及其它合适的包管理器）来安装依赖的程序。 遇到问题的话，请尝试使用 Explainshell 去获取相关命令、参数、管道等内容的解释。 基础 学习 Bash 的基础知识。具体地，在命令行中输入 man bash 并至少全文浏览一遍; 它理解起来很简单并且不冗长。其他的 shell 可能很好用，但 Bash 的功能已经足够强大并且到几乎总是可用的（ 如果你只学习 zsh，fish 或其他的 shell 的话，在你自己的设备上会显得很方便，但过度依赖这些功能会给您带来不便，例如当你需要在服务器上工作时）。
+熟悉至少一个基于文本的编辑器。通常而言 Vim （vi） 会是你最好的选择，毕竟在终端中编辑文本时 Vim 是最好用的工具（甚至大部分情况下 Vim 要比 Emacs、大型 IDE 或是炫酷的编辑器更好用）。...</p>
   </div>
-  <footer class="entry-footer"><span title='2019-08-11 19:09:48 +0000 UTC'>August 11, 2019</span></footer>
-  <a class="entry-link" aria-label="post link to vue-router&#43;nginx 路径配置方法" href="https://shiqstone.github.io/post/vue-route-nginx/"></a>
+  <footer class="entry-footer"><span title='2023-02-08 15:08:29 +0800 CST'>February 8, 2023</span></footer>
+  <a class="entry-link" aria-label="post link to 命令行的艺术" href="https://shiqstone.github.io/post/the-art-of-command-line/"></a>
 </article>
     </main>
     

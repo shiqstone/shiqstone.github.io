@@ -153,6 +153,18 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>windows程序员常见乱码问题汇总
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 名称 示例 特点 产生原因 古文码 鍝堝搱鐪嬪埌瀹堕噷鐫″ぇ瑙� 大都为不认识的古文，夹杂日韩文 以GBK方式读取UTF-8编码的中文 口子码 ����������� 大部分字符为小方块 以UTF-8方式读取GBK编码的中文 符号码 å“ˆå“ˆçœ‹åˆ°å®¶é‡Œç¡å¤§è§‰ 大部分字符为各种符号 以ISO8859-1方式读取UTF-8编码的中文 拼音码 ¿¨·É»úÉÏµÄ 大部分字符为头顶带各种类似声调符号的字母 以ISO8859-1方式读取GBK编码的中文 问句码 幽月要好好学习天天向?? 字符串长度为偶数时正常，长度为奇数时最后几个字符变为问号 以GBK的方式读取UTF-8编码的中文，然后用UTF-8格式再次读取 锟拷码 锟斤拷锟斤拷锟斤拷锟 全中文字符，且大部分文字为“锟斤拷”几个字符 以UTF-8方式读取GBK编码的中文，然后用GBK格式再次读取 </p>
+  </div>
+  <footer class="entry-footer"><span title='2019-08-18 13:14:45 +0000 UTC'>August 18, 2019</span></footer>
+  <a class="entry-link" aria-label="post link to windows程序员常见乱码问题汇总" href="https://shiqstone.github.io/post/gibberish/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>vue-router&#43;nginx 路径配置方法
     </h2>
   </header>
@@ -287,7 +299,7 @@ Deploy to remote sites $ hexo deploy More info: Deployment</p>
     </main>
     
 <footer class="footer">
-    <span>&copy; 2022 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>&copy; 2023 <a href="https://shiqstone.github.io">他山笨石</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
