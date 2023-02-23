@@ -6,7 +6,26 @@
     <description>Recent content in shell on 他山笨石</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh_CN</language>
-    <lastBuildDate>Wed, 08 Feb 2023 15:08:29 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/shell/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 21 Feb 2023 16:18:36 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/shell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>编写Shell脚本的一些知识点</title>
+      <link>https://shiqstone.github.io/post/how-to-write-shell-script/</link>
+      <pubDate>Tue, 21 Feb 2023 16:18:36 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/how-to-write-shell-script/</guid>
+      <description>最近经常需要上服务器修改一个配置文件端口，操作倒是不多，但是每次都要重复命令略麻烦，所以准备写一个脚本来简化操作。因为有段时间没有写shell脚本，有点手生，简单点东西连查资料带写也花了半天多。作为总结，把过程中遇到的一些点复盘一下，算不上系统的知识整理。
+需求描述 具体场景是一个远程服务器上的服务端口会不定期失效，目前修复服务的方法就是
+远程登录到服务器上 修改配置文件中的端口号 重启服务 开放防火墙端口 在本地验证远程服务端口状态 现有操作主要用到下面的命令：
+ssh $user@$host vim /usr/local/etc/xray/config.json systemctl restart xray firewall-cmd --zone=public --add-port=10086/tcp 部署这个服务所需的准备工作，如需要购买vps，安装linux系统，安装xray，配置服务器的免密登录等，此处不做详细说明。
+接受参数 脚本主要功能是登录到远程服务器上修改端口配置，如果服务器IP，登录用户名，端口都是固定的，可以直接在代码中写死，但考虑脚本的可复用性，会声明几个变量，并设定默认值。
+常用的几种获取参数的方式有以下几种：
+直接获取，使用$1,$2,$3…进行解析 使用getopt函数: 单个字符选项的情况，例如：-n 10 -f file.txt等选项 使用getopts函数：可同时接受短命令和长命令，如：–prefix=/home等 直接获取 shell脚本自动将命令行参数赋给各个位置参数，输入参数以空格分隔（如果想在参数中使用空格，需要用引号引起来）；在程序中使用${n}，$0为程序名，$1为第一个参数，$2 ... $9为第二到第九个参数，参数超过9个之后，需要用大括号的方式获取${12}
+```bash # bash test.sh a b c echo $0 # test.sh echo $1 # a echo $2 # b echo $3 # c ``` 这种方式优点在于简单直接，不需要做特殊处理就可以直接获取并使用参数，但缺点是不灵活，所有参数需要严格按顺序输入，且不能缺省，如果添加、删除以及调整参数顺序时，都需要小心修改程序；同时，参数比较多时，使用脚本不方便记忆。
+使用getopts函数 getopts是shell中内建的命令，它的使用语法相对getopt简单，但它不支持长命令参数（--option）。它不会重排列所有参数的顺序，选项参数的格式必须是-d val，而不能是中间没有空格的-dval，遇到非-开头的参数，或者选项参数结束标记&amp;ndash;就中止了，如果中间遇到非选项的命令行参数，后面的选项参数就都取不到了，出现的目的仅仅是为了代替getopt较快捷方便的执行参数的分析。
+命令格式为getopts optstring name [arg]
+#!/bin/sh while getopts &amp;#34;:b:o:h&amp;#34; opt_name do case $opt_name in b) echo &amp;#34;-b Option is recognized, argument=$OPTARG&amp;#34; ;; o) echo &amp;#34;-o Option is recognized, argument=$OPTARG&amp;#34; ;; h) echo &amp;#34;-h Option is recognized&amp;#34; ;; :) echo &amp;#34;$OPTARG Option need a argument&amp;#34; ;; esac done optstring：表示要识别的命令行选项形式，如果一个字母后面有一个&amp;quot;:&amp;quot;，表示该命令行选项后面要跟一个参数。如optsting写成&amp;quot;co:f:&amp;quot;，表示支持-c、-o、-f选项识别，-o和-f选项后面需要跟一个参数</description>
+    </item>
+    
     <item>
       <title>命令行的艺术</title>
       <link>https://shiqstone.github.io/post/the-art-of-command-line/</link>

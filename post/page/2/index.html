@@ -153,6 +153,19 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>尝试使用Go截取视频生成缩略图
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>1 基本命令 使用ffmpeg截取视频生成图片，原始命令为
+ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( &#34;bytes&#34; &#34;fmt&#34; &#34;os/exec&#34; ) func main() { filename := &#34;test.mp4&#34; width := 288 height := 512 output := &#34;output.jpg&#34; cmd := exec.Command(&#34;ffmpeg&#34;, &#34;-i&#34;, filename, &#34;-vframes&#34;, &#34;1&#34;, &#34;-s&#34;, fmt.Sprintf(&#34;%dx%d&#34;, width, height), &#34;-f&#34;, &#34;singlejpeg&#34;, output) var buffer bytes.Buffer cmd.Stdout = &amp;buffer if cmd.Run() != nil { panic(&#34;could not generate frame&#34;) } } 3 查询数据库 增加从mysql数据库读取视频路径...</p>
+  </div>
+  <footer class="entry-footer"><span title='2020-01-31 18:44:26 +0000 UTC'>January 31, 2020</span></footer>
+  <a class="entry-link" aria-label="post link to 尝试使用Go截取视频生成缩略图" href="https://shiqstone.github.io/post/try-golang-snapshot-video-thumb/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>windows程序员常见乱码问题汇总
     </h2>
   </header>
