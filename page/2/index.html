@@ -147,6 +147,22 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>一次慢查询问题的排查
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>问题发现 某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒 结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢
+问题分析 有问题的sql如下
+mysql&gt; select count(*) from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null; &#43;----------&#43; | count(*) | &#43;----------&#43; | 229330 | &#43;----------&#43; 1 row in set (41.34 sec) 首先看了一下全表数据，接近千万级，但是有趣的是耗时只有不到4s，对于千万级的表，勉强可以接收
+mysql&gt; select count(*) from test_tab; &#43;----------&#43; | count(*) | &#43;----------&#43; | 9469766 | &#43;----------&#43; 1 row in set (3.86 sec) 更有意思的是，执行相同条件查询数据记录的sql，结果10ms就返回了
+mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null order by update_time desc limit 0, 20; &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; | id | label | call_round | dial_start_time | dial_duration | disconnect_reason | update_time | &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; | 17510408 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:09 | | 17510411 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:08 | | 17510421 | E | 8 | 2020-01-10 20:59:43 | 78 | NULL | 2020-01-10 21:00:58 | | 17510418 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:00:54 | | 17510407 | C | 15 | 2020-01-10 20:59:33 | 78 | NULL | 2020-01-10 21:00:48 | | 17510416 | A | 8 | 2020-01-10 20:59:34 | 57 | NULL | 2020-01-10 21:00:28 | | 17510413 | C | 2 | 2020-01-10 21:00:04 | 20 | NULL | 2020-01-10 21:00:21 | | 17510415 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:20 | | 17510412 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:18 | | 17510423 | C | 4 | 2020-01-10 20:59:49 | 31 | NULL | 2020-01-10 21:00:17 | | 17510420 | C | 1 | 2020-01-10 20:59:46 | 4 | NULL | 2020-01-10 20:59:47 | | 17510424 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:44 | | 17510410 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:41 | | 17510419 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:38 | | 17510437 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:37 | | 17510441 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:35 | | 17510417 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:34 | | 17510414 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:32 | | 17510409 | F | NULL | NULL | NULL | 8 | 2020-01-10 20:59:31 | | 17510422 | F | NULL | NULL | NULL | 6 | 2020-01-10 20:59:29 | &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; 20 rows in set (0....</p>
+  </div>
+  <footer class="entry-footer"><span title='2020-02-01 11:55:30 +0000 UTC'>February 1, 2020</span></footer>
+  <a class="entry-link" aria-label="post link to 一次慢查询问题的排查" href="https://shiqstone.github.io/post/troubleshooting-a-slow-query/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>尝试使用Go截取视频生成缩略图
     </h2>
   </header>

@@ -147,6 +147,22 @@
 
 <article class="first-entry"> 
   <header class="entry-header">
+    <h2>如何在Mac上用西班牙语输入法输入特殊字符
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Mac在不同国家会根据当地语言习惯提供不同布局的键盘，主要版本包括美版、欧版、日版等，不同版本的键盘布局和输入内容也都略有不同。中国大陆使用的键盘是美版布局，也是大家日常最为习惯的键盘。
+最近需要使用西班牙语，首先需要在输入法中添加 ES 西班牙，之后通过切换输入法就可以开始使用，输入法设置有西语和拉丁美洲两种不同的键盘映射，此处对我影响不大，默认选择了西班牙。
+开始使用时，必然会用到的几个符号包括，重音符号，分音符号，ñ，感叹号，问号等，通过搜索整理，分别如下（以下说明用美版键盘标记）：
+重音符号： &#39; &#43; a (元音字母) 可得 á, é, í, ó, ú 分音符号： ⇧ &#43; &#39; &#43; u 如 güe ñ：; 问号：⇧ &#43; =和⇧ &#43; - 可得 ¿? 感叹号：=和⇧ &#43; 1 可得 ¡! 完整符号映射如下
+US ` 1 2 3 4 5 6 7 8 9 0 - = [ ] \ ; &#39; , . / ES &lt; 1 2 3 4 5 6 7 8 9 0 &#39; ¡ ` &#43; ç ñ ´ , ....</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-02-24 13:56:13 +0800 CST'>February 24, 2023</span></footer>
+  <a class="entry-link" aria-label="post link to 如何在Mac上用西班牙语输入法输入特殊字符" href="https://shiqstone.github.io/post/how-to-type-special-characters-on-mac-keyboard/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>编写Shell脚本的一些知识点
     </h2>
   </header>
@@ -313,22 +329,6 @@ a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，
   </div>
   <footer class="entry-footer"><span title='2020-03-01 17:13:08 +0000 UTC'>March 1, 2020</span></footer>
   <a class="entry-link" aria-label="post link to centos7 防火墙和端口" href="https://shiqstone.github.io/post/centos7-firewall/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>一次慢查询问题的排查
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>问题发现 某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒 结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢
-问题分析 有问题的sql如下
-mysql&gt; select count(*) from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null; &#43;----------&#43; | count(*) | &#43;----------&#43; | 229330 | &#43;----------&#43; 1 row in set (41.34 sec) 首先看了一下全表数据，接近千万级，但是有趣的是耗时只有不到4s，对于千万级的表，勉强可以接收
-mysql&gt; select count(*) from test_tab; &#43;----------&#43; | count(*) | &#43;----------&#43; | 9469766 | &#43;----------&#43; 1 row in set (3.86 sec) 更有意思的是，执行相同条件查询数据记录的sql，结果10ms就返回了
-mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null order by update_time desc limit 0, 20; &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; | id | label | call_round | dial_start_time | dial_duration | disconnect_reason | update_time | &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; | 17510408 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:09 | | 17510411 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:08 | | 17510421 | E | 8 | 2020-01-10 20:59:43 | 78 | NULL | 2020-01-10 21:00:58 | | 17510418 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:00:54 | | 17510407 | C | 15 | 2020-01-10 20:59:33 | 78 | NULL | 2020-01-10 21:00:48 | | 17510416 | A | 8 | 2020-01-10 20:59:34 | 57 | NULL | 2020-01-10 21:00:28 | | 17510413 | C | 2 | 2020-01-10 21:00:04 | 20 | NULL | 2020-01-10 21:00:21 | | 17510415 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:20 | | 17510412 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:18 | | 17510423 | C | 4 | 2020-01-10 20:59:49 | 31 | NULL | 2020-01-10 21:00:17 | | 17510420 | C | 1 | 2020-01-10 20:59:46 | 4 | NULL | 2020-01-10 20:59:47 | | 17510424 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:44 | | 17510410 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:41 | | 17510419 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:38 | | 17510437 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:37 | | 17510441 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:35 | | 17510417 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:34 | | 17510414 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:32 | | 17510409 | F | NULL | NULL | NULL | 8 | 2020-01-10 20:59:31 | | 17510422 | F | NULL | NULL | NULL | 6 | 2020-01-10 20:59:29 | &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; 20 rows in set (0....</p>
-  </div>
-  <footer class="entry-footer"><span title='2020-02-01 11:55:30 +0000 UTC'>February 1, 2020</span></footer>
-  <a class="entry-link" aria-label="post link to 一次慢查询问题的排查" href="https://shiqstone.github.io/post/troubleshooting-a-slow-query/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

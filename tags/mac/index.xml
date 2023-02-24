@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>mac on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/mac/</link>
+    <description>Recent content in mac on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Fri, 24 Feb 2023 13:56:13 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/mac/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何在Mac上用西班牙语输入法输入特殊字符</title>
+      <link>https://shiqstone.github.io/post/how-to-type-special-characters-on-mac-keyboard/</link>
+      <pubDate>Fri, 24 Feb 2023 13:56:13 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/how-to-type-special-characters-on-mac-keyboard/</guid>
+      <description>Mac在不同国家会根据当地语言习惯提供不同布局的键盘，主要版本包括美版、欧版、日版等，不同版本的键盘布局和输入内容也都略有不同。中国大陆使用的键盘是美版布局，也是大家日常最为习惯的键盘。
+最近需要使用西班牙语，首先需要在输入法中添加 ES 西班牙，之后通过切换输入法就可以开始使用，输入法设置有西语和拉丁美洲两种不同的键盘映射，此处对我影响不大，默认选择了西班牙。
+开始使用时，必然会用到的几个符号包括，重音符号，分音符号，ñ，感叹号，问号等，通过搜索整理，分别如下（以下说明用美版键盘标记）：
+重音符号： &#39; + a (元音字母) 可得 á, é, í, ó, ú 分音符号： ⇧ + &#39; + u 如 güe ñ：; 问号：⇧ + =和⇧ + - 可得 ¿? 感叹号：=和⇧ + 1 可得 ¡! 完整符号映射如下
+US ` 1 2 3 4 5 6 7 8 9 0 - = [ ] \ ; &#39; , . / ES &amp;lt; 1 2 3 4 5 6 7 8 9 0 &#39; ¡ ` + ç ñ ´ , .</description>
+    </item>
+    
+  </channel>
+</rss>
