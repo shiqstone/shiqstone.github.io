@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>简单理解Typescript里的泛型 | 他山笨石</title>
+<meta name="keywords" content="generics, TypeScript">
+<meta name="description" content="您可能认为 TypeScript 中的泛型（generics）实际上是三个独立的概念：
+将类型传递给类型 将类型传递给函数 从传递给函数的参数推断类型 // 1. Passing types to types type PartialUser = Partial&lt;{id: string; name: string}&gt;; // 2. Passing types to functions const stringSet = new Set&lt;string&gt;(); // 3. Inferring types from arguments passed to functions const objKeys = &lt;T extends object&gt;(obj: T) =&gt; { return Ojbect.keys(obj) as Array&lt;keyof T&gt;; }; const keys = objKeys({a: 1, b: 2}); // ^? const keys: (&#34;a&#34; | &#34;b&#34;)[] 让我们从将类型传递给类型开始。
+在 TypeScript 中，您可以声明一个表示对象、基元、函数的类型——任何您想要的类型。">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/understand-generics-in-typescript/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+
+
+
+<meta property="og:title" content="简单理解Typescript里的泛型" />
+<meta property="og:description" content="您可能认为 TypeScript 中的泛型（generics）实际上是三个独立的概念：
+将类型传递给类型 将类型传递给函数 从传递给函数的参数推断类型 // 1. Passing types to types type PartialUser = Partial&lt;{id: string; name: string}&gt;; // 2. Passing types to functions const stringSet = new Set&lt;string&gt;(); // 3. Inferring types from arguments passed to functions const objKeys = &lt;T extends object&gt;(obj: T) =&gt; { return Ojbect.keys(obj) as Array&lt;keyof T&gt;; }; const keys = objKeys({a: 1, b: 2}); // ^? const keys: (&#34;a&#34; | &#34;b&#34;)[] 让我们从将类型传递给类型开始。
+在 TypeScript 中，您可以声明一个表示对象、基元、函数的类型——任何您想要的类型。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/understand-generics-in-typescript/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-03-01T14:43:25&#43;08:00" />
+<meta property="article:modified_time" content="2023-03-01T14:43:25&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="简单理解Typescript里的泛型"/>
+<meta name="twitter:description" content="您可能认为 TypeScript 中的泛型（generics）实际上是三个独立的概念：
+将类型传递给类型 将类型传递给函数 从传递给函数的参数推断类型 // 1. Passing types to types type PartialUser = Partial&lt;{id: string; name: string}&gt;; // 2. Passing types to functions const stringSet = new Set&lt;string&gt;(); // 3. Inferring types from arguments passed to functions const objKeys = &lt;T extends object&gt;(obj: T) =&gt; { return Ojbect.keys(obj) as Array&lt;keyof T&gt;; }; const keys = objKeys({a: 1, b: 2}); // ^? const keys: (&#34;a&#34; | &#34;b&#34;)[] 让我们从将类型传递给类型开始。
+在 TypeScript 中，您可以声明一个表示对象、基元、函数的类型——任何您想要的类型。"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "简单理解Typescript里的泛型",
+      "item": "https://shiqstone.github.io/post/understand-generics-in-typescript/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "简单理解Typescript里的泛型",
+  "name": "简单理解Typescript里的泛型",
+  "description": "您可能认为 TypeScript 中的泛型（generics）实际上是三个独立的概念：\n将类型传递给类型 将类型传递给函数 从传递给函数的参数推断类型 // 1. Passing types to types type PartialUser = Partial\u0026lt;{id: string; name: string}\u0026gt;; // 2. Passing types to functions const stringSet = new Set\u0026lt;string\u0026gt;(); // 3. Inferring types from arguments passed to functions const objKeys = \u0026lt;T extends object\u0026gt;(obj: T) =\u0026gt; { return Ojbect.keys(obj) as Array\u0026lt;keyof T\u0026gt;; }; const keys = objKeys({a: 1, b: 2}); // ^? const keys: (\u0026#34;a\u0026#34; | \u0026#34;b\u0026#34;)[] 让我们从将类型传递给类型开始。\n在 TypeScript 中，您可以声明一个表示对象、基元、函数的类型——任何您想要的类型。",
+  "keywords": [
+    "generics", "TypeScript"
+  ],
+  "articleBody": "您可能认为 TypeScript 中的泛型（generics）实际上是三个独立的概念：\n将类型传递给类型 将类型传递给函数 从传递给函数的参数推断类型 // 1. Passing types to types type PartialUser = Partial\u003c{id: string; name: string}\u003e; // 2. Passing types to functions const stringSet = new Set\u003cstring\u003e(); // 3. Inferring types from arguments passed to functions const objKeys = \u003cT extends object\u003e(obj: T) =\u003e { return Ojbect.keys(obj) as Array\u003ckeyof T\u003e; }; const keys = objKeys({a: 1, b: 2}); // ^? const keys: (\"a\" | \"b\")[] 让我们从将类型传递给类型开始。\n在 TypeScript 中，您可以声明一个表示对象、基元、函数的类型——任何您想要的类型。\nexport type User = { id: string; name: string; }; export type ToString = (input: any) =\u003e string; 但是假设您需要创建一些具有相似结构的类型。 例如，数据形状。\n下面的代码不是很符合DRY —— 我们可以清理它吗？\ntype ErrorShape = { message: string; code: number; }; type GetUserData = { data: { id: string; name: string; }; error?: ErrorShape; }; type GetPostsData = { data: { id: string; title: string; }[]; error?: ErrorShape; }; type GetCommentsData = { data: { id: string; content: string; }[]; error?: ErrorShape; }; 如果您倾向于 OOP，则可以使用可重用的界面来做到这一点…\ninterface DataBaseInterface { error?: ErrorShape; } interface GetUserData extends DataBaseInterface { data: { id: string; name: string; }; } interface GetPostsData extends DataBaseInterface { data: { id: string; title: string; }[]; } interface GetCommentsData extends DataBaseInterface { data: { id: string; content: string; }[]; } 但是创建一个“类型函数”更简洁，它接受数据类型并返回新的数据形状。\n// Our new type function! type DataShape\u003cTData\u003e = { data: TData; error?: ErrorShape; }; type GetUserData = DataShape\u003c{ id: string; name: string; }\u003e; type GetPostsData = DataShape\u003c { id: string; title: string; }[] \u003e; type GetCommentsData = DataShape\u003c { id: string; content: string; }[] \u003e; 理解这个语法很重要，因为它会在后面出现。\n尖括号 告诉 TypeScript 我们要向该类型添加一个type argument。\n我们可以给 TData 起任何名字，它就像一个函数的参数。\n这是一个通用类型。\n// Generic type type DataShape\u003cTData\u003e = { data: TData; error?: ErrorShape; }; // Passing our generic type // another type type GetPostsData = DataShape\u003c { id: string; title: string; }[] \u003e; 通用类型可以接受多个类型参数。您可以为类型参数提供默认值。您甚至可以对类型参数提供约束，以便只能传递某些类型。 但是，现在我们先继续之前的话题。\n如果我告诉您,可以将类型传递给的不只是types，您会怎么办？\nconst createSet = \u003cT\u003e() =\u003e { return new Set\u003cT\u003e(); }; const stringSet = createSet\u003cstring\u003e(); // ^? const stringSet : Set const numberSet = createSet\u003cnumber\u003e(); // ^? const numberSet : Set 没错——就像类型可以接受类型作为参数一样，函数也可以。\n在本例中，我们在声明 createSet 时在括号前添加了一个 。\n然后我们将该 手动传递给 Set()，它本身允许您传递类型参数。\nexport const createSet = \u003cT\u003e() =\u003e { return new Set\u003cT\u003e(); }; 这意味着当我们调用它时，我们可以将 的类型参数传递给 createSet。 我们最终得到了一个只能传递字符串的集合。\nconst stringSet = createSet\u003cstring\u003e(); // Argument of type 'number' is not assignable // to parameter of type 'string'. stringSet.add(123); 这是谈论泛型时的第二个意思——手动将类型传递给函数。\n如果你使用 React，你就会看到这一点，你需要将类型参数传递给 useState。\nconst [index, setIndex] = useState\u003cnumber\u003e(0); 但是，您还会注意到 React 中的另一种行为。 也就是说，在某些情况下，您不需要传递类型参数来推断它…\nconst [index, setIndex] = useState(0); // ^? const index: number // WHAT IS THIS SORCERY 让我们再看看我们的 createSet 函数。 您会注意到它不接收actual 参数, 仅接收类型参数。\nconst createSet = \u003cT\u003e() =\u003e { return new Set\u003cT\u003e(); }; 但是如果我们改变我们的函数让它接受集合的初始值呢？ 我们知道初始值需要与 Set 的类型相同，所以我们将其输入 T。\nconst createSet = \u003cT\u003e(initial: T) =\u003e { return new Set\u003cT\u003e([initial]); }; 现在，当我们调用它时，我们需要传入一个初始值，并且它需要与我们传递给 createSet 的类型参数具有相同的类型。\nconst stringSet = createSet\u003cstring\u003e(\"matt\"); // Argument of type 'string' is not assignable // to parameter of type 'number'. const numberSet = createSet\u003cnumber\u003e(\"pocock\"); 但这是神奇的事情。 TypeScript 可以从'initial'推断出'T'的类型。 换句话说，类型参数将从运行时参数推断出来。\nconst stringSet = createSet(\"matt\"); // ^? const stringSet: Set const numberSet = createSet(123); // ^? const numberSer: Set 如果您使用IDE，可以通过将鼠标悬停在其中一个 createSet 调用上来检查这一点。 当我们向它传递一个字符串时，您会看到正在推断 。\nconst createSet: \u003cstring\u003e(initial: string) =\u003e Set\u003cstring\u003e 在 useState 中也是如此 - 请参阅工具提示中的 useState 语法。\n在我显示在该线程最顶部的 objKeys 函数中。 这个也有一些额外的好处：\n我们将 T 限制为一个对象，以便它可以传递给 Object.keys（它只接受对象） 我们强制 Object.keys 的返回类型为 Array const objKeys = \u003cT extends object\u003e(obj: T) =\u003e { return Object.keys(obj) as Array\u003ckeyof T\u003e; }; 总的来说，您认为的“泛型”实际上是几种不同的模式：\n将类型传递给类型 - DataShape 将类型传递给函数 - createSet() 从传递给函数的参数推断类型 - useState(0) 参考：\nMatt Pocok’s twitter\n",
+  "wordCount" : "525",
+  "inLanguage": "en",
+  "datePublished": "2023-03-01T14:43:25+08:00",
+  "dateModified": "2023-03-01T14:43:25+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/understand-generics-in-typescript/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      简单理解Typescript里的泛型
+    </h1>
+    <div class="post-meta"><span title='2023-03-01 14:43:25 +0800 CST'>March 1, 2023</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>您可能认为 TypeScript 中的泛型（generics）实际上是三个独立的概念：</p>
+<ul>
+<li>将类型传递给类型</li>
+<li>将类型传递给函数</li>
+<li>从传递给函数的参数推断类型</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#75715e">// 1. Passing types to types
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">PartialUser</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Partial</span><span style="color:#f92672">&lt;</span>{<span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>; <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>}<span style="color:#f92672">&gt;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 2. Passing types to functions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringSet</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>&lt;<span style="color:#f92672">string</span>&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 3. Inferring types from arguments passed to functions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">objKeys</span> <span style="color:#f92672">=</span> &lt;<span style="color:#f92672">T</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">object</span>&gt;(<span style="color:#a6e22e">obj</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Ojbect</span>.<span style="color:#a6e22e">keys</span>(<span style="color:#a6e22e">obj</span>) <span style="color:#66d9ef">as</span> Array&lt;<span style="color:#f92672">keyof</span> <span style="color:#a6e22e">T</span>&gt;;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">keys</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">objKeys</span>({<span style="color:#a6e22e">a</span>: <span style="color:#66d9ef">1</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">2</span>});
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ^? const keys: (&#34;a&#34; | &#34;b&#34;)[]
+</span></span></span></code></pre></div><p>让我们从将类型传递给类型开始。</p>
+<p>在 TypeScript 中，您可以声明一个表示对象、基元、函数的类型——任何您想要的类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">User</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ToString</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">input</span>: <span style="color:#66d9ef">any</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">string</span>;
+</span></span></code></pre></div><p>但是假设您需要创建一些具有相似结构的类型。 例如，数据形状。</p>
+<p>下面的代码不是很符合DRY —— 我们可以清理它吗？</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ErrorShape</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">message</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GetUserData</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">error?</span>: <span style="color:#66d9ef">ErrorShape</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GetPostsData</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">title</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  }[];
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">error?</span>: <span style="color:#66d9ef">ErrorShape</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GetCommentsData</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">content</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  }[];
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">error?</span>: <span style="color:#66d9ef">ErrorShape</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>如果您倾向于 OOP，则可以使用可重用的界面来做到这一点&hellip;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">DataBaseInterface</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">error?</span>: <span style="color:#66d9ef">ErrorShape</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">GetUserData</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">DataBaseInterface</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">GetPostsData</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">DataBaseInterface</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">title</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  }[];
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">GetCommentsData</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">DataBaseInterface</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">content</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  }[];
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>但是创建一个“类型函数”更简洁，它接受数据类型并返回新的数据形状。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#75715e">// Our new type function!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataShape</span>&lt;<span style="color:#f92672">TData</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">TData</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">error?</span>: <span style="color:#66d9ef">ErrorShape</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GetUserData</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">DataShape</span><span style="color:#f92672">&lt;</span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}<span style="color:#f92672">&gt;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GetPostsData</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">DataShape</span><span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">title</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  }[]
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GetCommentsData</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">DataShape</span><span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">content</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  }[]
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;</span>;
+</span></span></code></pre></div><p>理解这个语法很重要，因为它会在后面出现。</p>
+<p>尖括号 <code>&lt;TData&gt;</code> 告诉 TypeScript 我们要向该类型添加一个<code>type argument</code>。</p>
+<p>我们可以给 <code>TData</code> 起任何名字，它就像一个函数的参数。</p>
+<p>这是一个通用类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#75715e">// Generic type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">DataShape</span>&lt;<span style="color:#f92672">TData</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">TData</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">error?</span>: <span style="color:#66d9ef">ErrorShape</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Passing our generic type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// another type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GetPostsData</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">DataShape</span><span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">title</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>  }[]
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;</span>;
+</span></span></code></pre></div><p>通用类型可以接受多个类型参数。您可以为类型参数提供默认值。您甚至可以对类型参数提供约束，以便只能传递某些类型。
+但是，现在我们先继续之前的话题。</p>
+<p>如果我告诉您,可以将类型传递给的不只是<code>types</code>，您会怎么办？</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createSet</span> <span style="color:#f92672">=</span> &lt;<span style="color:#f92672">T</span>&gt;() <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>&lt;<span style="color:#f92672">T</span>&gt;();
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringSet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createSet</span>&lt;<span style="color:#f92672">string</span>&gt;();
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ^? const stringSet : Set&lt;string&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">numberSet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createSet</span>&lt;<span style="color:#f92672">number</span>&gt;();
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ^? const numberSet : Set&lt;number&gt;
+</span></span></span></code></pre></div><p>没错——就像类型可以接受类型作为参数一样，函数也可以。</p>
+<p>在本例中，我们在声明 <code>createSet</code> 时在括号前添加了一个 <code>&lt;T&gt;</code>。</p>
+<p>然后我们将该 <code>&lt;T&gt;</code> 手动传递给 <code>Set()</code>，它本身允许您传递类型参数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createSet</span> <span style="color:#f92672">=</span> &lt;<span style="color:#f92672">T</span>&gt;() <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>&lt;<span style="color:#f92672">T</span>&gt;();
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>这意味着当我们调用它时，我们可以将 <!-- raw HTML omitted --> 的类型参数传递给 createSet。
+我们最终得到了一个只能传递字符串的集合。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringSet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createSet</span>&lt;<span style="color:#f92672">string</span>&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Argument of type &#39;number&#39; is not assignable
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// to parameter of type &#39;string&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">stringSet</span>.<span style="color:#a6e22e">add</span>(<span style="color:#ae81ff">123</span>);
+</span></span></code></pre></div><p>这是谈论泛型时的第二个意思——手动将类型传递给函数。</p>
+<p>如果你使用 React，你就会看到这一点，你需要将类型参数传递给 <code>useState</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">setIndex</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">number</span>&gt;(<span style="color:#ae81ff">0</span>);
+</span></span></code></pre></div><p>但是，您还会注意到 React 中的另一种行为。
+也就是说，在某些情况下，您不需要传递类型参数来推断它&hellip;</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">setIndex</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//     ^? const index: number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// WHAT IS THIS SORCERY
+</span></span></span></code></pre></div><p>让我们再看看我们的 createSet 函数。
+您会注意到它不接收<code>actual</code> 参数, 仅接收类型参数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createSet</span> <span style="color:#f92672">=</span> &lt;<span style="color:#f92672">T</span>&gt;() <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>&lt;<span style="color:#f92672">T</span>&gt;();
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>但是如果我们改变我们的函数让它接受集合的初始值呢？
+我们知道初始值需要与 <code>Set</code> 的类型相同，所以我们将其输入 <code>T</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createSet</span> <span style="color:#f92672">=</span> &lt;<span style="color:#f92672">T</span>&gt;(<span style="color:#a6e22e">initial</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Set</span>&lt;<span style="color:#f92672">T</span>&gt;([<span style="color:#a6e22e">initial</span>]);
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>现在，当我们调用它时，我们需要传入一个初始值，并且它需要与我们传递给 <code>createSet</code> 的类型参数具有相同的类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringSet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createSet</span>&lt;<span style="color:#f92672">string</span>&gt;(<span style="color:#e6db74">&#34;matt&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Argument of type &#39;string&#39; is not assignable
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// to parameter of type &#39;number&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">numberSet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createSet</span>&lt;<span style="color:#f92672">number</span>&gt;(<span style="color:#e6db74">&#34;pocock&#34;</span>);
+</span></span></code></pre></div><p>但这是神奇的事情。 TypeScript 可以从<code>'initial'</code>推断出<code>'T'</code>的类型。
+换句话说，类型参数将从运行时参数推断出来。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stringSet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createSet</span>(<span style="color:#e6db74">&#34;matt&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//    ^? const stringSet: Set&lt;string&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">numberSet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createSet</span>(<span style="color:#ae81ff">123</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//    ^? const numberSer: Set&lt;number&gt;
+</span></span></span></code></pre></div><p>如果您使用IDE，可以通过将鼠标悬停在其中一个 <code>createSet</code> 调用上来检查这一点。
+当我们向它传递一个字符串时，您会看到正在推断 <code>&lt;string&gt;</code> 。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createSet</span><span style="color:#f92672">:</span> &lt;<span style="color:#f92672">string</span>&gt;(<span style="color:#a6e22e">initial</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Set</span>&lt;<span style="color:#f92672">string</span>&gt;
+</span></span></code></pre></div><p>在 <code>useState</code> 中也是如此 - 请参阅工具提示中的 <code>useState&lt;number&gt;</code> 语法。</p>
+<p>在我显示在该线程最顶部的 <code>objKeys</code> 函数中。
+这个也有一些额外的好处：</p>
+<ul>
+<li>我们将 <code>T</code> 限制为一个对象，以便它可以传递给 <code>Object.keys</code>（它只接受对象）</li>
+<li>我们强制 <code>Object.keys</code> 的返回类型为 <code>Array&lt;keyof T&gt;</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">objKeys</span> <span style="color:#f92672">=</span> &lt;<span style="color:#f92672">T</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">object</span>&gt;(<span style="color:#a6e22e">obj</span>: <span style="color:#66d9ef">T</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> Object.<span style="color:#a6e22e">keys</span>(<span style="color:#a6e22e">obj</span>) <span style="color:#66d9ef">as</span> Array&lt;<span style="color:#f92672">keyof</span> <span style="color:#a6e22e">T</span>&gt;;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>总的来说，您认为的“泛型”实际上是几种不同的模式：</p>
+<ul>
+<li>将类型传递给类型 - DataShape<!-- raw HTML omitted --></li>
+<li>将类型传递给函数 - createSet<!-- raw HTML omitted -->()</li>
+<li>从传递给函数的参数推断类型 - useState(0)</li>
+</ul>
+<p>参考：</p>
+<p><a href="https://twitter.com/mattpocockuk/status/1625838626742435842?s=19">Matt Pocok&rsquo;s twitter</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/generics/">generics</a></li>
+      <li><a href="https://shiqstone.github.io/tags/typescript/">TypeScript</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

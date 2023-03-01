@@ -6,7 +6,18 @@
     <description>Recent content on 他山笨石</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh_CN</language>
-    <lastBuildDate>Fri, 24 Feb 2023 13:56:13 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 01 Mar 2023 14:43:25 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>简单理解Typescript里的泛型</title>
+      <link>https://shiqstone.github.io/post/understand-generics-in-typescript/</link>
+      <pubDate>Wed, 01 Mar 2023 14:43:25 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/understand-generics-in-typescript/</guid>
+      <description>您可能认为 TypeScript 中的泛型（generics）实际上是三个独立的概念：
+将类型传递给类型 将类型传递给函数 从传递给函数的参数推断类型 // 1. Passing types to types type PartialUser = Partial&amp;lt;{id: string; name: string}&amp;gt;; // 2. Passing types to functions const stringSet = new Set&amp;lt;string&amp;gt;(); // 3. Inferring types from arguments passed to functions const objKeys = &amp;lt;T extends object&amp;gt;(obj: T) =&amp;gt; { return Ojbect.keys(obj) as Array&amp;lt;keyof T&amp;gt;; }; const keys = objKeys({a: 1, b: 2}); // ^? const keys: (&amp;#34;a&amp;#34; | &amp;#34;b&amp;#34;)[] 让我们从将类型传递给类型开始。
+在 TypeScript 中，您可以声明一个表示对象、基元、函数的类型——任何您想要的类型。</description>
+    </item>
+    
     <item>
       <title>如何在Mac上用西班牙输入法输入字符</title>
       <link>https://shiqstone.github.io/post/how-to-type-special-characters-on-mac-keyboard/</link>

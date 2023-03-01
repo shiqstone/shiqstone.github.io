@@ -147,6 +147,21 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>centos7 防火墙和端口
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>首先检查某端口是否开启： firewall-cmd --query-port=80/tcp --zone=public #查询80端口是否开启 返回no即未开启，显示yes为已开启
+开启某端口 firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口 修改完成后需要重启防火墙服务才能生效
+查看防火墙状态 systemctl status firewalld 有如下提示表示未开启 FirewallD is not running
+开启防火墙，没有任何提示即开启成功 systemctl start firewalld 关闭防火墙 systemctl stop firewalld 重启防火墙 systemctl restart firewalld 相关网站收藏 http://ping.pe http://ping.chinaz.com</p>
+  </div>
+  <footer class="entry-footer"><span title='2020-03-01 17:13:08 +0000 UTC'>March 1, 2020</span></footer>
+  <a class="entry-link" aria-label="post link to centos7 防火墙和端口" href="https://shiqstone.github.io/post/centos7-firewall/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>一次慢查询问题的排查
     </h2>
   </header>
@@ -298,25 +313,10 @@ deploy: type: git repository: git@github....</p>
   <footer class="entry-footer"><span title='2019-04-13 16:22:54 +0000 UTC'>April 13, 2019</span></footer>
   <a class="entry-link" aria-label="post link to 使用Hexo&#43;github搭建博客（基础）" href="https://shiqstone.github.io/post/first-hexo/"></a>
 </article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>Hello World
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick Start Create a new post $ hexo new &#34;My New Post&#34; More info: Writing
-Run server $ hexo server More info: Server
-Generate static files $ hexo generate More info: Generating
-Deploy to remote sites $ hexo deploy More info: Deployment</p>
-  </div>
-  <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Hello World" href="https://shiqstone.github.io/post/hello-world/"></a>
-</article>
 <footer class="page-footer">
   <nav class="pagination">
     <a class="prev" href="https://shiqstone.github.io/">« Prev</a>
+    <a class="next" href="https://shiqstone.github.io/page/3/">Next »</a>
   </nav>
 </footer>
     </main>
