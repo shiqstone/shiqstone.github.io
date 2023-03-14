@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>使用ACME申请证书 | 他山笨石</title>
+<meta name="keywords" content="acme, certificate, issue, renew">
+<meta name="description" content="现在的网站基本都是HTTPS协议，想要提升一下资源访问性能，拥抱HTTP/2，但是浏览器就要求必须启用HTTPS才能正常接入HTTP/2。所以，把网站升级到HTTPS是很有必要。
+网站想要升级到HTTPS，首先得申请下发个安全证书，现在下发证书很简单，方式也很多，很多域名提供商都提供免费证书申请。但是，很多证书都是有时间限制（3个月或者1年），时间到期就需要手动重新，手续麻烦而且还会忘记续期，如果想一劳永逸可以用工具自动生成证书并且自动续租。续租工具和方式也很多，本文将讲解用ACME实现证书申请和证书自动续期。
+ACME安装 执行如下脚本即可自动安装
+curl https://get.acme.sh | sh 安装程序会自动做以下操作：
+自动把 acme.sh 安装到你的 home 的.acme.sh目录下，即~/.acme.sh/ 自动创建一个 bash 的 alias, 方便你的使用: alias acme.sh=~/.acme.sh/acme.sh 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书. 更改证书 acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，在这里也可以在生成证书时加一个--server参数来决定生成什么证书，或者直接修改默认证书机构
+acme.sh --set-default-ca --server letsencrypt 生成证书 使用acme.sh --issue命令生成证书，但生成证书的同时会进行域名的所有权的验证。 acme.sh 有两种方式验证：http 和 dns 验证。
+注意：如果需要生成泛域名（*.a.com）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式
+http验证方式
+http方式需要通过以下几种方式来验证你的域名所有权来完成验证。
+或配置网站根目录，命令参数为（&ndash;webroot /home/wwwroot/mydomain.com/） 或关联服务器的nginx服务，命令参数为（&ndash;nginx） 或关联服务器的apache服务，命令参数为（&ndash;apache） 或自建虚拟webserver（服务器没有占用80端口），命令参数为（&ndash;standalone） 假设服务器已搭建nginx服务，因此关联即可
+acme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx 参数解析：
+--issue命令参数生成证书 -d定义需要生成证书的域名，如有多个域名需使用多次，以上定了三个域名：file.a.com/www.a.com/img.a.com 三个域名需要配置到nginx中，不一定都配置到同一个server中，所有域名都至少对应一个server，否则无法生成证书 ... server { listen 80; server_name file.">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/use_acme_to_request_a_certificate/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+
+
+
+<meta property="og:title" content="使用ACME申请证书" />
+<meta property="og:description" content="现在的网站基本都是HTTPS协议，想要提升一下资源访问性能，拥抱HTTP/2，但是浏览器就要求必须启用HTTPS才能正常接入HTTP/2。所以，把网站升级到HTTPS是很有必要。
+网站想要升级到HTTPS，首先得申请下发个安全证书，现在下发证书很简单，方式也很多，很多域名提供商都提供免费证书申请。但是，很多证书都是有时间限制（3个月或者1年），时间到期就需要手动重新，手续麻烦而且还会忘记续期，如果想一劳永逸可以用工具自动生成证书并且自动续租。续租工具和方式也很多，本文将讲解用ACME实现证书申请和证书自动续期。
+ACME安装 执行如下脚本即可自动安装
+curl https://get.acme.sh | sh 安装程序会自动做以下操作：
+自动把 acme.sh 安装到你的 home 的.acme.sh目录下，即~/.acme.sh/ 自动创建一个 bash 的 alias, 方便你的使用: alias acme.sh=~/.acme.sh/acme.sh 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书. 更改证书 acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，在这里也可以在生成证书时加一个--server参数来决定生成什么证书，或者直接修改默认证书机构
+acme.sh --set-default-ca --server letsencrypt 生成证书 使用acme.sh --issue命令生成证书，但生成证书的同时会进行域名的所有权的验证。 acme.sh 有两种方式验证：http 和 dns 验证。
+注意：如果需要生成泛域名（*.a.com）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式
+http验证方式
+http方式需要通过以下几种方式来验证你的域名所有权来完成验证。
+或配置网站根目录，命令参数为（&ndash;webroot /home/wwwroot/mydomain.com/） 或关联服务器的nginx服务，命令参数为（&ndash;nginx） 或关联服务器的apache服务，命令参数为（&ndash;apache） 或自建虚拟webserver（服务器没有占用80端口），命令参数为（&ndash;standalone） 假设服务器已搭建nginx服务，因此关联即可
+acme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx 参数解析：
+--issue命令参数生成证书 -d定义需要生成证书的域名，如有多个域名需使用多次，以上定了三个域名：file.a.com/www.a.com/img.a.com 三个域名需要配置到nginx中，不一定都配置到同一个server中，所有域名都至少对应一个server，否则无法生成证书 ... server { listen 80; server_name file." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/use_acme_to_request_a_certificate/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-03-14T12:54:12&#43;08:00" />
+<meta property="article:modified_time" content="2023-03-14T12:54:12&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="使用ACME申请证书"/>
+<meta name="twitter:description" content="现在的网站基本都是HTTPS协议，想要提升一下资源访问性能，拥抱HTTP/2，但是浏览器就要求必须启用HTTPS才能正常接入HTTP/2。所以，把网站升级到HTTPS是很有必要。
+网站想要升级到HTTPS，首先得申请下发个安全证书，现在下发证书很简单，方式也很多，很多域名提供商都提供免费证书申请。但是，很多证书都是有时间限制（3个月或者1年），时间到期就需要手动重新，手续麻烦而且还会忘记续期，如果想一劳永逸可以用工具自动生成证书并且自动续租。续租工具和方式也很多，本文将讲解用ACME实现证书申请和证书自动续期。
+ACME安装 执行如下脚本即可自动安装
+curl https://get.acme.sh | sh 安装程序会自动做以下操作：
+自动把 acme.sh 安装到你的 home 的.acme.sh目录下，即~/.acme.sh/ 自动创建一个 bash 的 alias, 方便你的使用: alias acme.sh=~/.acme.sh/acme.sh 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书. 更改证书 acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，在这里也可以在生成证书时加一个--server参数来决定生成什么证书，或者直接修改默认证书机构
+acme.sh --set-default-ca --server letsencrypt 生成证书 使用acme.sh --issue命令生成证书，但生成证书的同时会进行域名的所有权的验证。 acme.sh 有两种方式验证：http 和 dns 验证。
+注意：如果需要生成泛域名（*.a.com）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式
+http验证方式
+http方式需要通过以下几种方式来验证你的域名所有权来完成验证。
+或配置网站根目录，命令参数为（&ndash;webroot /home/wwwroot/mydomain.com/） 或关联服务器的nginx服务，命令参数为（&ndash;nginx） 或关联服务器的apache服务，命令参数为（&ndash;apache） 或自建虚拟webserver（服务器没有占用80端口），命令参数为（&ndash;standalone） 假设服务器已搭建nginx服务，因此关联即可
+acme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx 参数解析：
+--issue命令参数生成证书 -d定义需要生成证书的域名，如有多个域名需使用多次，以上定了三个域名：file.a.com/www.a.com/img.a.com 三个域名需要配置到nginx中，不一定都配置到同一个server中，所有域名都至少对应一个server，否则无法生成证书 ... server { listen 80; server_name file."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "使用ACME申请证书",
+      "item": "https://shiqstone.github.io/post/use_acme_to_request_a_certificate/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "使用ACME申请证书",
+  "name": "使用ACME申请证书",
+  "description": "现在的网站基本都是HTTPS协议，想要提升一下资源访问性能，拥抱HTTP/2，但是浏览器就要求必须启用HTTPS才能正常接入HTTP/2。所以，把网站升级到HTTPS是很有必要。\n网站想要升级到HTTPS，首先得申请下发个安全证书，现在下发证书很简单，方式也很多，很多域名提供商都提供免费证书申请。但是，很多证书都是有时间限制（3个月或者1年），时间到期就需要手动重新，手续麻烦而且还会忘记续期，如果想一劳永逸可以用工具自动生成证书并且自动续租。续租工具和方式也很多，本文将讲解用ACME实现证书申请和证书自动续期。\nACME安装 执行如下脚本即可自动安装\ncurl https://get.acme.sh | sh 安装程序会自动做以下操作：\n自动把 acme.sh 安装到你的 home 的.acme.sh目录下，即~/.acme.sh/ 自动创建一个 bash 的 alias, 方便你的使用: alias acme.sh=~/.acme.sh/acme.sh 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书. 更改证书 acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，在这里也可以在生成证书时加一个--server参数来决定生成什么证书，或者直接修改默认证书机构\nacme.sh --set-default-ca --server letsencrypt 生成证书 使用acme.sh --issue命令生成证书，但生成证书的同时会进行域名的所有权的验证。 acme.sh 有两种方式验证：http 和 dns 验证。\n注意：如果需要生成泛域名（*.a.com）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式\nhttp验证方式\nhttp方式需要通过以下几种方式来验证你的域名所有权来完成验证。\n或配置网站根目录，命令参数为（\u0026ndash;webroot /home/wwwroot/mydomain.com/） 或关联服务器的nginx服务，命令参数为（\u0026ndash;nginx） 或关联服务器的apache服务，命令参数为（\u0026ndash;apache） 或自建虚拟webserver（服务器没有占用80端口），命令参数为（\u0026ndash;standalone） 假设服务器已搭建nginx服务，因此关联即可\nacme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx 参数解析：\n--issue命令参数生成证书 -d定义需要生成证书的域名，如有多个域名需使用多次，以上定了三个域名：file.a.com/www.a.com/img.a.com 三个域名需要配置到nginx中，不一定都配置到同一个server中，所有域名都至少对应一个server，否则无法生成证书 ... server { listen 80; server_name file.",
+  "keywords": [
+    "acme", "certificate", "issue", "renew"
+  ],
+  "articleBody": "现在的网站基本都是HTTPS协议，想要提升一下资源访问性能，拥抱HTTP/2，但是浏览器就要求必须启用HTTPS才能正常接入HTTP/2。所以，把网站升级到HTTPS是很有必要。\n网站想要升级到HTTPS，首先得申请下发个安全证书，现在下发证书很简单，方式也很多，很多域名提供商都提供免费证书申请。但是，很多证书都是有时间限制（3个月或者1年），时间到期就需要手动重新，手续麻烦而且还会忘记续期，如果想一劳永逸可以用工具自动生成证书并且自动续租。续租工具和方式也很多，本文将讲解用ACME实现证书申请和证书自动续期。\nACME安装 执行如下脚本即可自动安装\ncurl https://get.acme.sh | sh 安装程序会自动做以下操作：\n自动把 acme.sh 安装到你的 home 的.acme.sh目录下，即~/.acme.sh/ 自动创建一个 bash 的 alias, 方便你的使用: alias acme.sh=~/.acme.sh/acme.sh 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书. 更改证书 acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，在这里也可以在生成证书时加一个--server参数来决定生成什么证书，或者直接修改默认证书机构\nacme.sh --set-default-ca --server letsencrypt 生成证书 使用acme.sh --issue命令生成证书，但生成证书的同时会进行域名的所有权的验证。 acme.sh 有两种方式验证：http 和 dns 验证。\n注意：如果需要生成泛域名（*.a.com）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式\nhttp验证方式\nhttp方式需要通过以下几种方式来验证你的域名所有权来完成验证。\n或配置网站根目录，命令参数为（–webroot /home/wwwroot/mydomain.com/） 或关联服务器的nginx服务，命令参数为（–nginx） 或关联服务器的apache服务，命令参数为（–apache） 或自建虚拟webserver（服务器没有占用80端口），命令参数为（–standalone） 假设服务器已搭建nginx服务，因此关联即可\nacme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx 参数解析：\n--issue命令参数生成证书 -d定义需要生成证书的域名，如有多个域名需使用多次，以上定了三个域名：file.a.com/www.a.com/img.a.com 三个域名需要配置到nginx中，不一定都配置到同一个server中，所有域名都至少对应一个server，否则无法生成证书 ... server { listen 80; server_name file.a.com www.a.com img.a.com; } ... 如果觉得麻烦可以使用第一种配置网站根目录。或者停止占用80端口的服务，然后通过添加–standalone参数，等生成证书后再启动原来的服务。如果服务器已有80端口的服务，不建议使用自建虚拟webserver，此方式续租时略麻烦需要改造。\ndns 验证方式\n需要在域名上添加一条 txt 解析记录, 验证域名所有权\n方式1：手动添加记录\n生成txt解析内容\nacme.sh --issue --dns -d mydomain.com \\ --yes-I-know-dns-manual-mode-enough-go-ahead-please 以上mydomain.com只是测试域名，如果多个域名，则需多次使用-d配置，如-d www.a.com -d img.a.com\n把txt解析添加到域名管理面板中\n重新生成证书\nacme.sh --renew -d mydomain.com \\ --yes-I-know-dns-manual-mode-enough-go-ahead-please 注意，重新生成使用的是renew参数，把生成txt解析内容命令的issue改为renew\n方式2：域名提供商api自动解析\ndns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.\n在域名提供商中，生成你的 api id 和 api key并记录 引入api id和key，以godaddy为例 export GD_Key=\"123456\" export GD_Secret=\"abcdef\" 不同提供商，API参数值各不同，可参考下面的表格：自动 DNS API 集成\n生成证书 acme.sh --issue --dns dns_gd -d aa.com -d www.aa.com --dns的配置值也是根据域名提供商来决定，dns_gd表示godaddy。更多参数值可看下方表格 表：自动 DNS API 集成\n服务商名称 服务商简称 所需API参数 cloudxns cx export CX_Key=“123456” export CX_Secret=“abcdef” dnspod.cn dp export DP_Id=“123456” export DP_Key=“abcdef” aliyun ali export Ali_Key=“123456” export Ali_Secret=“abcdef” cloudflare cf export CF_Key=“123456” export CF_Email=“abc@example.com” linode linode export LINODE_API_KEY=“123456” he he export HE_Username=“username” export HE_Password=“password” digitalocean dgon export DO_API_KEY=“123456” namesilo namesilo export Namesilo_Key=“123456” aws aws export AWS_ACCESS_KEY_ID=123456 export AWS_SECRET_ACCESS_KEY=abcdef namecom namecom export Namecom_Username=“username” export Namecom_Token=“123456” freedns freedns export FREEDNS_User=“username” export FREEDNS_Password=“password” godaddy gd export GD_Key=“123456” export GD_Secret=“abcdef” yandex yandex export PDD_Token=“abcdef” 更多dnsapi的使用，可以查看文档\ncopy/安装 证书 默认生成的证书都放在安装目录下: ~/.acme.sh/，但是不要在web服务器中直接引用目录下的证书文件，也不要手动来拷贝证书文件到具体的web服务器中，手动拷贝会导致之后更新证书流程不能完全自动。\n正确方式是使用acme.sh的安装证书命令，acme.sh自动拷贝证书文件到具体目录中，拷贝命令会被记录下来，之后自动更新证书流程也会执行此拷贝步骤，从而实现更新证书流程的完全自动化。\n格式例子如下：\nacme.sh --install-cert -d xxx \\ --cert-file xxx \\ --key-file xxx \\ --fullchain-file xxx\\ --reloadcmd xxx 根据web服务器需要的文件按需引入对应的参数，reloadcmd定义证书更新后重启对应的web服务命令。\n以nginx为例：\nacme.sh --install-cert -d www.a.com -d img.a.com \\ --key-file /etc/nginx/cert_file/key.pem \\ --fullchain-file /etc/nginx/cert_file/fullchain.pem \\ --reloadcmd \"service nginx force-reload\" web服务使用证书 通过上一步安装证书，已经把证书拷贝到目标的目录，接下来就是在web服务中使用证书即可。\n以nginx为例：\n... server { listen 443 ssl; ssl_certificate /etc/nginx/cert_file/fullchain.pem; ssl_certificate_key /etc/nginx/cert_file/key.pem; # ... } 更新证书 目前证书在 60 天以后会自动更新，你无需任何操作，因为在acme.sh安装时，已经把相关的自动更新程序写入到crontab中，如果想要查看，可以通过以下命令：\ncrontab -l 56 * * * * \"/root/.acme.sh\"/acme.sh --cron --home \"/root/.acme.sh\" \u003e /dev/null 查看证书列表 使用以下命令可以查看目前服务器安装的所有证书以及过期时间\nacme.sh list Main_Domain KeyLength SAN_Domains CA Created Renew b.c.com \"ec-256\" no LetsEncrypt.org 2022-12-14T16:10:09Z 2023-02-11T16:10:09Z *.a.com \"2048\" no LetsEncrypt.org 2022-11-18T16:10:48Z 2023-01-16T16:10:48Z ",
+  "wordCount" : "311",
+  "inLanguage": "en",
+  "datePublished": "2023-03-14T12:54:12+08:00",
+  "dateModified": "2023-03-14T12:54:12+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/use_acme_to_request_a_certificate/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      使用ACME申请证书
+    </h1>
+    <div class="post-meta"><span title='2023-03-14 12:54:12 +0800 CST'>March 14, 2023</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#acme%e5%ae%89%e8%a3%85" aria-label="ACME安装">ACME安装</a></li>
+                <li>
+                    <a href="#%e6%9b%b4%e6%94%b9%e8%af%81%e4%b9%a6" aria-label="更改证书">更改证书</a></li>
+                <li>
+                    <a href="#%e7%94%9f%e6%88%90%e8%af%81%e4%b9%a6" aria-label="生成证书">生成证书</a></li>
+                <li>
+                    <a href="#copy%e5%ae%89%e8%a3%85-%e8%af%81%e4%b9%a6" aria-label="copy/安装 证书">copy/安装 证书</a></li>
+                <li>
+                    <a href="#web%e6%9c%8d%e5%8a%a1%e4%bd%bf%e7%94%a8%e8%af%81%e4%b9%a6" aria-label="web服务使用证书">web服务使用证书</a></li>
+                <li>
+                    <a href="#%e6%9b%b4%e6%96%b0%e8%af%81%e4%b9%a6" aria-label="更新证书">更新证书</a></li>
+                <li>
+                    <a href="#%e6%9f%a5%e7%9c%8b%e8%af%81%e4%b9%a6%e5%88%97%e8%a1%a8" aria-label="查看证书列表">查看证书列表</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><p>现在的网站基本都是HTTPS协议，想要提升一下资源访问性能，拥抱HTTP/2，但是浏览器就要求必须启用HTTPS才能正常接入HTTP/2。所以，把网站升级到HTTPS是很有必要。</p>
+<p>网站想要升级到HTTPS，首先得申请下发个安全证书，现在下发证书很简单，方式也很多，很多域名提供商都提供免费证书申请。但是，很多证书都是有时间限制（3个月或者1年），时间到期就需要手动重新，手续麻烦而且还会忘记续期，如果想一劳永逸可以用工具自动生成证书并且自动续租。续租工具和方式也很多，本文将讲解用ACME实现证书申请和证书自动续期。</p>
+<h2 id="acme安装">ACME安装<a hidden class="anchor" aria-hidden="true" href="#acme安装">#</a></h2>
+<p>执行如下脚本即可自动安装</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl  https://get.acme.sh | sh
+</span></span></code></pre></div><p>安装程序会自动做以下操作：</p>
+<ul>
+<li>自动把 acme.sh 安装到你的 home 的.acme.sh目录下，即~/.acme.sh/</li>
+<li>自动创建一个 bash 的 alias, 方便你的使用: alias acme.sh=~/.acme.sh/acme.sh</li>
+<li>自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书.</li>
+</ul>
+<h2 id="更改证书">更改证书<a hidden class="anchor" aria-hidden="true" href="#更改证书">#</a></h2>
+<p>acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，在这里也可以在生成证书时加一个<code>--server</code>参数来决定生成什么证书，或者直接修改默认证书机构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh --set-default-ca  --server  letsencrypt
+</span></span></code></pre></div><h2 id="生成证书">生成证书<a hidden class="anchor" aria-hidden="true" href="#生成证书">#</a></h2>
+<p>使用<code>acme.sh --issue</code>命令生成证书，但生成证书的同时会进行域名的所有权的验证。 <code>acme.sh</code> 有两种方式验证：<code>http</code> 和 <code>dns</code> 验证。</p>
+<blockquote>
+<p>注意：如果需要生成泛域名（<code>*.a.com</code>）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式</p>
+</blockquote>
+<ol>
+<li>
+<p>http验证方式</p>
+<p>http方式需要通过以下几种方式来验证你的域名所有权来完成验证。</p>
+<ul>
+<li>或配置网站根目录，命令参数为（&ndash;webroot /home/wwwroot/mydomain.com/）</li>
+<li>或关联服务器的nginx服务，命令参数为（&ndash;nginx）</li>
+<li>或关联服务器的apache服务，命令参数为（&ndash;apache）</li>
+<li>或自建虚拟webserver（服务器没有占用80端口），命令参数为（&ndash;standalone）</li>
+</ul>
+<p>假设服务器已搭建nginx服务，因此关联即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx
+</span></span></code></pre></div><p>参数解析：</p>
+<ul>
+<li><code>--issue</code>命令参数生成证书</li>
+<li><code>-d</code>定义需要生成证书的域名，如有多个域名需使用多次，以上定了三个域名：<code>file.a.com</code>/<code>www.a.com</code>/<code>img.a.com</code></li>
+<li>三个域名需要配置到nginx中，不一定都配置到同一个server中，所有域名都至少对应一个server，否则无法生成证书
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>server <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>listen       80;
+</span></span><span style="display:flex;"><span>server_name  file.a.com www.a.com img.a.com;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div></li>
+</ul>
+<p>如果觉得麻烦可以使用第一种配置网站根目录。或者停止占用80端口的服务，然后通过添加&ndash;standalone参数，等生成证书后再启动原来的服务。如果服务器已有80端口的服务，不建议使用自建虚拟webserver，此方式续租时略麻烦需要改造。</p>
+</li>
+<li>
+<p>dns 验证方式</p>
+<p>需要在域名上添加一条 txt 解析记录, 验证域名所有权</p>
+<p>方式1：手动添加记录</p>
+<ul>
+<li>
+<p>生成txt解析内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh  --issue  --dns -d mydomain.com <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>   --yes-I-know-dns-manual-mode-enough-go-ahead-please
+</span></span></code></pre></div><blockquote>
+<p>以上<code>mydomain.com</code>只是测试域名，如果多个域名，则需多次使用<code>-d</code>配置，如<code>-d www.a.com -d img.a.com</code></p>
+</blockquote>
+</li>
+<li>
+<p>把txt解析添加到域名管理面板中</p>
+</li>
+<li>
+<p>重新生成证书</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh  --renew   -d mydomain.com <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>   --yes-I-know-dns-manual-mode-enough-go-ahead-please
+</span></span></code></pre></div><blockquote>
+<p>注意，重新生成使用的是<code>renew</code>参数，把生成<code>txt</code>解析内容命令的<code>issue</code>改为<code>renew</code></p>
+</blockquote>
+</li>
+</ul>
+<p>方式2：域名提供商api自动解析</p>
+<blockquote>
+<p>dns 方式的真正强大之处在于可以使用域名解析商提供的 api 自动添加 txt 记录完成验证.</p>
+</blockquote>
+<ul>
+<li>在域名提供商中，生成你的 api id 和 api key并记录</li>
+<li>引入api id和key，以godaddy为例
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>export GD_Key<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;123456&#34;</span>
+</span></span><span style="display:flex;"><span>export GD_Secret<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;abcdef&#34;</span>
+</span></span></code></pre></div><blockquote>
+<p>不同提供商，API参数值各不同，可参考下面的表格：自动 DNS API 集成</p>
+</blockquote>
+</li>
+<li>生成证书
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh --issue --dns dns_gd  -d aa.com -d www.aa.com
+</span></span></code></pre></div><code>--dns</code>的配置值也是根据域名提供商来决定，dns_gd表示godaddy。更多参数值可看下方表格</li>
+</ul>
+<p>表：自动 DNS API 集成</p>
+<table>
+<thead>
+<tr>
+<th>服务商名称</th>
+<th>服务商简称</th>
+<th>所需API参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cloudxns</td>
+<td>cx</td>
+<td>export CX_Key=&ldquo;123456&rdquo; <!-- raw HTML omitted --> export CX_Secret=&ldquo;abcdef&rdquo;</td>
+</tr>
+<tr>
+<td>dnspod.cn</td>
+<td>dp</td>
+<td>export DP_Id=&ldquo;123456&rdquo; <!-- raw HTML omitted --> export DP_Key=&ldquo;abcdef&rdquo;</td>
+</tr>
+<tr>
+<td>aliyun</td>
+<td>ali</td>
+<td>export Ali_Key=&ldquo;123456&rdquo; <!-- raw HTML omitted --> export Ali_Secret=&ldquo;abcdef&rdquo;</td>
+</tr>
+<tr>
+<td>cloudflare</td>
+<td>cf</td>
+<td>export CF_Key=&ldquo;123456&rdquo; <!-- raw HTML omitted --> export CF_Email=&ldquo;<a href="mailto:abc@example.com">abc@example.com</a>&rdquo;</td>
+</tr>
+<tr>
+<td>linode</td>
+<td>linode</td>
+<td>export LINODE_API_KEY=&ldquo;123456&rdquo;</td>
+</tr>
+<tr>
+<td>he</td>
+<td>he</td>
+<td>export HE_Username=&ldquo;username&rdquo; <!-- raw HTML omitted --> export HE_Password=&ldquo;password&rdquo;</td>
+</tr>
+<tr>
+<td>digitalocean</td>
+<td>dgon</td>
+<td>export DO_API_KEY=&ldquo;123456&rdquo;</td>
+</tr>
+<tr>
+<td>namesilo</td>
+<td>namesilo</td>
+<td>export Namesilo_Key=&ldquo;123456&rdquo;</td>
+</tr>
+<tr>
+<td>aws</td>
+<td>aws</td>
+<td>export AWS_ACCESS_KEY_ID=123456 <!-- raw HTML omitted --> export AWS_SECRET_ACCESS_KEY=abcdef</td>
+</tr>
+<tr>
+<td>namecom</td>
+<td>namecom</td>
+<td>export Namecom_Username=&ldquo;username&rdquo; <!-- raw HTML omitted --> export Namecom_Token=&ldquo;123456&rdquo;</td>
+</tr>
+<tr>
+<td>freedns</td>
+<td>freedns</td>
+<td>export FREEDNS_User=&ldquo;username&rdquo; <!-- raw HTML omitted --> export FREEDNS_Password=&ldquo;password&rdquo;</td>
+</tr>
+<tr>
+<td>godaddy</td>
+<td>gd</td>
+<td>export GD_Key=&ldquo;123456&rdquo; <!-- raw HTML omitted --> export GD_Secret=&ldquo;abcdef&rdquo;</td>
+</tr>
+<tr>
+<td>yandex</td>
+<td>yandex</td>
+<td>export PDD_Token=&ldquo;abcdef&rdquo;</td>
+</tr>
+</tbody>
+</table>
+<p>更多dnsapi的使用，可以查看<a href="https://github.com/acmesh-official/acme.sh/wiki/dnsapi">文档</a></p>
+</li>
+</ol>
+<h2 id="copy安装-证书">copy/安装 证书<a hidden class="anchor" aria-hidden="true" href="#copy安装-证书">#</a></h2>
+<p>默认生成的证书都放在安装目录下: <code>~/.acme.sh/</code>，但是不要在web服务器中直接引用目录下的证书文件，也不要手动来拷贝证书文件到具体的web服务器中，手动拷贝会导致之后更新证书流程不能完全自动。</p>
+<p>正确方式是使用acme.sh的安装证书命令，<code>acme.sh</code>自动拷贝证书文件到具体目录中，拷贝命令会被记录下来，之后自动更新证书流程也会执行此拷贝步骤，从而实现更新证书流程的完全自动化。</p>
+<p>格式例子如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh --install-cert -d xxx <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--cert-file xxx <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--key-file xxx <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--fullchain-file xxx<span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--reloadcmd xxx
+</span></span></code></pre></div><p>根据web服务器需要的文件按需引入对应的参数，reloadcmd定义证书更新后重启对应的web服务命令。</p>
+<p>以nginx为例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh --install-cert -d www.a.com -d img.a.com <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--key-file   /etc/nginx/cert_file/key.pem  <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--fullchain-file /etc/nginx/cert_file/fullchain.pem <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>		--reloadcmd     <span style="color:#e6db74">&#34;service nginx force-reload&#34;</span>
+</span></span></code></pre></div><h2 id="web服务使用证书">web服务使用证书<a hidden class="anchor" aria-hidden="true" href="#web服务使用证书">#</a></h2>
+<p>通过上一步安装证书，已经把证书拷贝到目标的目录，接下来就是在web服务中使用证书即可。</p>
+<p>以nginx为例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>server <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  listen       <span style="color:#ae81ff">443</span> ssl;
+</span></span><span style="display:flex;"><span>  ssl_certificate      /etc/nginx/cert_file/fullchain.pem;
+</span></span><span style="display:flex;"><span>  ssl_certificate_key  /etc/nginx/cert_file/key.pem;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="更新证书">更新证书<a hidden class="anchor" aria-hidden="true" href="#更新证书">#</a></h2>
+<p>目前证书在 60 天以后会自动更新，你无需任何操作，因为在acme.sh安装时，已经把相关的自动更新程序写入到crontab中，如果想要查看，可以通过以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>crontab -l
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">56</span> * * * * <span style="color:#e6db74">&#34;/root/.acme.sh&#34;</span>/acme.sh --cron --home <span style="color:#e6db74">&#34;/root/.acme.sh&#34;</span> &gt; /dev/null
+</span></span></code></pre></div><h2 id="查看证书列表">查看证书列表<a hidden class="anchor" aria-hidden="true" href="#查看证书列表">#</a></h2>
+<p>使用以下命令可以查看目前服务器安装的所有证书以及过期时间</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>acme.sh list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Main_Domain        KeyLength  SAN_Domains     CA               Created               Renew
+</span></span><span style="display:flex;"><span>b.c.com            <span style="color:#e6db74">&#34;ec-256&#34;</span>   no              LetsEncrypt.org  2022-12-14T16:10:09Z  2023-02-11T16:10:09Z
+</span></span><span style="display:flex;"><span>*.a.com            <span style="color:#e6db74">&#34;2048&#34;</span>     no              LetsEncrypt.org  2022-11-18T16:10:48Z  2023-01-16T16:10:48Z
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/acme/">acme</a></li>
+      <li><a href="https://shiqstone.github.io/tags/certificate/">certificate</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

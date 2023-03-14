@@ -147,6 +147,29 @@
 
 <article class="first-entry"> 
   <header class="entry-header">
+    <h2>使用ACME申请证书
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>现在的网站基本都是HTTPS协议，想要提升一下资源访问性能，拥抱HTTP/2，但是浏览器就要求必须启用HTTPS才能正常接入HTTP/2。所以，把网站升级到HTTPS是很有必要。
+网站想要升级到HTTPS，首先得申请下发个安全证书，现在下发证书很简单，方式也很多，很多域名提供商都提供免费证书申请。但是，很多证书都是有时间限制（3个月或者1年），时间到期就需要手动重新，手续麻烦而且还会忘记续期，如果想一劳永逸可以用工具自动生成证书并且自动续租。续租工具和方式也很多，本文将讲解用ACME实现证书申请和证书自动续期。
+ACME安装 执行如下脚本即可自动安装
+curl https://get.acme.sh | sh 安装程序会自动做以下操作：
+自动把 acme.sh 安装到你的 home 的.acme.sh目录下，即~/.acme.sh/ 自动创建一个 bash 的 alias, 方便你的使用: alias acme.sh=~/.acme.sh/acme.sh 自动为你创建 cronjob, 每天 0:00 点自动检测所有的证书, 如果快过期了, 需要更新, 则会自动更新证书. 更改证书 acme被ZeroSSL收购，其默认的证书方式为ZeroSSL，但此证书生成时会携带邮箱，在这里也可以在生成证书时加一个--server参数来决定生成什么证书，或者直接修改默认证书机构
+acme.sh --set-default-ca --server letsencrypt 生成证书 使用acme.sh --issue命令生成证书，但生成证书的同时会进行域名的所有权的验证。 acme.sh 有两种方式验证：http 和 dns 验证。
+注意：如果需要生成泛域名（*.a.com）的证书，不能使用HTTP认证域名，需要改用DNS认证的方式
+http验证方式
+http方式需要通过以下几种方式来验证你的域名所有权来完成验证。
+或配置网站根目录，命令参数为（–webroot /home/wwwroot/mydomain.com/） 或关联服务器的nginx服务，命令参数为（–nginx） 或关联服务器的apache服务，命令参数为（–apache） 或自建虚拟webserver（服务器没有占用80端口），命令参数为（–standalone） 假设服务器已搭建nginx服务，因此关联即可
+acme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx 参数解析：
+--issue命令参数生成证书 -d定义需要生成证书的域名，如有多个域名需使用多次，以上定了三个域名：file.a.com/www.a.com/img.a.com 三个域名需要配置到nginx中，不一定都配置到同一个server中，所有域名都至少对应一个server，否则无法生成证书 ... server { listen 80; server_name file....</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-03-14 12:54:12 +0800 CST'>March 14, 2023</span></footer>
+  <a class="entry-link" aria-label="post link to 使用ACME申请证书" href="https://shiqstone.github.io/post/use_acme_to_request_a_certificate/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>简单理解Typescript里的泛型
     </h2>
   </header>
@@ -309,25 +332,6 @@ a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，
   </div>
   <footer class="entry-footer"><span title='2022-08-02 00:15:51 +0000 UTC'>August 2, 2022</span></footer>
   <a class="entry-link" aria-label="post link to Go语言开发效率的小技巧" href="https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>在Linux下如何防止定时脚本重复执行
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>场景 好多系统中会用到邮件系统，我们假设有一个 PHP 脚本用来发送邮件。使用 Linux cron 每分钟执行一次 我们暂时不引入队列系统，其实使用队列处理此方式更优。
-我们得到下面的基本配置
-* * * * * php /home/app/email.php 问题分析和解决 异常问题 如果这个邮件服务出现异常，进程僵死怎么办？ 假设由于未知因素， email.php 脚本一直执行，没有退出。极端的情况，进入一个 while 死循环。 这下倒好，原来说好的一分钟执行一次，现在一直死这边了，后面的脚本也不能跑了
-解决办法： 使用 timeout，假设我们设定每个脚本最多执行时间位 200秒，超过 200秒 就自动死掉。
-* * * * * timeout 200 php /home/app/email.php 重复问题 如果这个脚本执行时间超过 60秒，下一分钟又会执行 php email.php，如果避免重复执行？ 这样会出现，有两个进程同时在执行 php email.php，那会不会出现同一个任务被执行了两次？
-解决办法： 使用 flock 进行互斥控制
-用法： flock [选项] &lt;文件|目录&gt; &lt;命令&gt; [&lt;参数&gt;...] flock [选项] &lt;文件|目录&gt; -c &lt;命令&gt; flock [选项] &lt;文件描述符号码&gt; 通过 shell 脚本管理文件锁。
-选项： -s, --shared 获取共享锁 -x, --exclusive 获取排他锁(默认) -u, --unlock 移除锁 -n, --nonblock 失败而非等待 -w, --timeout &lt;秒&gt; 等待限定的时间 -E, --conflict-exit-code &lt;数字&gt; 冲突或超时后的退出代码 -o, --close 运行命令前关闭文件描述符 -c, --command &lt;命令&gt; 通过 shell 运行单个命令字符串 -F, --no-fork 执行命令时不 fork --verbose 增加详尽程度 -h, --help display this help -V, --version display version 使用其中的排他设置...</p>
-  </div>
-  <footer class="entry-footer"><span title='2020-03-13 15:53:34 +0000 UTC'>March 13, 2020</span></footer>
-  <a class="entry-link" aria-label="post link to 在Linux下如何防止定时脚本重复执行" href="https://shiqstone.github.io/post/linux-crontab-avoid-repeat-run/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
