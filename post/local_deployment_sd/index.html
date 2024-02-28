@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Stable Diffusion WebUI本地安装部署（Mac M1） | 他山笨石</title>
+<meta name="keywords" content="Stable Diffusion, Mac M1">
+<meta name="description" content="在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
+需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
+前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
+Stable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。
+大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew
+安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：
+A 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：
+brew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：
+brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ &gt;&gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3.">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/local_deployment_sd/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+
+
+
+<meta property="og:title" content="Stable Diffusion WebUI本地安装部署（Mac M1）" />
+<meta property="og:description" content="在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
+需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
+前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
+Stable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。
+大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew
+安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：
+A 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：
+brew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：
+brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ &gt;&gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/local_deployment_sd/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2024-02-28T22:20:56&#43;08:00" />
+<meta property="article:modified_time" content="2024-02-28T22:20:56&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Stable Diffusion WebUI本地安装部署（Mac M1）"/>
+<meta name="twitter:description" content="在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
+需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
+前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
+Stable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。
+大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew
+安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：
+A 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：
+brew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：
+brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ &gt;&gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Stable Diffusion WebUI本地安装部署（Mac M1）",
+      "item": "https://shiqstone.github.io/post/local_deployment_sd/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Stable Diffusion WebUI本地安装部署（Mac M1）",
+  "name": "Stable Diffusion WebUI本地安装部署（Mac M1）",
+  "description": "在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。\n出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。\n需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。\n前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间\nStable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。\n大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew\n安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：\nA 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：\nbrew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：\nbrew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ \u0026gt;\u0026gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3.",
+  "keywords": [
+    "Stable Diffusion", "Mac M1"
+  ],
+  "articleBody": "在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。\n出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。\n需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。\n前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间\nStable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。\n大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew\n安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：\nA 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：\nbrew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：\nbrew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ \u003e\u003e ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3.10.6：\nconda create --name sdwebui python=3.10.6 安装 Stable Diffusion WebUI 首先，我们需要下载Stable-Diffusion-WebUI项目。在终端中执行以下命令：\ngit clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git 下载完成后，你会在当前目录下看到一个名为”stable-diffusion-webui”的文件夹。 在终端并激活之前创建的虚拟环境。输入以下命令：\nconda activate sdwebui 启动运行\ncd stable-diffusion-webui ./webui.sh 首次运行时，程序会自动寻找安装所需要的依赖包以及基础模型，这个过程会根据网络情况而定耗费一段很长的时间，需要耐心等候；\n安装成功后，在命令行窗口中，你将看到一个网址链接。将该链接（http://127.0.0.1:7860），直接用浏览器访问就可以进入sd webui界面。通常，每次启动成功后，会自动启动浏览器跳转到这个链接，等页面加载成功就可以开始使用。\n至此，stable-diffusion-webui基本完成；后续视情况再补充Stable Diffusion WebUI的基本使用，API访问方式以及更复杂的用法。\n参考 https://www.stablediffusion-cn.com/sd/sd-install/4306.html https://aituts.com/models/\nhttps://github.com/AUTOMATIC1111/stable-diffusion-webui https://www.cnblogs.com/xueweihan/p/7954960.html\n",
+  "wordCount" : "106",
+  "inLanguage": "en",
+  "datePublished": "2024-02-28T22:20:56+08:00",
+  "dateModified": "2024-02-28T22:20:56+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/local_deployment_sd/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Stable Diffusion WebUI本地安装部署（Mac M1）
+    </h1>
+    <div class="post-meta"><span title='2024-02-28 22:20:56 +0800 CST'>February 28, 2024</span>
+
+</div>
+  </header> <aside id="toc-container" class="toc-container wide">
+<div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e5%89%8d%e7%bd%ae%e6%9d%a1%e4%bb%b6%e4%b8%8e%e7%a1%ac%e4%bb%b6%e8%a6%81%e6%b1%82" aria-label="前置条件与硬件要求">前置条件与硬件要求</a></li>
+                <li>
+                    <a href="#stable-diffusion-web-ui%e4%bb%8b%e7%bb%8d" aria-label="Stable Diffusion web UI介绍">Stable Diffusion web UI介绍</a></li>
+                <li>
+                    <a href="#%e5%a4%a7%e8%87%b4%e6%ad%a5%e9%aa%a4" aria-label="大致步骤">大致步骤</a><ul>
+                        
+                <li>
+                    <a href="#%e5%ae%89%e8%a3%85-home-brew" aria-label="安装 Home Brew">安装 Home Brew</a></li>
+                <li>
+                    <a href="#%e5%ae%89%e8%a3%85python" aria-label="安装Python">安装Python</a><ul>
+                        
+                <li>
+                    <a href="#a-%e4%bd%bf%e7%94%a8%e5%91%bd%e4%bb%a4%e8%a1%8c%e7%9b%b4%e6%8e%a5%e5%ae%89%e8%a3%85" aria-label="A 使用命令行直接安装">A 使用命令行直接安装</a></li>
+                <li>
+                    <a href="#b-%e6%8e%a8%e8%8d%90-%e4%bd%bf%e7%94%a8anaconda%e6%9d%a5%e5%88%9b%e5%bb%ba%e8%99%9a%e6%8b%9f%e7%8e%af%e5%a2%83" aria-label="B 推荐 使用Anaconda来创建虚拟环境">B <strong>推荐</strong> 使用Anaconda来创建虚拟环境</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%ae%89%e8%a3%85-stable-diffusion-webui" aria-label="安装 Stable Diffusion WebUI">安装 Stable Diffusion WebUI</a></li>
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83" aria-label="参考">参考</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+        
+        activeElement = elements[0];
+        const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+        document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+    }, false);
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+        elements.forEach(element => {
+            const id = encodeURI(element.getAttribute('id')).toLowerCase();
+            if (element === activeElement){
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+            } else {
+                document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+            }
+        })
+    }, false);
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+
+  <div class="post-content"><p>在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进；
+最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。</p>
+<p>出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。</p>
+<p>需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。</p>
+<h2 id="前置条件与硬件要求">前置条件与硬件要求<a hidden class="anchor" aria-hidden="true" href="#前置条件与硬件要求">#</a></h2>
+<ul>
+<li>CPU：M1及以上芯片</li>
+<li>内存RAM：8GB及以上</li>
+<li>硬盘ROM：剩余空间30GB及以上</li>
+</ul>
+<blockquote>
+<p>* 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间</p>
+</blockquote>
+<h2 id="stable-diffusion-web-ui介绍">Stable Diffusion web UI介绍<a hidden class="anchor" aria-hidden="true" href="#stable-diffusion-web-ui介绍">#</a></h2>
+<p>Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。</p>
+<h2 id="大致步骤">大致步骤<a hidden class="anchor" aria-hidden="true" href="#大致步骤">#</a></h2>
+<ol>
+<li>安装 Home Brew</li>
+<li>安装 Python和其它相关拓展</li>
+<li>安装 Stable Diffusion WebUI</li>
+<li>启动 Stable Diffusion</li>
+</ol>
+<h3 id="安装-home-brew">安装 Home Brew<a hidden class="anchor" aria-hidden="true" href="#安装-home-brew">#</a></h3>
+<p>详见 <a href="https://brew.sh/">Homebrew</a></p>
+<h3 id="安装python">安装Python<a hidden class="anchor" aria-hidden="true" href="#安装python">#</a></h3>
+<p>有两种方式来安装Python，你可以根据自己的需求选择其中一种：</p>
+<h4 id="a-使用命令行直接安装">A 使用命令行直接安装<a hidden class="anchor" aria-hidden="true" href="#a-使用命令行直接安装">#</a></h4>
+<p>执行以下命令来一次性安装所有必要的依赖：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install cmake protobuf rust python@3.10 git wget
+</span></span></code></pre></div><h4 id="b-推荐-使用anaconda来创建虚拟环境">B <strong>推荐</strong> 使用Anaconda来创建虚拟环境<a hidden class="anchor" aria-hidden="true" href="#b-推荐-使用anaconda来创建虚拟环境">#</a></h4>
+<p>首先，安装Anaconda并将其加入环境变量中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>brew install --cask anaconda
+</span></span><span style="display:flex;"><span>echo ‘export PATH<span style="color:#f92672">=</span>”/usr/local/anaconda3/bin:$PATH” ‘ &gt;&gt; ~/.zshrc
+</span></span><span style="display:flex;"><span>source ~/.zshrc
+</span></span><span style="display:flex;"><span>conda init zsh
+</span></span></code></pre></div><p>接下来，你可以创建一个名为<code>sdwebui</code>的虚拟环境，并指定Python版本为3.10.6：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>conda create --name sdwebui python<span style="color:#f92672">=</span>3.10.6
+</span></span></code></pre></div><h2 id="安装-stable-diffusion-webui">安装 Stable Diffusion WebUI<a hidden class="anchor" aria-hidden="true" href="#安装-stable-diffusion-webui">#</a></h2>
+<p>首先，我们需要下载Stable-Diffusion-WebUI项目。在终端中执行以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+</span></span></code></pre></div><p>下载完成后，你会在当前目录下看到一个名为”stable-diffusion-webui”的文件夹。
+在终端并激活之前创建的虚拟环境。输入以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>conda activate sdwebui
+</span></span></code></pre></div><p><strong>启动运行</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd stable-diffusion-webui
+</span></span><span style="display:flex;"><span>./webui.sh
+</span></span></code></pre></div><p>首次运行时，程序会自动寻找安装所需要的依赖包以及基础模型，这个过程会根据网络情况而定耗费一段很长的时间，需要耐心等候；</p>
+<p>安装成功后，在命令行窗口中，你将看到一个网址链接。将该链接（http://127.0.0.1:7860），直接用浏览器访问就可以进入sd webui界面。通常，每次启动成功后，会自动启动浏览器跳转到这个链接，等页面加载成功就可以开始使用。</p>
+<p>至此，stable-diffusion-webui基本完成；后续视情况再补充Stable Diffusion WebUI的基本使用，API访问方式以及更复杂的用法。</p>
+<h2 id="参考">参考<a hidden class="anchor" aria-hidden="true" href="#参考">#</a></h2>
+<p><a href="https://www.stablediffusion-cn.com/sd/sd-install/4306.html">https://www.stablediffusion-cn.com/sd/sd-install/4306.html</a>
+<a href="https://aituts.com/models/">https://aituts.com/models/</a><br>
+<a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">https://github.com/AUTOMATIC1111/stable-diffusion-webui</a>
+<a href="https://www.cnblogs.com/xueweihan/p/7954960.html">https://www.cnblogs.com/xueweihan/p/7954960.html</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://shiqstone.github.io/tags/stable-diffusion/">Stable Diffusion</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

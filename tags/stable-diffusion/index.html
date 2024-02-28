@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
-<title>vue | 他山笨石</title>
+<title>Stable Diffusion | 他山笨石</title>
 <meta name="keywords" content="">
 <meta name="description" content="Show no remorse">
 <meta name="author" content="">
-<link rel="canonical" href="https://shiqstone.github.io/tags/vue/">
+<link rel="canonical" href="https://shiqstone.github.io/tags/stable-diffusion/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://shiqstone.github.io/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
@@ -18,7 +18,7 @@
 <link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/vue/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://shiqstone.github.io/tags/stable-diffusion/index.xml">
 <noscript>
     <style>
         #theme-toggle,
@@ -60,13 +60,13 @@
 
 
 
-<meta property="og:title" content="vue" />
+<meta property="og:title" content="Stable Diffusion" />
 <meta property="og:description" content="Show no remorse" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://shiqstone.github.io/tags/vue/" />
+<meta property="og:url" content="https://shiqstone.github.io/tags/stable-diffusion/" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="vue"/>
+<meta name="twitter:title" content="Stable Diffusion"/>
 <meta name="twitter:description" content="Show no remorse"/>
 
 </head>
@@ -132,28 +132,29 @@
 <main class="main"> 
 <header class="page-header">
   <h1>
-    vue
+    Stable Diffusion
   </h1>
 </header>
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
-    <h2>vue-router&#43;nginx 路径配置方法
+    <h2>Stable Diffusion WebUI本地安装部署（Mac M1）
     </h2>
   </header>
   <div class="entry-content">
-    <p>vue-router 的默认数据hash模式-使用url的hash来模拟一个完整的URL，于是当URL改变时，页面不会重新加载。
-一般情况下，我们不喜欢丑丑的hash，类似于index.html#/matchResult，可以使用路由的history模式。history模式是利用history.pushState API来实现页面跳转。
-但是有个问题，在使用nginx的时候，我们需要添加一些配置。
-直接配置在根路径下 直接配置在根路径下，访问的时候只用输入http://yoursite.com，在nginx的配置如下
-location / { try_files $uri $uri/ /index.html; } 非根路径配置 如果一个域名下有多个项目，那么使用根路径配置就不合适了，我们需要在根路径下指定一层路径，比如说
-A项目
-http://yoursite.com/A B项目
-http://yoursite.com/B nginx的配置
-location ^~/A { alias /XX/A;//此处为A的路径 index index.html; try_files $uri $uri/ /A/index.html; } location ^~/B { alias /XX/B;//此处为B的路径 index index.html; try_files $uri $uri/ /B/index.html; } tip: 注意要用alias不能用root</p>
+    <p>在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
+需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
+前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
+Stable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。
+大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew
+安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：
+A 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：
+brew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：
+brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ &gt;&gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3....</p>
   </div>
-  <footer class="entry-footer"><span title='2019-08-11 19:09:48 +0000 UTC'>August 11, 2019</span></footer>
-  <a class="entry-link" aria-label="post link to vue-router&#43;nginx 路径配置方法" href="https://shiqstone.github.io/post/vue-route-nginx/"></a>
+  <footer class="entry-footer"><span title='2024-02-28 22:20:56 +0800 CST'>February 28, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Stable Diffusion WebUI本地安装部署（Mac M1）" href="https://shiqstone.github.io/post/local_deployment_sd/"></a>
 </article>
     </main>
     

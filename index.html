@@ -147,6 +147,27 @@
 
 <article class="first-entry"> 
   <header class="entry-header">
+    <h2>Stable Diffusion WebUI本地安装部署（Mac M1）
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
+需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
+前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
+Stable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。
+大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew
+安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：
+A 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：
+brew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：
+brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ &gt;&gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-02-28 22:20:56 +0800 CST'>February 28, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to Stable Diffusion WebUI本地安装部署（Mac M1）" href="https://shiqstone.github.io/post/local_deployment_sd/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>使用ACME申请证书
     </h2>
   </header>
@@ -315,24 +336,6 @@ hugo version hugo v0.101.0&#43;extended darwin/arm64 BuildDate=unknown Hugo 使�
   <footer class="entry-footer"><span title='2022-08-02 13:25:20 +0800 CST'>August 2, 2022</span></footer>
   <a class="entry-link" aria-label="post link to 博客从Hexo迁移到Hugo" href="https://shiqstone.github.io/post/hexo_to_hugo/"></a>
 </article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>Go语言开发效率的小技巧
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>前言 每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、for-each等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。
-可变长参数 Go语言允许一个函数把任意数量的值作为参数，Go语言内置了...操作符，在函数的最后一个形参才能使用...操作符，使用它必须注意如下事项：
-可变长参数必须在函数列表的最后一个； 把可变长参数当切片来解析，可变长参数没有没有值时就是nil切片 可变长参数的类型必须相同 func test(a int, b ...int) { return } 既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用...进行解包转换为参数列表，append 方法就是最好的例子：
-var sarr []int sarr = append(sarr, 1) sarr = append(sarr, sarr...) append方法定义如下：
-// slice = append(slice, elem1, elem2) // slice = append(slice, anotherSlice...) func append(slice []Type, elems ...Type) []Type 声明不定长数组 数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用…操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；
-a := [...]int{1, 3, 5} // 数组长度是3，等同于 a := [3]{1, 3, 5} 有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用…操作符搞定：
-a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0 init函数 Go语言提供了先于main函数执行的init函数，初始化每个包后会自动执行init函数，每个包中可以有多个init函数，每个包中的源文件中也可以有多个init函数，加载顺序如下：...</p>
-  </div>
-  <footer class="entry-footer"><span title='2022-08-02 00:15:51 +0000 UTC'>August 2, 2022</span></footer>
-  <a class="entry-link" aria-label="post link to Go语言开发效率的小技巧" href="https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/"></a>
-</article>
 <footer class="page-footer">
   <nav class="pagination">
     <a class="next" href="https://shiqstone.github.io/page/2/">Next »</a>
@@ -341,7 +344,7 @@ a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，
     </main>
     
 <footer class="footer">
-    <span>&copy; 2023 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>&copy; 2024 <a href="https://shiqstone.github.io">他山笨石</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
