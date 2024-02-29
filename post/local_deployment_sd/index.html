@@ -7,7 +7,7 @@
 <meta name="robots" content="index, follow">
 <title>Stable Diffusion WebUI本地安装部署（Mac M1） | 他山笨石</title>
 <meta name="keywords" content="Stable Diffusion, Mac M1">
-<meta name="description" content="在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+<meta name="description" content="在AIGC刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
 出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
 需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
 前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
@@ -71,7 +71,7 @@ brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PA
 
 
 <meta property="og:title" content="Stable Diffusion WebUI本地安装部署（Mac M1）" />
-<meta property="og:description" content="在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+<meta property="og:description" content="在AIGC刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
 出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
 需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
 前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
@@ -88,7 +88,7 @@ brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PA
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Stable Diffusion WebUI本地安装部署（Mac M1）"/>
-<meta name="twitter:description" content="在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
+<meta name="twitter:description" content="在AIGC刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。
 出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。
 需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。
 前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间
@@ -126,11 +126,11 @@ brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PA
   "@type": "BlogPosting",
   "headline": "Stable Diffusion WebUI本地安装部署（Mac M1）",
   "name": "Stable Diffusion WebUI本地安装部署（Mac M1）",
-  "description": "在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。\n出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。\n需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。\n前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间\nStable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。\n大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew\n安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：\nA 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：\nbrew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：\nbrew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ \u0026gt;\u0026gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3.",
+  "description": "在AIGC刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。\n出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。\n需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。\n前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间\nStable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。\n大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew\n安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：\nA 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：\nbrew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：\nbrew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ \u0026gt;\u0026gt; ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3.",
   "keywords": [
     "Stable Diffusion", "Mac M1"
   ],
-  "articleBody": "在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。\n出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。\n需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。\n前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间\nStable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。\n大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew\n安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：\nA 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：\nbrew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：\nbrew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ \u003e\u003e ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3.10.6：\nconda create --name sdwebui python=3.10.6 安装 Stable Diffusion WebUI 首先，我们需要下载Stable-Diffusion-WebUI项目。在终端中执行以下命令：\ngit clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git 下载完成后，你会在当前目录下看到一个名为”stable-diffusion-webui”的文件夹。 在终端并激活之前创建的虚拟环境。输入以下命令：\nconda activate sdwebui 启动运行\ncd stable-diffusion-webui ./webui.sh 首次运行时，程序会自动寻找安装所需要的依赖包以及基础模型，这个过程会根据网络情况而定耗费一段很长的时间，需要耐心等候；\n安装成功后，在命令行窗口中，你将看到一个网址链接。将该链接（http://127.0.0.1:7860），直接用浏览器访问就可以进入sd webui界面。通常，每次启动成功后，会自动启动浏览器跳转到这个链接，等页面加载成功就可以开始使用。\n至此，stable-diffusion-webui基本完成；后续视情况再补充Stable Diffusion WebUI的基本使用，API访问方式以及更复杂的用法。\n参考 https://www.stablediffusion-cn.com/sd/sd-install/4306.html https://aituts.com/models/\nhttps://github.com/AUTOMATIC1111/stable-diffusion-webui https://www.cnblogs.com/xueweihan/p/7954960.html\n",
+  "articleBody": "在AIGC刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进； 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。\n出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。\n需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。\n前置条件与硬件要求 CPU：M1及以上芯片 内存RAM：8GB及以上 硬盘ROM：剩余空间30GB及以上 * 在持续运行中，切换模型和生成图片的过程会不断占用硬盘空间，在运行中不会自行清除，重启服务和重启系统后可以释放空间\nStable Diffusion web UI介绍 Stable Diffusion web UI是一个基于Stable Diffusion的开源项目。这个项目非常强大，把原本很难安装配置的开源项目做成了一个简单易操作的网页，后来又引入了插件系统，可以玩出很多花样。非常适合新人上手。\n大致步骤 安装 Home Brew 安装 Python和其它相关拓展 安装 Stable Diffusion WebUI 启动 Stable Diffusion 安装 Home Brew 详见 Homebrew\n安装Python 有两种方式来安装Python，你可以根据自己的需求选择其中一种：\nA 使用命令行直接安装 执行以下命令来一次性安装所有必要的依赖：\nbrew install cmake protobuf rust python@3.10 git wget B 推荐 使用Anaconda来创建虚拟环境 首先，安装Anaconda并将其加入环境变量中：\nbrew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PATH” ‘ \u003e\u003e ~/.zshrc source ~/.zshrc conda init zsh 接下来，你可以创建一个名为sdwebui的虚拟环境，并指定Python版本为3.10.6：\nconda create --name sdwebui python=3.10.6 安装 Stable Diffusion WebUI 首先，我们需要下载Stable-Diffusion-WebUI项目。在终端中执行以下命令：\ngit clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git 下载完成后，你会在当前目录下看到一个名为”stable-diffusion-webui”的文件夹。 在终端并激活之前创建的虚拟环境。输入以下命令：\nconda activate sdwebui 启动运行\ncd stable-diffusion-webui ./webui.sh 首次运行时，程序会自动寻找安装所需要的依赖包以及基础模型，这个过程会根据网络情况而定耗费一段很长的时间，需要耐心等候；\n安装成功后，在命令行窗口中，你将看到一个网址链接。将该链接（http://127.0.0.1:7860），直接用浏览器访问就可以进入sd webui界面。通常，每次启动成功后，会自动启动浏览器跳转到这个链接，等页面加载成功就可以开始使用。\n至此，stable-diffusion-webui基本完成；后续视情况再补充Stable Diffusion WebUI的基本使用，API访问方式以及更复杂的用法。\n参考 https://www.stablediffusion-cn.com/sd/sd-install/4306.html https://aituts.com/models/\nhttps://github.com/AUTOMATIC1111/stable-diffusion-webui https://www.cnblogs.com/xueweihan/p/7954960.html\n",
   "wordCount" : "106",
   "inLanguage": "en",
   "datePublished": "2024-02-28T22:20:56+08:00",
@@ -308,7 +308,7 @@ brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PA
     }
 </script>
 
-  <div class="post-content"><p>在AICG刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进；
+  <div class="post-content"><p>在AIGC刚开始流行时，曾简单尝试过一些早期的技术方案，当时主要采用的是Colab的免费服务，之后DALL-E和Midjourney的横空出世，也很是惊艳，跟风玩了一段时间，直到各家开始收费之后，因为没有实际商用的原因，没有继续跟进；
 最近开始有一些绘图和改图的需求，经过调研注意到Stable Diffusion是一个强大的AI绘画工具，出图质量完全满足要求，更重要的是它是一个开源的工具，完全可以自己部署和维护，并且有活跃的开源社区提供了众多非常优秀的模型。</p>
 <p>出于学习和尝试开发的目的，决定在自己的MacBook Pro（M1）笔记本上安装使用Stable Diffusion，以下是大概步骤的记录。</p>
 <p>需要注意的是，由于硬件和操作系统的不同，网上一些常见的linux/windows教程并不适用。</p>
