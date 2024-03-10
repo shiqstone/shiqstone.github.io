@@ -6,7 +6,34 @@
     <description>Recent content in Tags on 他山笨石</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh_CN</language>
-    <lastBuildDate>Wed, 28 Feb 2024 22:20:56 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Mar 2024 03:22:01 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>aws</title>
+      <link>https://shiqstone.github.io/tags/aws/</link>
+      <pubDate>Sun, 10 Mar 2024 03:22:01 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/aws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ec2</title>
+      <link>https://shiqstone.github.io/tags/ec2/</link>
+      <pubDate>Sun, 10 Mar 2024 03:22:01 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/ec2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>redis</title>
+      <link>https://shiqstone.github.io/tags/redis/</link>
+      <pubDate>Sun, 10 Mar 2024 03:22:01 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/redis/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Stable Diffusion</title>
       <link>https://shiqstone.github.io/tags/stable-diffusion/</link>

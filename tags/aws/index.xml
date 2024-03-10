@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>aws on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/aws/</link>
+    <description>Recent content in aws on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Sun, 10 Mar 2024 03:22:01 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>在AWS EC2上安装使用redis</title>
+      <link>https://shiqstone.github.io/post/install-redis-server-on-aws-ec2/</link>
+      <pubDate>Sun, 10 Mar 2024 03:22:01 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/install-redis-server-on-aws-ec2/</guid>
+      <description>Amazon 的 ElastiCache 有着出色的性能表现和可靠的稳定性，但价格不菲，对于一些小负载，且对数据可靠性要求不太高的场景，可以采用在ec2上自行搭建redis服务的方式；在这里，系统版本采用Amazon Linux3。
+sudo yum-config-manager --enable epel sudo yum install redis6 -y #sudo redis6-server /etc/redis6/redis6.conf sudo systemctl enable redis6 sudo systemctl start redis6 sudo systemctl status redis6 几个简单命令就可以完成安装，可以用以下命令进行简单测试
+redis6-cli -h 127.0.0.1 -p 6379 127.0.0.1:6379&amp;gt; set a &amp;#34;hello&amp;#34; OK 127.0.0.1:6379&amp;gt; get a &amp;#34;hello&amp;#34; 意外的是在这个环境下，甚至还有代码补全，虽然日常用不到。</description>
+    </item>
+    
+  </channel>
+</rss>
