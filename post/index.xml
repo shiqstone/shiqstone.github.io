@@ -6,7 +6,20 @@
     <description>Recent content in Posts on 他山笨石</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh_CN</language>
-    <lastBuildDate>Sun, 10 Mar 2024 03:22:01 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 21 Mar 2024 17:40:49 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用systemctl命令配置开机启动服务</title>
+      <link>https://shiqstone.github.io/post/systemctl_set_startup_service/</link>
+      <pubDate>Thu, 21 Mar 2024 17:40:49 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/systemctl_set_startup_service/</guid>
+      <description>systemctl是Linux系统上用于管理系统服务（systemd单元）的命令行工具。它可以用来启动、停止、重启、禁用、启用、查询和管理系统服务的状态。
+我们可以通过自定义服务的方式，把指定的脚本程序配置为系统服务，可以用systemctl命令控制状态，并可设置为开机自动启动。
+实现步骤 创建.service文件 例如，为一个qnc_api程序配置启动服务，可以创建一个qnc_api.service
+[Unit] Description=Qnc Api Service After=network.target [Service] User=ec2-user Type=simple WorkingDirectory=/home/ec2-user ExecStart=/home/ec2-user/qnc_api &amp;gt; /home/ec2-user/log.txt 2&amp;gt;&amp;amp;1 Restart=always RestartSec=10 [Install] WantedBy=multi-user.target 主要字段说明： [Unit] Description：一段描述这个Unit文件的文字，通常只是简短的一句话。 Requires：依赖的其他Unit列表，列在其中的Unit 模块会在这个服务启动的同时被启动，并且如果其中有任意一个服务启动失败，这个服务也会被终止。 Wants：与Requires相似，但只是在被配置的这个 Unit 启动时，触发启动列出的每个 Unit 模块，而不去考虑这些模块启动是否成功。 After：与Requires 相似，但会在后面列出的所有模块全部启动完成以后，才会启动当前的服务。 Before：与After 相反，在启动指定的任一个模块之前，都会首先确保当前服务已经运行。 Conflicts：与这个模块有冲突的模块，如果列出模块中有已经在运行的，这个服务就不能启动，反之亦然。 上面这些配置中，除了Description 外，都能够被添加多次。比如前面第一个例子中的After参数在一行中使用空格分隔指定所有值，也可以像第二个例子中那样使用多个After参数，在每行参数中指定一个值。
+[Service] Type：服务的类型，常用的有 simple（默认类型） 和 forking。++默认的 simple 类型可以适应于绝大多数的场景，因此一般可以忽略这个参数的配置++。而如果服务程序启动后会通过 fork 系统调用创建子进程，然后关闭应用程序本身进程的情况，则应该将 Type 的值设置为 forking，否则 systemd 将不会跟踪子进程的行为，而认为服务已经退出。 ExecStart：这个参数是几乎每个 .service 文件都会有的，指定服务启动的主要命令，在每个配置文件中只能使用一次。 ExecStartPre：指定在启动执行 ExecStart 的命令前的准备工作，可以有多个，如前面第二个例子中所示，所有命令会按照文件中书写的顺序依次被执行。 ExecStop：停止服务所需要执行的主要命令。 WorkingDirectory：指定服务的工作目录。 RootDirectory：指定服务进程的根目录（ / 目录），如果配置了这个参数后，服务将无法访问指定目录以外的任何文件。 User：指定运行服务的用户，会影响服务对本地文件系统的访问权限。 [Install] WantedBy：表示该服务所在的 Target(服务组) 文件位置 配置文件主要放在 /usr/lib/systemd/ 目录(CentOS)，也可能在 /etc/systemd/ 目录(Ubuntu), 有系统(system)和用户(user)之分，需要开机不登陆就能运行的程序，存在系统服务里，以Ubuntu为例，我们把上面编辑的qnc_api.</description>
+    </item>
+    
     <item>
       <title>在AWS EC2上安装使用redis</title>
       <link>https://shiqstone.github.io/post/install-redis-server-on-aws-ec2/</link>
