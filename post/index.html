@@ -153,6 +153,20 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>DevEco 启动了模拟器但是显示 No Device
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>已经安装了模拟器，并且模拟器已经运行了 在Device Manager页面启动了模拟器 但是在设备选择下拉列表没有模拟器的选项，显示“No Device” 同时，打开项目时，Notifications 中提示如下信息
+unable to open connection to hdc server on localhost/127.0.0.1:5037, due to: java.net.connectexception: connection refused 尝试设置HDC_SERVER_PORT，修改默认端口等方法都没有生效
+最后发现，模拟器的USB调试会自动关闭，导致设备列表中找不到已经启动的模拟器设备 设置启用后，就可以在设备列表里面选择使用了 没想到被同一块小石头绊倒了一次又一次</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-05-07 15:03:30 +0800 CST'>May 7, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to DevEco 启动了模拟器但是显示 No Device" href="https://shiqstone.github.io/post/deveco_emulator_nodevice/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>使用systemctl命令配置开机启动服务
     </h2>
   </header>
@@ -307,27 +321,6 @@ ssh $user@$host vim /usr/local/etc/xray/config.json systemctl restart xray firew
   </div>
   <footer class="entry-footer"><span title='2022-11-03 11:18:20 +0800 CST'>November 3, 2022</span></footer>
   <a class="entry-link" aria-label="post link to 让Hugo支持LaTex" href="https://shiqstone.github.io/post/latex_for_hugo/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>MarkDown 中使用 LaTeX 数学式
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>在很多与数学相关的地方，需要输入数学公式都会用到LaTeX，虽然很多数学学术论文整个文档就像使用Markdown一样是直接使用的LaTex语法来编辑的，但是仔细比对之后发现直接用LaTex语法来写整个文档来，它的效果和Markdown &#43; LaTex Math 方式没有太大的区别。 但是LaTex的语法、编辑器、配置、中文支持等都要比Markdown要复杂的多，而且也不及Markdown已经非常成熟的生态（包括工具链、社区等）。下面简要介绍下 MarkDown 中如何使用LaTeX输入数学公式。
-在 LaTeX 中，最常用到的主要有文本模式和数学模式这两种模式。数学模式又可分为行内公式{inline math)和行间公式 (display math) 两种形式。
-行内公式形式是将数学公式插入文本行内，使之与文本融为一体，这种形式适合更简短的公式。 行内公式 $...$
-行间公式形式是将数学公式插在文本行之间，自成一行或一个段落，与上下文附加一段垂直空白，使数学公式突出醒目。多行公式、公式组和微积分方程等复杂的数学式都是采用行间 公式形式编写。 行间公式 $$...$$
-行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$ 行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$ 行内 ${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots$
-行间 $${f(x)=a_nx^n&#43;a_{n-1}x^{n-1}&#43;a_{n-2}x^{n-2}}&#43;\cdots \tag{1.1}$$
-LaTex Math的语法多且杂，我们是没法完全记住这些语法的，能记住也不提倡，这里比较推荐名校莱斯Rice大学的一个语法手册，莱斯大学LaTex Math在线PDF手册。
-当然安装了上述插件的VS Code也是有LaTex Math语法提示的。用英文字符反斜杠\就可以为你提示。下面我们就结合这个PDF里LaTex Math的语法在Markdown里面进行实战，以及对这些语法的使用进行一些简单的讲解。
-希腊字母 使用$LaTex希腊字母语法$，也就是将LaTex的希腊字母语法用两个美元符号围住即可。比如:
-α \alpha κ \kappa ψ \psi z \digamma ∆ \Delta Θ \Theta β \beta λ \lambda ρ \rho ε \varepsilon Γ \Gamma Υ \Upsilon χ \chi µ \mu σ \sigma κ \varkappa Λ \Lambda Ξ \Xi δ \delta ν \nu τ \tau ϕ \varphi Ω \Omega ϵ \epsilon o o θ \theta $ \varpi Φ \Phi ℵ \aleph η \eta ω \omega υ \upsilon % \varrho Π \Pi i \beth γ \gamma φ \phi ξ \xi ς \varsigma Ψ \Psi k \daleth ι \iota π \pi ζ \zeta ϑ \vartheta Σ \Sigma 值得注意的是希腊字母有大写和小写之分，这个大小写是由LaTex的首字母是否大小写来控制的。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2022-10-12 16:25:27 +0800 CST'>October 12, 2022</span></footer>
-  <a class="entry-link" aria-label="post link to MarkDown 中使用 LaTeX 数学式" href="https://shiqstone.github.io/post/latex_in_markdown/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
