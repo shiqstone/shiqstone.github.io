@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Beyond Compare on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/beyond-compare/</link>
+    <description>Recent content in Beyond Compare on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Fri, 23 Feb 2024 16:22:01 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/beyond-compare/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>解决Beyond Compare “这个授权密钥已被吊销”的办法</title>
+      <link>https://shiqstone.github.io/post/beyondcompare_key_revoked/</link>
+      <pubDate>Fri, 23 Feb 2024 16:22:01 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/beyondcompare_key_revoked/</guid>
+      <description>在MacOs下遇到Beyond Compare “这个授权密钥已被吊销”
+cd ~/Library/Application Support/Beyond Compare 修改BCState.xml，原文件：
+&amp;lt;TCheckForUpdatesState&amp;gt; &amp;lt;Build Value=&amp;#34;24545&amp;#34;/&amp;gt; &amp;lt;CheckID Value=&amp;#34;173864067260425&amp;#34;/&amp;gt; &amp;lt;LastChecked Value=&amp;#34;2019-12-13 10:28:02&amp;#34;/&amp;gt; &amp;lt;/TCheckForUpdatesState&amp;gt; 删除CheckID和LastChecked
+&amp;lt;TCheckForUpdatesState&amp;gt; &amp;lt;Build Value=&amp;#34;24545&amp;#34;/&amp;gt; &amp;lt;/TCheckForUpdatesState&amp;gt; 修改BCSessions.xml，原文件：
+&amp;lt;BCSessions Flags=&amp;#34;2516348444542&amp;#34; Version=&amp;#34;1&amp;#34; MinVersion=&amp;#34;1&amp;#34;&amp;gt; &amp;lt;/BCSessions&amp;gt; 删除Flags
+&amp;lt;BCSessions Version=&amp;#34;1&amp;#34; MinVersion=&amp;#34;1&amp;#34;&amp;gt; &amp;lt;/BCSessions&amp;gt; </description>
+    </item>
+    
+  </channel>
+</rss>

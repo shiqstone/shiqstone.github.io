@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>从零开始用pytorch搭建Transformer模型 | 他山笨石</title>
+<meta name="keywords" content="">
+<meta name="description" content="我们从零开始用pytorch搭建Transformer模型。
+训练它来实现一个有趣的实例：两数之和。
+输入输出类似如下： 输入： &ldquo;12345&#43;54321&rdquo; 输出： &ldquo;66666&rdquo;
+我们把这个任务当做一个机器翻译任务来进行。输入是一个字符序列，输出也是一个字符序列(seq-to-seq). 这和机器翻译的输入输出结构是类似的，所以可以用Transformer来做。
+一、准备数据 import random import numpy as np import torch from torch.utils.data import Dataset,DataLoader # 定义字典 words_x = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;,&#43;&#39; vocab_x = {word: i for i, word in enumerate(words_x.split(&#39;,&#39;))} vocab_xr = [k for k, v in vocab_x.items()] #反查词典 words_y = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;&#39; vocab_y = {word: i for i, word in enumerate(words_y.split(&#39;,&#39;))} vocab_yr = [k for k, v in vocab_y.items()] #反查词典 #两数相加数据集 def get_data(): # 定义词集合 words = [&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;] # 每个词被选中的概率 p = np.">
+<meta name="author" content="">
+<link rel="canonical" href="https://shiqstone.github.io/post/build_transformer_model_with_pytorch/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.91271db59a1cc6d80ca5e764681a680ab708aaa888b53ce09b5af262b9f73e53.css" integrity="sha256-kScdtZocxtgMpedkaBpoCrcIqqiItTzgm1ryYrn3PlM=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://shiqstone.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://shiqstone.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://shiqstone.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://shiqstone.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://shiqstone.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+
+
+
+<meta property="og:title" content="从零开始用pytorch搭建Transformer模型" />
+<meta property="og:description" content="我们从零开始用pytorch搭建Transformer模型。
+训练它来实现一个有趣的实例：两数之和。
+输入输出类似如下： 输入： &ldquo;12345&#43;54321&rdquo; 输出： &ldquo;66666&rdquo;
+我们把这个任务当做一个机器翻译任务来进行。输入是一个字符序列，输出也是一个字符序列(seq-to-seq). 这和机器翻译的输入输出结构是类似的，所以可以用Transformer来做。
+一、准备数据 import random import numpy as np import torch from torch.utils.data import Dataset,DataLoader # 定义字典 words_x = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;,&#43;&#39; vocab_x = {word: i for i, word in enumerate(words_x.split(&#39;,&#39;))} vocab_xr = [k for k, v in vocab_x.items()] #反查词典 words_y = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;&#39; vocab_y = {word: i for i, word in enumerate(words_y.split(&#39;,&#39;))} vocab_yr = [k for k, v in vocab_y.items()] #反查词典 #两数相加数据集 def get_data(): # 定义词集合 words = [&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;] # 每个词被选中的概率 p = np." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://shiqstone.github.io/post/build_transformer_model_with_pytorch/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2024-04-09T16:26:24&#43;08:00" />
+<meta property="article:modified_time" content="2024-04-09T16:26:24&#43;08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="从零开始用pytorch搭建Transformer模型"/>
+<meta name="twitter:description" content="我们从零开始用pytorch搭建Transformer模型。
+训练它来实现一个有趣的实例：两数之和。
+输入输出类似如下： 输入： &ldquo;12345&#43;54321&rdquo; 输出： &ldquo;66666&rdquo;
+我们把这个任务当做一个机器翻译任务来进行。输入是一个字符序列，输出也是一个字符序列(seq-to-seq). 这和机器翻译的输入输出结构是类似的，所以可以用Transformer来做。
+一、准备数据 import random import numpy as np import torch from torch.utils.data import Dataset,DataLoader # 定义字典 words_x = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;,&#43;&#39; vocab_x = {word: i for i, word in enumerate(words_x.split(&#39;,&#39;))} vocab_xr = [k for k, v in vocab_x.items()] #反查词典 words_y = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;&#39; vocab_y = {word: i for i, word in enumerate(words_y.split(&#39;,&#39;))} vocab_yr = [k for k, v in vocab_y.items()] #反查词典 #两数相加数据集 def get_data(): # 定义词集合 words = [&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;] # 每个词被选中的概率 p = np."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Posts",
+      "item": "https://shiqstone.github.io/post/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "从零开始用pytorch搭建Transformer模型",
+      "item": "https://shiqstone.github.io/post/build_transformer_model_with_pytorch/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "从零开始用pytorch搭建Transformer模型",
+  "name": "从零开始用pytorch搭建Transformer模型",
+  "description": "我们从零开始用pytorch搭建Transformer模型。\n训练它来实现一个有趣的实例：两数之和。\n输入输出类似如下： 输入： \u0026ldquo;12345+54321\u0026rdquo; 输出： \u0026ldquo;66666\u0026rdquo;\n我们把这个任务当做一个机器翻译任务来进行。输入是一个字符序列，输出也是一个字符序列(seq-to-seq). 这和机器翻译的输入输出结构是类似的，所以可以用Transformer来做。\n一、准备数据 import random import numpy as np import torch from torch.utils.data import Dataset,DataLoader # 定义字典 words_x = \u0026#39;\u0026lt;PAD\u0026gt;,1,2,3,4,5,6,7,8,9,0,\u0026lt;SOS\u0026gt;,\u0026lt;EOS\u0026gt;,+\u0026#39; vocab_x = {word: i for i, word in enumerate(words_x.split(\u0026#39;,\u0026#39;))} vocab_xr = [k for k, v in vocab_x.items()] #反查词典 words_y = \u0026#39;\u0026lt;PAD\u0026gt;,1,2,3,4,5,6,7,8,9,0,\u0026lt;SOS\u0026gt;,\u0026lt;EOS\u0026gt;\u0026#39; vocab_y = {word: i for i, word in enumerate(words_y.split(\u0026#39;,\u0026#39;))} vocab_yr = [k for k, v in vocab_y.items()] #反查词典 #两数相加数据集 def get_data(): # 定义词集合 words = [\u0026#39;0\u0026#39;, \u0026#39;1\u0026#39;, \u0026#39;2\u0026#39;, \u0026#39;3\u0026#39;, \u0026#39;4\u0026#39;, \u0026#39;5\u0026#39;, \u0026#39;6\u0026#39;, \u0026#39;7\u0026#39;, \u0026#39;8\u0026#39;, \u0026#39;9\u0026#39;] # 每个词被选中的概率 p = np.",
+  "keywords": [
+    
+  ],
+  "articleBody": "我们从零开始用pytorch搭建Transformer模型。\n训练它来实现一个有趣的实例：两数之和。\n输入输出类似如下： 输入： “12345+54321” 输出： “66666”\n我们把这个任务当做一个机器翻译任务来进行。输入是一个字符序列，输出也是一个字符序列(seq-to-seq). 这和机器翻译的输入输出结构是类似的，所以可以用Transformer来做。\n一、准备数据 import random import numpy as np import torch from torch.utils.data import Dataset,DataLoader # 定义字典 words_x = ',1,2,3,4,5,6,7,8,9,0,,,+' vocab_x = {word: i for i, word in enumerate(words_x.split(','))} vocab_xr = [k for k, v in vocab_x.items()] #反查词典 words_y = ',1,2,3,4,5,6,7,8,9,0,,' vocab_y = {word: i for i, word in enumerate(words_y.split(','))} vocab_yr = [k for k, v in vocab_y.items()] #反查词典 #两数相加数据集 def get_data(): # 定义词集合 words = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] # 每个词被选中的概率 p = np.array([7, 5, 5, 7, 6, 5, 7, 6, 5, 7]) p = p / p.sum() # 随机采样n1个词作为s1 n1 = random.randint(10, 20) s1 = np.random.choice(words, size=n1, replace=True, p=p) s1 = s1.tolist() # 随机采样n2个词作为s2 n2 = random.randint(10, 20) s2 = np.random.choice(words, size=n2, replace=True, p=p) s2 = s2.tolist() # x等于s1和s2字符上的相加 x = s1 + ['+'] + s2 # y等于s1和s2数值上的相加 y = int(''.join(s1)) + int(''.join(s2)) y = list(str(y)) # 加上首尾符号 x = [''] + x + [''] y = [''] + y + [''] # 补pad到固定长度 x = x + [''] * 50 y = y + [''] * 51 x = x[:50] y = y[:51] # 编码成token token_x = [vocab_x[i] for i in x] token_y = [vocab_y[i] for i in y] # 转tensor tensor_x = torch.LongTensor(token_x) tensor_y = torch.LongTensor(token_y) return tensor_x, tensor_y def show_data(tensor_x,tensor_y) -\u003e\"str\": words_x = \"\".join([vocab_xr[i] for i in tensor_x.tolist()]) words_y = \"\".join([vocab_yr[i] for i in tensor_y.tolist()]) return words_x,words_y x,y = get_data() print(x,y,\"\\n\") print(show_data(x,y)) 需要先安装pytorch\nconda install pytorch torchvision torchaudio -c pytorch 安装完成后运行代码，输出类似下面：\ntensor([11, 8, 3, 1, 7, 6, 1, 8, 2, 8, 6, 13, 3, 1, 3, 5, 3, 5, 10, 7, 2, 3, 3, 6, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) tensor([11, 3, 2, 1, 8, 5, 2, 6, 9, 10, 6, 2, 2, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) ('8317618286+313535072336', '321852690622') # 定义数据集 class TwoSumDataset(torch.utils.data.Dataset): def __init__(self,size = 100000): super(Dataset, self).__init__() self.size = size def __len__(self): return self.size def __getitem__(self, i): return get_data() ds_train = TwoSumDataset(size = 100000) ds_validation = TwoSumDataset(size = 10000) # 数据加载器 dl_train = DataLoader(dataset=ds_train, batch_size=200, drop_last=True, shuffle=True) ds_validation = DataLoader(dataset=ds_validation, batch_size=200, drop_last=True, shuffle=False) for src,tgt in dl_train: print(src.shape) print(tgt.shape) break torch.Size([200, 50]) torch.Size([200, 51]) 二、定义模型 下面，我们会像搭积木建城堡那样从低往高地构建Transformer模型。\n先构建6个基础组件：多头注意力（multi-head attention）、前馈网络（feed-forward network）、层归一化（layer normalization）、残差连接（residual connection）、单词嵌入（word embedding）、位置编码（position encoding）。类似用最基础的积木块搭建了 墙壁，屋顶，篱笆，厅柱，大门，窗户 这样的模块。\n然后用这6个基础组件构建了3个中间成品: 编码器（encoder），解码器（decoder），产生器(generator)。类似用基础组件构建了城堡的主楼，塔楼，花园。\n最后用这3个中间成品组装成Tranformer完整模型。类似用主楼，塔楼，花园这样的中间成品拼凑出一座完整美丽的城堡。\n多头注意力: MultiHeadAttention (用于融合不同单词之间的信息, 三处使用场景，①Encoder self-attention, ② Decoder masked-self-attention, ③ Encoder-Decoder cross-attention)\n前馈网络: PositionwiseFeedForward (用于逐位置将多头注意力融合后的信息进行高维映射变换，简称FFN)\n层归一化: LayerNorm (用于稳定输入，每个样本在Sequece和Feature维度归一化,相比BatchNorm更能适应NLP领域变长序列)\n残差连接: ResConnection (用于增强梯度流动以降低网络学习难度, 可以先LayerNorm再Add，LayerNorm也可以放在残差Add之后)\n单词嵌入: WordEmbedding (用于编码单词信息，权重要学习，输出乘了sqrt(d_model)来和位置编码保持相当量级)\n位置编码: PositionEncoding (用于编码位置信息，使用sin和cos函数直接编码绝对位置)\n编码器: TransformerEncoder (用于将输入Sequence编码成与Sequence等长的memory向量序列, 由N个TransformerEncoderLayer堆叠而成)\n解码器: TransformerDecoder (用于将编码器编码的memory向量解码成另一个不定长的向量序列, 由N个TransformerDecoderLayer堆叠而成)\n生成器: Generator (用于将解码器解码的向量序列中的每个向量映射成为输出词典中的词，一般由一个Linear层构成)\nTransformer (用于Seq2Seq转码，例如用于机器翻译，采用EncoderDecoder架构，由Encoder, Decoder 和 Generator组成)\nimport torch from torch import nn import torch.nn.functional as F import copy import math import numpy as np import pandas as pd def clones(module, N): \"Produce N identical layers.\" return nn.ModuleList([copy.deepcopy(module) for _ in range(N)]) 参考 《Attention is All you needed》: https://arxiv.org/pdf/1706.03762.pdf 哈佛博客：https://github.com/harvardnlp/annotated-transformer/ https://www.cvmart.net/community/detail/7898\n",
+  "wordCount" : "510",
+  "inLanguage": "en",
+  "datePublished": "2024-04-09T16:26:24+08:00",
+  "dateModified": "2024-04-09T16:26:24+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://shiqstone.github.io/post/build_transformer_model_with_pytorch/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "他山笨石",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://shiqstone.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://shiqstone.github.io" accesskey="h" title="他山笨石 (Alt + H)">他山笨石</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://shiqstone.github.io/" title="Home">
+                    <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/post/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://shiqstone.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      从零开始用pytorch搭建Transformer模型<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h1>
+    <div class="post-meta"><span title='2024-04-09 16:26:24 +0800 CST'>April 9, 2024</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>我们从零开始用pytorch搭建Transformer模型。</p>
+<p>训练它来实现一个有趣的实例：两数之和。</p>
+<p>输入输出类似如下：
+输入：
+&ldquo;12345+54321&rdquo;
+输出：
+&ldquo;66666&rdquo;</p>
+<p>我们把这个任务当做一个机器翻译任务来进行。输入是一个字符序列，输出也是一个字符序列(seq-to-seq).
+这和机器翻译的输入输出结构是类似的，所以可以用Transformer来做。</p>
+<h1 id="一准备数据">一、准备数据<a hidden class="anchor" aria-hidden="true" href="#一准备数据">#</a></h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> random  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> torch.utils.data <span style="color:#f92672">import</span> Dataset,DataLoader  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 定义字典  </span>
+</span></span><span style="display:flex;"><span>words_x <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;,+&#39;</span>  
+</span></span><span style="display:flex;"><span>vocab_x <span style="color:#f92672">=</span> {word: i <span style="color:#66d9ef">for</span> i, word <span style="color:#f92672">in</span> enumerate(words_x<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>))}  
+</span></span><span style="display:flex;"><span>vocab_xr <span style="color:#f92672">=</span> [k <span style="color:#66d9ef">for</span> k, v <span style="color:#f92672">in</span> vocab_x<span style="color:#f92672">.</span>items()] <span style="color:#75715e">#反查词典  </span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>words_y <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;&#39;</span>  
+</span></span><span style="display:flex;"><span>vocab_y <span style="color:#f92672">=</span> {word: i <span style="color:#66d9ef">for</span> i, word <span style="color:#f92672">in</span> enumerate(words_y<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>))}  
+</span></span><span style="display:flex;"><span>vocab_yr <span style="color:#f92672">=</span> [k <span style="color:#66d9ef">for</span> k, v <span style="color:#f92672">in</span> vocab_y<span style="color:#f92672">.</span>items()] <span style="color:#75715e">#反查词典  </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#两数相加数据集  </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_data</span>():  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 定义词集合  </span>
+</span></span><span style="display:flex;"><span>    words <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;0&#39;</span>, <span style="color:#e6db74">&#39;1&#39;</span>, <span style="color:#e6db74">&#39;2&#39;</span>, <span style="color:#e6db74">&#39;3&#39;</span>, <span style="color:#e6db74">&#39;4&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;6&#39;</span>, <span style="color:#e6db74">&#39;7&#39;</span>, <span style="color:#e6db74">&#39;8&#39;</span>, <span style="color:#e6db74">&#39;9&#39;</span>]  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 每个词被选中的概率  </span>
+</span></span><span style="display:flex;"><span>    p <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array([<span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">5</span>, <span style="color:#ae81ff">7</span>])  
+</span></span><span style="display:flex;"><span>    p <span style="color:#f92672">=</span> p <span style="color:#f92672">/</span> p<span style="color:#f92672">.</span>sum()  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 随机采样n1个词作为s1  </span>
+</span></span><span style="display:flex;"><span>    n1 <span style="color:#f92672">=</span> random<span style="color:#f92672">.</span>randint(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">20</span>)  
+</span></span><span style="display:flex;"><span>    s1 <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>choice(words, size<span style="color:#f92672">=</span>n1, replace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, p<span style="color:#f92672">=</span>p)  
+</span></span><span style="display:flex;"><span>    s1 <span style="color:#f92672">=</span> s1<span style="color:#f92672">.</span>tolist()  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 随机采样n2个词作为s2  </span>
+</span></span><span style="display:flex;"><span>    n2 <span style="color:#f92672">=</span> random<span style="color:#f92672">.</span>randint(<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">20</span>)  
+</span></span><span style="display:flex;"><span>    s2 <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>choice(words, size<span style="color:#f92672">=</span>n2, replace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, p<span style="color:#f92672">=</span>p)  
+</span></span><span style="display:flex;"><span>    s2 <span style="color:#f92672">=</span> s2<span style="color:#f92672">.</span>tolist()  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># x等于s1和s2字符上的相加  </span>
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> s1 <span style="color:#f92672">+</span> [<span style="color:#e6db74">&#39;+&#39;</span>] <span style="color:#f92672">+</span> s2  
+</span></span><span style="display:flex;"><span>      
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># y等于s1和s2数值上的相加  </span>
+</span></span><span style="display:flex;"><span>    y <span style="color:#f92672">=</span> int(<span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>join(s1)) <span style="color:#f92672">+</span> int(<span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>join(s2))  
+</span></span><span style="display:flex;"><span>    y <span style="color:#f92672">=</span> list(str(y))  
+</span></span><span style="display:flex;"><span>      
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 加上首尾符号  </span>
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;&lt;SOS&gt;&#39;</span>] <span style="color:#f92672">+</span> x <span style="color:#f92672">+</span> [<span style="color:#e6db74">&#39;&lt;EOS&gt;&#39;</span>]  
+</span></span><span style="display:flex;"><span>    y <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;&lt;SOS&gt;&#39;</span>] <span style="color:#f92672">+</span> y <span style="color:#f92672">+</span> [<span style="color:#e6db74">&#39;&lt;EOS&gt;&#39;</span>]  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 补pad到固定长度  </span>
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> x <span style="color:#f92672">+</span> [<span style="color:#e6db74">&#39;&lt;PAD&gt;&#39;</span>] <span style="color:#f92672">*</span> <span style="color:#ae81ff">50</span>  
+</span></span><span style="display:flex;"><span>    y <span style="color:#f92672">=</span> y <span style="color:#f92672">+</span> [<span style="color:#e6db74">&#39;&lt;PAD&gt;&#39;</span>] <span style="color:#f92672">*</span> <span style="color:#ae81ff">51</span>  
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> x[:<span style="color:#ae81ff">50</span>]  
+</span></span><span style="display:flex;"><span>    y <span style="color:#f92672">=</span> y[:<span style="color:#ae81ff">51</span>]  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 编码成token  </span>
+</span></span><span style="display:flex;"><span>    token_x <span style="color:#f92672">=</span> [vocab_x[i] <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> x]  
+</span></span><span style="display:flex;"><span>    token_y <span style="color:#f92672">=</span> [vocab_y[i] <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> y]  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 转tensor  </span>
+</span></span><span style="display:flex;"><span>    tensor_x <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>LongTensor(token_x)  
+</span></span><span style="display:flex;"><span>    tensor_y <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>LongTensor(token_y)  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> tensor_x, tensor_y  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">show_data</span>(tensor_x,tensor_y) <span style="color:#f92672">-&gt;</span><span style="color:#e6db74">&#34;str&#34;</span>:  
+</span></span><span style="display:flex;"><span>    words_x <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">.</span>join([vocab_xr[i] <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> tensor_x<span style="color:#f92672">.</span>tolist()])  
+</span></span><span style="display:flex;"><span>    words_y <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">.</span>join([vocab_yr[i] <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> tensor_y<span style="color:#f92672">.</span>tolist()])  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> words_x,words_y  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>x,y <span style="color:#f92672">=</span> get_data()   
+</span></span><span style="display:flex;"><span>print(x,y,<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)  
+</span></span><span style="display:flex;"><span>print(show_data(x,y))   
+</span></span></code></pre></div><p>需要先安装pytorch</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>conda install pytorch torchvision torchaudio -c pytorch
+</span></span></code></pre></div><p>安装完成后运行代码，输出类似下面：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>tensor<span style="color:#f92672">([</span>11,  8,  3,  1,  7,  6,  1,  8,  2,  8,  6, 13,  3,  1,  3,  5,  3,  5,
+</span></span><span style="display:flex;"><span>        10,  7,  2,  3,  3,  6, 12,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+</span></span><span style="display:flex;"><span>         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0<span style="color:#f92672">])</span> tensor<span style="color:#f92672">([</span>11,  3,  2,  1,  8,  5,  2,  6,  9, 10,  6,  2,  2, 12,  0,  0,  0,  0,
+</span></span><span style="display:flex;"><span>         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+</span></span><span style="display:flex;"><span>         0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0<span style="color:#f92672">])</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;&lt;SOS&gt;8317618286+313535072336&lt;EOS&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&#39;</span>, <span style="color:#e6db74">&#39;&lt;SOS&gt;321852690622&lt;EOS&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&lt;PAD&gt;&#39;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># 定义数据集  </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TwoSumDataset</span>(torch<span style="color:#f92672">.</span>utils<span style="color:#f92672">.</span>data<span style="color:#f92672">.</span>Dataset):  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self,size <span style="color:#f92672">=</span> <span style="color:#ae81ff">100000</span>):  
+</span></span><span style="display:flex;"><span>        super(Dataset, self)<span style="color:#f92672">.</span>__init__()  
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>size <span style="color:#f92672">=</span> size  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __len__(self):  
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>size  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __getitem__(self, i):  
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> get_data()  
+</span></span><span style="display:flex;"><span>      
+</span></span><span style="display:flex;"><span>ds_train <span style="color:#f92672">=</span> TwoSumDataset(size <span style="color:#f92672">=</span> <span style="color:#ae81ff">100000</span>)  
+</span></span><span style="display:flex;"><span>ds_validation <span style="color:#f92672">=</span> TwoSumDataset(size <span style="color:#f92672">=</span> <span style="color:#ae81ff">10000</span>)  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 数据加载器  </span>
+</span></span><span style="display:flex;"><span>dl_train <span style="color:#f92672">=</span> DataLoader(dataset<span style="color:#f92672">=</span>ds_train,  
+</span></span><span style="display:flex;"><span>         batch_size<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>,  
+</span></span><span style="display:flex;"><span>         drop_last<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>,  
+</span></span><span style="display:flex;"><span>         shuffle<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>ds_validation <span style="color:#f92672">=</span> DataLoader(dataset<span style="color:#f92672">=</span>ds_validation,
+</span></span><span style="display:flex;"><span>         batch_size<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>,  
+</span></span><span style="display:flex;"><span>         drop_last<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>,  
+</span></span><span style="display:flex;"><span>         shuffle<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> src,tgt <span style="color:#f92672">in</span> dl_train:  
+</span></span><span style="display:flex;"><span>    print(src<span style="color:#f92672">.</span>shape)  
+</span></span><span style="display:flex;"><span>    print(tgt<span style="color:#f92672">.</span>shape)  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">break</span>   
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>Size([<span style="color:#ae81ff">200</span>, <span style="color:#ae81ff">50</span>])
+</span></span><span style="display:flex;"><span>torch<span style="color:#f92672">.</span>Size([<span style="color:#ae81ff">200</span>, <span style="color:#ae81ff">51</span>])
+</span></span></code></pre></div><h1 id="二定义模型">二、定义模型<a hidden class="anchor" aria-hidden="true" href="#二定义模型">#</a></h1>
+<p>下面，我们会像搭积木建城堡那样从低往高地构建Transformer模型。</p>
+<p>先构建6个基础组件：多头注意力（multi-head attention）、前馈网络（feed-forward network）、层归一化（layer normalization）、残差连接（residual connection）、单词嵌入（word embedding）、位置编码（position encoding）。类似用最基础的积木块搭建了 墙壁，屋顶，篱笆，厅柱，大门，窗户 这样的模块。</p>
+<p>然后用这6个基础组件构建了3个中间成品: 编码器（encoder），解码器（decoder），产生器(generator)。类似用基础组件构建了城堡的主楼，塔楼，花园。</p>
+<p>最后用这3个中间成品组装成Tranformer完整模型。类似用主楼，塔楼，花园这样的中间成品拼凑出一座完整美丽的城堡。</p>
+<ol>
+<li>
+<p>多头注意力: MultiHeadAttention (用于融合不同单词之间的信息, 三处使用场景，①Encoder self-attention, ② Decoder masked-self-attention, ③ Encoder-Decoder cross-attention)</p>
+</li>
+<li>
+<p>前馈网络: PositionwiseFeedForward (用于逐位置将多头注意力融合后的信息进行高维映射变换，简称FFN)</p>
+</li>
+<li>
+<p>层归一化: LayerNorm (用于稳定输入，每个样本在Sequece和Feature维度归一化,相比BatchNorm更能适应NLP领域变长序列)</p>
+</li>
+<li>
+<p>残差连接: ResConnection (用于增强梯度流动以降低网络学习难度, 可以先LayerNorm再Add，LayerNorm也可以放在残差Add之后)</p>
+</li>
+<li>
+<p>单词嵌入: WordEmbedding (用于编码单词信息，权重要学习，输出乘了sqrt(d_model)来和位置编码保持相当量级)</p>
+</li>
+<li>
+<p>位置编码: PositionEncoding (用于编码位置信息，使用sin和cos函数直接编码绝对位置)</p>
+</li>
+<li>
+<p>编码器: TransformerEncoder (用于将输入Sequence编码成与Sequence等长的memory向量序列, 由N个TransformerEncoderLayer堆叠而成)</p>
+</li>
+<li>
+<p>解码器: TransformerDecoder (用于将编码器编码的memory向量解码成另一个不定长的向量序列, 由N个TransformerDecoderLayer堆叠而成)</p>
+</li>
+<li>
+<p>生成器: Generator (用于将解码器解码的向量序列中的每个向量映射成为输出词典中的词，一般由一个Linear层构成)</p>
+</li>
+<li>
+<p>Transformer (用于Seq2Seq转码，例如用于机器翻译，采用EncoderDecoder架构，由Encoder, Decoder 和 Generator组成)</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch   
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> torch <span style="color:#f92672">import</span> nn   
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.nn.functional <span style="color:#66d9ef">as</span> F  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> copy   
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> math   
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np  
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> pandas <span style="color:#66d9ef">as</span> pd   
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">clones</span>(module, N):  
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Produce N identical layers.&#34;</span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> nn<span style="color:#f92672">.</span>ModuleList([copy<span style="color:#f92672">.</span>deepcopy(module) <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(N)])  
+</span></span><span style="display:flex;"><span>  
+</span></span></code></pre></div><h1 id="参考">参考<a hidden class="anchor" aria-hidden="true" href="#参考">#</a></h1>
+<p>《Attention is All you needed》: <a href="https://arxiv.org/pdf/1706.03762.pdf">https://arxiv.org/pdf/1706.03762.pdf</a>
+哈佛博客：https://github.com/harvardnlp/annotated-transformer/
+<a href="https://www.cvmart.net/community/detail/7898">https://www.cvmart.net/community/detail/7898</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2024 <a href="https://shiqstone.github.io">他山笨石</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

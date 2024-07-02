@@ -153,6 +153,21 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>删除AWS绑定的信用卡账户<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>想使用AWS的服务，必须先绑定信用卡（不能使用储蓄卡），验证通过后，才可以使用免费服务，如涉及收费项目，则会在每月生成账单后自动扣除，不需要用户输入密码或确认。因此，为避免停止使用服务后出现异常扣费，希望把绑定的银行卡取消。
+如果AWS账户只绑定了一张信用卡，默认是不允许删除的。但是我们注意到AWS在绑定信用卡时，只要卡号基础信息是合法的就可以添加，所以考虑添加一个虚拟信用卡并设置为默认支付，之后就可以删除我们之前绑定的真实信用卡了。
+我们可以通过这个网站 https://haoweichi.com/ 生成美国信用卡，使用生成的信息添加绑定新信用卡。
+参考 https://blog.csdn.net/knight_zhou/article/details/125550522 https://www.p-chao.com/2020-06-06/永久关闭aws并解除信用卡绑定/</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-07-02 11:23:20 +0800 CST'>July 2, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 删除AWS绑定的信用卡账户" href="https://shiqstone.github.io/post/delete_aws_binded_account/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>DevEco 启动了模拟器但是显示 No Device
     </h2>
   </header>
@@ -164,6 +179,22 @@ unable to open connection to hdc server on localhost/127.0.0.1:5037, due to: jav
   </div>
   <footer class="entry-footer"><span title='2024-05-07 15:03:30 +0800 CST'>May 7, 2024</span></footer>
   <a class="entry-link" aria-label="post link to DevEco 启动了模拟器但是显示 No Device" href="https://shiqstone.github.io/post/deveco_emulator_nodevice/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>从零开始用pytorch搭建Transformer模型<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>我们从零开始用pytorch搭建Transformer模型。
+训练它来实现一个有趣的实例：两数之和。
+输入输出类似如下： 输入： “12345&#43;54321” 输出： “66666”
+我们把这个任务当做一个机器翻译任务来进行。输入是一个字符序列，输出也是一个字符序列(seq-to-seq). 这和机器翻译的输入输出结构是类似的，所以可以用Transformer来做。
+一、准备数据 import random import numpy as np import torch from torch.utils.data import Dataset,DataLoader # 定义字典 words_x = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;,&#43;&#39; vocab_x = {word: i for i, word in enumerate(words_x.split(&#39;,&#39;))} vocab_xr = [k for k, v in vocab_x.items()] #反查词典 words_y = &#39;&lt;PAD&gt;,1,2,3,4,5,6,7,8,9,0,&lt;SOS&gt;,&lt;EOS&gt;&#39; vocab_y = {word: i for i, word in enumerate(words_y.split(&#39;,&#39;))} vocab_yr = [k for k, v in vocab_y.items()] #反查词典 #两数相加数据集 def get_data(): # 定义词集合 words = [&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;] # 每个词被选中的概率 p = np....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-04-09 16:26:24 +0800 CST'>April 9, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 从零开始用pytorch搭建Transformer模型" href="https://shiqstone.github.io/post/build_transformer_model_with_pytorch/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -219,6 +250,41 @@ brew install --cask anaconda echo ‘export PATH=”/usr/local/anaconda3/bin:$PA
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>部署Stable Diffusion WebUI 到AWS <sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>本地部署Stable Diffusion主要是作为入门学习和简单开发调试使用，速度和稳定性都没有保证。为了更深入的学习使用以及支持对外提供服务，需要考虑租用GPU云服务。 经过初步调研，虽然有一些小的云服务商价格比较便宜，但因为算力资源等原因，并不提供性价比较高的入门版本，最终还是决定选择aws进行部署。
+前置准备 注册 注册aws账号需要提供邮箱，手机号，银行卡及账单地址 值得注意的是，新注册用户会有一些免费的服务，可以在官网找到相关介绍，当然，大多数免费产品都属于中低端产品，且免费时长不一致。
+EC2价格比较与选择 部署Stable Diffusion需要使用GPU，需要选择g系列或p系列，p系统是顶级豪华规则，费用昂贵，专门提供给专业AI公司使用，不做考虑，g系统价格相对亲民。 EC2 实例有多种付费方式：按需型实例、节省计划、预留实例和 Amazon EC2 竞价型实例，相比较，按需型实例比较符合初级产品的需求，以下是AWS的费用表： 从表中可以，选择最小机型g4dn.xlarge，配有一颗T4 GPU，4核XEON vCPU，以及16G内存，可以满足初步使用需求，目前价格约每小时USD 0.526。 这个价格只是EC2主机实例的基础价格，完整服务可能还需要弹性IP，储存空间等服务，会单独计价，不过相比较实例价格，这些费用就比较少了。
+快速部署教程 重启系统后驱动失效 sdwebui已经安装成功，并且成功运行过一段时间， 重启服务器之后启动服务失败，提示 Torch is not able to use GPU; add –skip-torch-cuda-test to COMMANDLINE_ARGS variable to disable this check
+检查显卡驱动，发现驱动失效了 nvidia-smi NVIDIA-SMI has failed because it couldn’t communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+分析原因是因为重启服务器后，ubuntu内核进行了更新，更新后的内核与之前所安装驱动不一致导致的。
+查看已安装的驱动 ll /usr/src/ |grep nvidia drwxr-xr-x 8 root root 4096 Mar 7 04:37 nvidia-525....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-02-28 16:15:20 +0800 CST'>February 28, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 部署Stable Diffusion WebUI 到AWS " href="https://shiqstone.github.io/post/deployment_sd_webui_to_aws/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>解决Beyond Compare “这个授权密钥已被吊销”的办法<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>在MacOs下遇到Beyond Compare “这个授权密钥已被吊销”
+cd ~/Library/Application Support/Beyond Compare 修改BCState.xml，原文件：
+&lt;TCheckForUpdatesState&gt; &lt;Build Value=&#34;24545&#34;/&gt; &lt;CheckID Value=&#34;173864067260425&#34;/&gt; &lt;LastChecked Value=&#34;2019-12-13 10:28:02&#34;/&gt; &lt;/TCheckForUpdatesState&gt; 删除CheckID和LastChecked
+&lt;TCheckForUpdatesState&gt; &lt;Build Value=&#34;24545&#34;/&gt; &lt;/TCheckForUpdatesState&gt; 修改BCSessions.xml，原文件：
+&lt;BCSessions Flags=&#34;2516348444542&#34; Version=&#34;1&#34; MinVersion=&#34;1&#34;&gt; &lt;/BCSessions&gt; 删除Flags
+&lt;BCSessions Version=&#34;1&#34; MinVersion=&#34;1&#34;&gt; &lt;/BCSessions&gt; </p>
+  </div>
+  <footer class="entry-footer"><span title='2024-02-23 16:22:01 +0800 CST'>February 23, 2024</span></footer>
+  <a class="entry-link" aria-label="post link to 解决Beyond Compare “这个授权密钥已被吊销”的办法" href="https://shiqstone.github.io/post/beyondcompare_key_revoked/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>使用ACME申请证书
     </h2>
   </header>
@@ -252,76 +318,6 @@ acme.sh --issue -d file.a.com -d www.a.com -d img.a.com --nginx 参数解析：
   </div>
   <footer class="entry-footer"><span title='2023-03-01 14:43:25 +0800 CST'>March 1, 2023</span></footer>
   <a class="entry-link" aria-label="post link to 简单理解Typescript里的泛型" href="https://shiqstone.github.io/post/understand-generics-in-typescript/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>如何在Mac上用西班牙输入法输入字符
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Mac在不同国家会根据当地语言习惯提供不同布局的键盘，主要版本包括美版、欧版、日版等，不同版本的键盘布局和输入内容也都略有不同。中国大陆使用的键盘是美版布局，也是大家日常最为习惯的键盘。
-最近需要使用西班牙语，首先需要在输入法中添加 ES 西班牙，之后通过切换输入法就可以开始使用，输入法设置有西语和拉丁美洲两种不同的键盘映射，此处对我影响不大，默认选择了西班牙。
-开始使用时，必然会用到的几个符号包括，重音符号，分音符号，ñ，感叹号，问号等，通过搜索整理，分别如下（以下说明用美版键盘标记）：
-重音符号： &#39; &#43; a (元音字母) 可得 á, é, í, ó, ú 分音符号： ⇧ &#43; &#39; &#43; u 如 güe ñ：; 问号：⇧ &#43; =和⇧ &#43; - 可得 ¿? 感叹号：=和⇧ &#43; 1 可得 ¡! 完整符号映射如下
-US ` 1 2 3 4 5 6 7 8 9 0 - = [ ] \ ; &#39; , . / ES &lt; 1 2 3 4 5 6 7 8 9 0 &#39; ¡ ` &#43; ç ñ ´ , ....</p>
-  </div>
-  <footer class="entry-footer"><span title='2023-02-24 13:56:13 +0800 CST'>February 24, 2023</span></footer>
-  <a class="entry-link" aria-label="post link to 如何在Mac上用西班牙输入法输入字符" href="https://shiqstone.github.io/post/how-to-type-special-characters-on-mac-keyboard/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>编写Shell脚本的一些知识点
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>最近经常需要上服务器修改一个配置文件端口，操作倒是不多，但是每次都要重复命令略麻烦，所以准备写一个脚本来简化操作。因为有段时间没有写shell脚本，有点手生，简单点东西连查资料带写也花了半天多。作为总结，把过程中遇到的一些点复盘一下，算不上系统的知识整理。
-需求描述 具体场景是一个远程服务器上的服务端口会不定期失效，目前修复服务的方法就是
-远程登录到服务器上 修改配置文件中的端口号 重启服务 开放防火墙端口 在本地验证远程服务端口状态 现有操作主要用到下面的命令：
-ssh $user@$host vim /usr/local/etc/xray/config.json systemctl restart xray firewall-cmd --zone=public --add-port=10086/tcp 部署这个服务所需的准备工作，如需要购买vps，安装linux系统，安装xray，配置服务器的免密登录等，此处不做详细说明。
-接受参数 脚本主要功能是登录到远程服务器上修改端口配置，如果服务器IP，登录用户名，端口都是固定的，可以直接在代码中写死，但考虑脚本的可复用性，会声明几个变量，并设定默认值。
-常用的几种获取参数的方式有以下几种：
-直接获取，使用$1,$2,$3…进行解析 使用getopt函数: 单个字符选项的情况，例如：-n 10 -f file.txt等选项 使用getopts函数：可同时接受短命令和长命令，如：–prefix=/home等 直接获取 shell脚本自动将命令行参数赋给各个位置参数，输入参数以空格分隔（如果想在参数中使用空格，需要用引号引起来）；在程序中使用${n}，$0为程序名，$1为第一个参数，$2 ... $9为第二到第九个参数，参数超过9个之后，需要用大括号的方式获取${12}
-```bash # bash test.sh a b c echo $0 # test.sh echo $1 # a echo $2 # b echo $3 # c ``` 这种方式优点在于简单直接，不需要做特殊处理就可以直接获取并使用参数，但缺点是不灵活，所有参数需要严格按顺序输入，且不能缺省，如果添加、删除以及调整参数顺序时，都需要小心修改程序；同时，参数比较多时，使用脚本不方便记忆。
-使用getopts函数 getopts是shell中内建的命令，它的使用语法相对getopt简单，但它不支持长命令参数（--option）。它不会重排列所有参数的顺序，选项参数的格式必须是-d val，而不能是中间没有空格的-dval，遇到非-开头的参数，或者选项参数结束标记–就中止了，如果中间遇到非选项的命令行参数，后面的选项参数就都取不到了，出现的目的仅仅是为了代替getopt较快捷方便的执行参数的分析。
-命令格式为getopts optstring name [arg]
-#!/bin/sh while getopts &#34;:b:o:h&#34; opt_name do case $opt_name in b) echo &#34;-b Option is recognized, argument=$OPTARG&#34; ;; o) echo &#34;-o Option is recognized, argument=$OPTARG&#34; ;; h) echo &#34;-h Option is recognized&#34; ;; :) echo &#34;$OPTARG Option need a argument&#34; ;; esac done optstring：表示要识别的命令行选项形式，如果一个字母后面有一个&#34;:&#34;，表示该命令行选项后面要跟一个参数。如optsting写成&#34;co:f:&#34;，表示支持-c、-o、-f选项识别，-o和-f选项后面需要跟一个参数...</p>
-  </div>
-  <footer class="entry-footer"><span title='2023-02-21 16:18:36 +0800 CST'>February 21, 2023</span></footer>
-  <a class="entry-link" aria-label="post link to 编写Shell脚本的一些知识点" href="https://shiqstone.github.io/post/how-to-write-shell-script/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>命令行的艺术
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>命令行的艺术 转自：GitHub github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md
-这篇文章是许多作者和译者共同的成果。 这里的部分内容 首次 出现 于 Quora， 但已经迁移到了 Github，并由众多高手做出了许多改进。 如果你在本文中发现了错误或者存在可以改善的地方，请贡献你的一份力量。
-前言 涵盖范围：
-这篇文章不仅能帮助刚接触命令行的新手，而且对具有经验的人也大有裨益。本文致力于做到覆盖面广（涉及所有重要的内容），具体（给出具体的最常用的例子），以及简洁（避免冗余的内容，或是可以在其他地方轻松查到的细枝末节）。在特定应用场景下，本文的内容属于基本功或者能帮助您节约大量的时间。 本文主要为 Linux 所写，但在仅限 OS X 系统章节和仅限 Windows 系统章节中也包含有对应操作系统的内容。除去这两个章节外，其它的内容大部分均可在其他类 Unix 系统或 OS X，甚至 Cygwin 中得到应用。 本文主要关注于交互式 Bash，但也有很多技巧可以应用于其他 shell 和 Bash 脚本当中。 除去“标准的”Unix 命令，本文还包括了一些依赖于特定软件包的命令（前提是它们具有足够的价值）。 注意事项：
-为了能在一页内展示尽量多的东西，一些具体的信息可以在引用的页面中找到。我们相信机智的你知道如何使用 Google 或者其他搜索引擎来查阅到更多的详细信息。文中部分命令需要您使用 apt-get，yum，dnf，pacman， pip 或 brew（以及其它合适的包管理器）来安装依赖的程序。 遇到问题的话，请尝试使用 Explainshell 去获取相关命令、参数、管道等内容的解释。 基础 学习 Bash 的基础知识。具体地，在命令行中输入 man bash 并至少全文浏览一遍; 它理解起来很简单并且不冗长。其他的 shell 可能很好用，但 Bash 的功能已经足够强大并且到几乎总是可用的（ 如果你只学习 zsh，fish 或其他的 shell 的话，在你自己的设备上会显得很方便，但过度依赖这些功能会给您带来不便，例如当你需要在服务器上工作时）。
-熟悉至少一个基于文本的编辑器。通常而言 Vim （vi） 会是你最好的选择，毕竟在终端中编辑文本时 Vim 是最好用的工具（甚至大部分情况下 Vim 要比 Emacs、大型 IDE 或是炫酷的编辑器更好用）。...</p>
-  </div>
-  <footer class="entry-footer"><span title='2023-02-08 15:08:29 +0800 CST'>February 8, 2023</span></footer>
-  <a class="entry-link" aria-label="post link to 命令行的艺术" href="https://shiqstone.github.io/post/the-art-of-command-line/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>让Hugo支持LaTex
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Hugo本身不支持渲染数学公式，只能使用前端方式来处理。
-在已经生成的html页面中，使用javascript来渲染LaTex公式是一个可行思路，Mathjax是这方面最流行的库。
-方案 按以下步骤引入mathjax：
-在所使用的theme目录下新建layouts/partials/mathjax.html，添加内容 {{ if or .Params.math .Site.Params.math }} &lt;script&gt; MathJax = { tex: { inlineMath: [[&#39;$&#39;, &#39;$&#39;], [&#39;\\(&#39;, &#39;\\)&#39;]], displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\\[&#39;, &#39;\\]&#39;]], processEscapes: true, processEnvironments: true }, svg: { fontCache: &#34;global&#34;, }, options: { skipHtmlTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] } }; window.addEventListener(&#39;load&#39;, (event) =&gt; { document.querySelectorAll(&#34;mjx-container&#34;).forEach(function(x){ x.parentElement.classList &#43;= &#39;has-jax&#39;}) }); &lt;/script&gt; &lt;script src=&#34;https://polyfill.io/v3/polyfill.min.js?features=es6&#34;&gt;&lt;/script&gt; &lt;script type=&#34;text/javascript&#34; id=&#34;MathJax-script&#34; async src=&#34;https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js&#34;&gt;&lt;/script&gt; &lt;style&gt; code.has-jax { font: inherit; font-size: 100%; background: inherit; border: inherit; color: #515151; } &lt;/style&gt; {{- end }} &lt;!...</p>
-  </div>
-  <footer class="entry-footer"><span title='2022-11-03 11:18:20 +0800 CST'>November 3, 2022</span></footer>
-  <a class="entry-link" aria-label="post link to 让Hugo支持LaTex" href="https://shiqstone.github.io/post/latex_for_hugo/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

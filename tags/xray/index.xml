@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>xray on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/xray/</link>
+    <description>Recent content in xray on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Fri, 11 Nov 2022 14:03:08 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/xray/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Xray教程</title>
+      <link>https://shiqstone.github.io/post/xray-tutorial/</link>
+      <pubDate>Fri, 11 Nov 2022 14:03:08 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/xray-tutorial/</guid>
+      <description>Xray介绍 一个Debian包维护者发现XTLS库的LICENSE不是BSD许可，提了一个issue希望作者 @rprx 能修改方便打包，详见 https://github.com/XTLS/Go/issues/9 。由这个issue引发了广泛讨论，rprx认为目前许可不是问题，也有不少人认为协议是立场的体现，各执一词。
+最终V2ray(V2fly社区)维护者经过投票确认XTLS不符合V2ray的MIT协议，并在V2ray-core 4.33.0版本移除了XTLS。rprx和其拥护者行动起来，很快就创建了Project X项目和Xray子项目（Xray取名来自XTLS和V2ray的结合），并发布了Xray-core的多个版本。这便是Xray的大致由来。
+XTLS和Xray离不开作者 @rprx 的辛勤付出，因此也简要介绍一下@rprx ：
+@rprx 是VLESS协议的设计者，在介绍VLESS协议时写下了 性能至上、可扩展性空前，目标是全场景终极协议 的宏壮愿景； @rprx 是 XTLS 的作者，在 XTLS库 中写下了 “THE FUTURE” 的霸气描述。将内外两条TLS连接结合，rprx可能不是第一个有这想法的人，但却是第一个将其实现、并成熟应用到实际中的作者。从使用表现上看，XTLS无愧于rprx对其的评价：划时代的革命性概念与技术：XTLS，以及社区给出的“黑科技”称谓； @rprx 是Project X和Xray项目的创始人。由于LICENSE理念之争，rprx创建了对标Project V和V2ray-core的Project X和Xray-core项目，广受欢迎。 Xray-Core自上个月创立以来，短短一个月已经发布了七个版本，足见维护者的诚意。Xray-Core目前发布的各个版本主要介绍如下：
+Xray-core 1.0.0版本：项目创建，提供完整的VLESS和XTLS支持，功能上是V2ray-core的超集。主要变动是将v2ray和v2ctl可执行文件合并为xray，性能全面增强； Xray-core 1.1.0和1.1.1版本：测试过渡版本，未提供详细发行说明； Xray-core 1.1.2版本：引入了Linux Kernel Splice技术，适用于安卓、路由器等Linux环境。Splice技术减少了数据拷贝次数和内存占用，拥有更强的性能。需要说明的是，只适用于类Linux环境的客户端出栈，服务端入栈仍然是direct； Xray-core 1.1.3版本：重构了透明代理的 REDIRECT 模式，使之同时支持 IPv4 和 IPv6，解决了V2ray和trojan遗留的问题； Xray-core 1.1.4版本：优化内存占用，TLS更多选项配置，使服务端伪装站的TLS设置在SSL Labs能达到A+评分； Xray-core 1.1.5版本：测试过渡版本，支持YAML配置文件、OCSP Stapling等功能，官方安装脚本大更新； Xray-core 1.2.0版本：SS、trojan协议完美支持Fullcone，向游戏使用迈出了重要一步。 Xray-core 1.2.3版本： 对 SS 协议的支持又变强了, 支持单端口多用户! 对 trojan 协议的支持也又变强了, trojan 的回落也解锁 SNI 分流的新姿势啦~! (VLESS: 嘤嘤嘤) UDP 奇奇怪怪的 BUG 被干掉了, 一个字, “稳定”.</description>
+    </item>
+    
+  </channel>
+</rss>

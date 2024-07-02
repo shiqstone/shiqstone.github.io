@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Stable Diffusion WebUI on 他山笨石</title>
+    <link>https://shiqstone.github.io/tags/stable-diffusion-webui/</link>
+    <description>Recent content in Stable Diffusion WebUI on 他山笨石</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh_CN</language>
+    <lastBuildDate>Wed, 28 Feb 2024 16:15:20 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/stable-diffusion-webui/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>部署Stable Diffusion WebUI 到AWS </title>
+      <link>https://shiqstone.github.io/post/deployment_sd_webui_to_aws/</link>
+      <pubDate>Wed, 28 Feb 2024 16:15:20 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/post/deployment_sd_webui_to_aws/</guid>
+      <description>本地部署Stable Diffusion主要是作为入门学习和简单开发调试使用，速度和稳定性都没有保证。为了更深入的学习使用以及支持对外提供服务，需要考虑租用GPU云服务。 经过初步调研，虽然有一些小的云服务商价格比较便宜，但因为算力资源等原因，并不提供性价比较高的入门版本，最终还是决定选择aws进行部署。
+前置准备 注册 注册aws账号需要提供邮箱，手机号，银行卡及账单地址 值得注意的是，新注册用户会有一些免费的服务，可以在官网找到相关介绍，当然，大多数免费产品都属于中低端产品，且免费时长不一致。
+EC2价格比较与选择 部署Stable Diffusion需要使用GPU，需要选择g系列或p系列，p系统是顶级豪华规则，费用昂贵，专门提供给专业AI公司使用，不做考虑，g系统价格相对亲民。 EC2 实例有多种付费方式：按需型实例、节省计划、预留实例和 Amazon EC2 竞价型实例，相比较，按需型实例比较符合初级产品的需求，以下是AWS的费用表： 从表中可以，选择最小机型g4dn.xlarge，配有一颗T4 GPU，4核XEON vCPU，以及16G内存，可以满足初步使用需求，目前价格约每小时USD 0.526。 这个价格只是EC2主机实例的基础价格，完整服务可能还需要弹性IP，储存空间等服务，会单独计价，不过相比较实例价格，这些费用就比较少了。
+快速部署教程 重启系统后驱动失效 sdwebui已经安装成功，并且成功运行过一段时间， 重启服务器之后启动服务失败，提示 Torch is not able to use GPU; add &amp;ndash;skip-torch-cuda-test to COMMANDLINE_ARGS variable to disable this check
+检查显卡驱动，发现驱动失效了 nvidia-smi NVIDIA-SMI has failed because it couldn&amp;rsquo;t communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+分析原因是因为重启服务器后，ubuntu内核进行了更新，更新后的内核与之前所安装驱动不一致导致的。
+查看已安装的驱动 ll /usr/src/ |grep nvidia drwxr-xr-x 8 root root 4096 Mar 7 04:37 nvidia-525.</description>
+    </item>
+    
+  </channel>
+</rss>

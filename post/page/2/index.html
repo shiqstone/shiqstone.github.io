@@ -153,6 +153,104 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>如何在Mac上用西班牙输入法输入字符
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Mac在不同国家会根据当地语言习惯提供不同布局的键盘，主要版本包括美版、欧版、日版等，不同版本的键盘布局和输入内容也都略有不同。中国大陆使用的键盘是美版布局，也是大家日常最为习惯的键盘。
+最近需要使用西班牙语，首先需要在输入法中添加 ES 西班牙，之后通过切换输入法就可以开始使用，输入法设置有西语和拉丁美洲两种不同的键盘映射，此处对我影响不大，默认选择了西班牙。
+开始使用时，必然会用到的几个符号包括，重音符号，分音符号，ñ，感叹号，问号等，通过搜索整理，分别如下（以下说明用美版键盘标记）：
+重音符号： &#39; &#43; a (元音字母) 可得 á, é, í, ó, ú 分音符号： ⇧ &#43; &#39; &#43; u 如 güe ñ：; 问号：⇧ &#43; =和⇧ &#43; - 可得 ¿? 感叹号：=和⇧ &#43; 1 可得 ¡! 完整符号映射如下
+US ` 1 2 3 4 5 6 7 8 9 0 - = [ ] \ ; &#39; , . / ES &lt; 1 2 3 4 5 6 7 8 9 0 &#39; ¡ ` &#43; ç ñ ´ , ....</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-02-24 13:56:13 +0800 CST'>February 24, 2023</span></footer>
+  <a class="entry-link" aria-label="post link to 如何在Mac上用西班牙输入法输入字符" href="https://shiqstone.github.io/post/how-to-type-special-characters-on-mac-keyboard/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>编写Shell脚本的一些知识点
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>最近经常需要上服务器修改一个配置文件端口，操作倒是不多，但是每次都要重复命令略麻烦，所以准备写一个脚本来简化操作。因为有段时间没有写shell脚本，有点手生，简单点东西连查资料带写也花了半天多。作为总结，把过程中遇到的一些点复盘一下，算不上系统的知识整理。
+需求描述 具体场景是一个远程服务器上的服务端口会不定期失效，目前修复服务的方法就是
+远程登录到服务器上 修改配置文件中的端口号 重启服务 开放防火墙端口 在本地验证远程服务端口状态 现有操作主要用到下面的命令：
+ssh $user@$host vim /usr/local/etc/xray/config.json systemctl restart xray firewall-cmd --zone=public --add-port=10086/tcp 部署这个服务所需的准备工作，如需要购买vps，安装linux系统，安装xray，配置服务器的免密登录等，此处不做详细说明。
+接受参数 脚本主要功能是登录到远程服务器上修改端口配置，如果服务器IP，登录用户名，端口都是固定的，可以直接在代码中写死，但考虑脚本的可复用性，会声明几个变量，并设定默认值。
+常用的几种获取参数的方式有以下几种：
+直接获取，使用$1,$2,$3…进行解析 使用getopt函数: 单个字符选项的情况，例如：-n 10 -f file.txt等选项 使用getopts函数：可同时接受短命令和长命令，如：–prefix=/home等 直接获取 shell脚本自动将命令行参数赋给各个位置参数，输入参数以空格分隔（如果想在参数中使用空格，需要用引号引起来）；在程序中使用${n}，$0为程序名，$1为第一个参数，$2 ... $9为第二到第九个参数，参数超过9个之后，需要用大括号的方式获取${12}
+```bash # bash test.sh a b c echo $0 # test.sh echo $1 # a echo $2 # b echo $3 # c ``` 这种方式优点在于简单直接，不需要做特殊处理就可以直接获取并使用参数，但缺点是不灵活，所有参数需要严格按顺序输入，且不能缺省，如果添加、删除以及调整参数顺序时，都需要小心修改程序；同时，参数比较多时，使用脚本不方便记忆。
+使用getopts函数 getopts是shell中内建的命令，它的使用语法相对getopt简单，但它不支持长命令参数（--option）。它不会重排列所有参数的顺序，选项参数的格式必须是-d val，而不能是中间没有空格的-dval，遇到非-开头的参数，或者选项参数结束标记–就中止了，如果中间遇到非选项的命令行参数，后面的选项参数就都取不到了，出现的目的仅仅是为了代替getopt较快捷方便的执行参数的分析。
+命令格式为getopts optstring name [arg]
+#!/bin/sh while getopts &#34;:b:o:h&#34; opt_name do case $opt_name in b) echo &#34;-b Option is recognized, argument=$OPTARG&#34; ;; o) echo &#34;-o Option is recognized, argument=$OPTARG&#34; ;; h) echo &#34;-h Option is recognized&#34; ;; :) echo &#34;$OPTARG Option need a argument&#34; ;; esac done optstring：表示要识别的命令行选项形式，如果一个字母后面有一个&#34;:&#34;，表示该命令行选项后面要跟一个参数。如optsting写成&#34;co:f:&#34;，表示支持-c、-o、-f选项识别，-o和-f选项后面需要跟一个参数...</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-02-21 16:18:36 +0800 CST'>February 21, 2023</span></footer>
+  <a class="entry-link" aria-label="post link to 编写Shell脚本的一些知识点" href="https://shiqstone.github.io/post/how-to-write-shell-script/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>命令行的艺术
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>命令行的艺术 转自：GitHub github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md
+这篇文章是许多作者和译者共同的成果。 这里的部分内容 首次 出现 于 Quora， 但已经迁移到了 Github，并由众多高手做出了许多改进。 如果你在本文中发现了错误或者存在可以改善的地方，请贡献你的一份力量。
+前言 涵盖范围：
+这篇文章不仅能帮助刚接触命令行的新手，而且对具有经验的人也大有裨益。本文致力于做到覆盖面广（涉及所有重要的内容），具体（给出具体的最常用的例子），以及简洁（避免冗余的内容，或是可以在其他地方轻松查到的细枝末节）。在特定应用场景下，本文的内容属于基本功或者能帮助您节约大量的时间。 本文主要为 Linux 所写，但在仅限 OS X 系统章节和仅限 Windows 系统章节中也包含有对应操作系统的内容。除去这两个章节外，其它的内容大部分均可在其他类 Unix 系统或 OS X，甚至 Cygwin 中得到应用。 本文主要关注于交互式 Bash，但也有很多技巧可以应用于其他 shell 和 Bash 脚本当中。 除去“标准的”Unix 命令，本文还包括了一些依赖于特定软件包的命令（前提是它们具有足够的价值）。 注意事项：
+为了能在一页内展示尽量多的东西，一些具体的信息可以在引用的页面中找到。我们相信机智的你知道如何使用 Google 或者其他搜索引擎来查阅到更多的详细信息。文中部分命令需要您使用 apt-get，yum，dnf，pacman， pip 或 brew（以及其它合适的包管理器）来安装依赖的程序。 遇到问题的话，请尝试使用 Explainshell 去获取相关命令、参数、管道等内容的解释。 基础 学习 Bash 的基础知识。具体地，在命令行中输入 man bash 并至少全文浏览一遍; 它理解起来很简单并且不冗长。其他的 shell 可能很好用，但 Bash 的功能已经足够强大并且到几乎总是可用的（ 如果你只学习 zsh，fish 或其他的 shell 的话，在你自己的设备上会显得很方便，但过度依赖这些功能会给您带来不便，例如当你需要在服务器上工作时）。
+熟悉至少一个基于文本的编辑器。通常而言 Vim （vi） 会是你最好的选择，毕竟在终端中编辑文本时 Vim 是最好用的工具（甚至大部分情况下 Vim 要比 Emacs、大型 IDE 或是炫酷的编辑器更好用）。...</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-02-08 15:08:29 +0800 CST'>February 8, 2023</span></footer>
+  <a class="entry-link" aria-label="post link to 命令行的艺术" href="https://shiqstone.github.io/post/the-art-of-command-line/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>Xray教程<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Xray介绍 一个Debian包维护者发现XTLS库的LICENSE不是BSD许可，提了一个issue希望作者 @rprx 能修改方便打包，详见 https://github.com/XTLS/Go/issues/9 。由这个issue引发了广泛讨论，rprx认为目前许可不是问题，也有不少人认为协议是立场的体现，各执一词。
+最终V2ray(V2fly社区)维护者经过投票确认XTLS不符合V2ray的MIT协议，并在V2ray-core 4.33.0版本移除了XTLS。rprx和其拥护者行动起来，很快就创建了Project X项目和Xray子项目（Xray取名来自XTLS和V2ray的结合），并发布了Xray-core的多个版本。这便是Xray的大致由来。
+XTLS和Xray离不开作者 @rprx 的辛勤付出，因此也简要介绍一下@rprx ：
+@rprx 是VLESS协议的设计者，在介绍VLESS协议时写下了 性能至上、可扩展性空前，目标是全场景终极协议 的宏壮愿景； @rprx 是 XTLS 的作者，在 XTLS库 中写下了 “THE FUTURE” 的霸气描述。将内外两条TLS连接结合，rprx可能不是第一个有这想法的人，但却是第一个将其实现、并成熟应用到实际中的作者。从使用表现上看，XTLS无愧于rprx对其的评价：划时代的革命性概念与技术：XTLS，以及社区给出的“黑科技”称谓； @rprx 是Project X和Xray项目的创始人。由于LICENSE理念之争，rprx创建了对标Project V和V2ray-core的Project X和Xray-core项目，广受欢迎。 Xray-Core自上个月创立以来，短短一个月已经发布了七个版本，足见维护者的诚意。Xray-Core目前发布的各个版本主要介绍如下：
+Xray-core 1.0.0版本：项目创建，提供完整的VLESS和XTLS支持，功能上是V2ray-core的超集。主要变动是将v2ray和v2ctl可执行文件合并为xray，性能全面增强； Xray-core 1.1.0和1.1.1版本：测试过渡版本，未提供详细发行说明； Xray-core 1.1.2版本：引入了Linux Kernel Splice技术，适用于安卓、路由器等Linux环境。Splice技术减少了数据拷贝次数和内存占用，拥有更强的性能。需要说明的是，只适用于类Linux环境的客户端出栈，服务端入栈仍然是direct； Xray-core 1.1.3版本：重构了透明代理的 REDIRECT 模式，使之同时支持 IPv4 和 IPv6，解决了V2ray和trojan遗留的问题； Xray-core 1.1.4版本：优化内存占用，TLS更多选项配置，使服务端伪装站的TLS设置在SSL Labs能达到A&#43;评分； Xray-core 1.1.5版本：测试过渡版本，支持YAML配置文件、OCSP Stapling等功能，官方安装脚本大更新； Xray-core 1.2.0版本：SS、trojan协议完美支持Fullcone，向游戏使用迈出了重要一步。 Xray-core 1.2.3版本： 对 SS 协议的支持又变强了, 支持单端口多用户! 对 trojan 协议的支持也又变强了, trojan 的回落也解锁 SNI 分流的新姿势啦~! (VLESS: 嘤嘤嘤) UDP 奇奇怪怪的 BUG 被干掉了, 一个字, “稳定”....</p>
+  </div>
+  <footer class="entry-footer"><span title='2022-11-11 14:03:08 +0800 CST'>November 11, 2022</span></footer>
+  <a class="entry-link" aria-label="post link to Xray教程" href="https://shiqstone.github.io/post/xray-tutorial/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>Markdown 进阶技能：用代码画流程图<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> graph TD A--&gt;B; B--&gt;C; </p>
+  </div>
+  <footer class="entry-footer"><span title='2022-11-07 09:42:48 +0800 CST'>November 7, 2022</span></footer>
+  <a class="entry-link" aria-label="post link to Markdown 进阶技能：用代码画流程图" href="https://shiqstone.github.io/post/chart_in_markdown/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>让Hugo支持LaTex
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Hugo本身不支持渲染数学公式，只能使用前端方式来处理。
+在已经生成的html页面中，使用javascript来渲染LaTex公式是一个可行思路，Mathjax是这方面最流行的库。
+方案 按以下步骤引入mathjax：
+在所使用的theme目录下新建layouts/partials/mathjax.html，添加内容 {{ if or .Params.math .Site.Params.math }} &lt;script&gt; MathJax = { tex: { inlineMath: [[&#39;$&#39;, &#39;$&#39;], [&#39;\\(&#39;, &#39;\\)&#39;]], displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\\[&#39;, &#39;\\]&#39;]], processEscapes: true, processEnvironments: true }, svg: { fontCache: &#34;global&#34;, }, options: { skipHtmlTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;] } }; window.addEventListener(&#39;load&#39;, (event) =&gt; { document.querySelectorAll(&#34;mjx-container&#34;).forEach(function(x){ x.parentElement.classList &#43;= &#39;has-jax&#39;}) }); &lt;/script&gt; &lt;script src=&#34;https://polyfill.io/v3/polyfill.min.js?features=es6&#34;&gt;&lt;/script&gt; &lt;script type=&#34;text/javascript&#34; id=&#34;MathJax-script&#34; async src=&#34;https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js&#34;&gt;&lt;/script&gt; &lt;style&gt; code.has-jax { font: inherit; font-size: 100%; background: inherit; border: inherit; color: #515151; } &lt;/style&gt; {{- end }} &lt;!...</p>
+  </div>
+  <footer class="entry-footer"><span title='2022-11-03 11:18:20 +0800 CST'>November 3, 2022</span></footer>
+  <a class="entry-link" aria-label="post link to 让Hugo支持LaTex" href="https://shiqstone.github.io/post/latex_for_hugo/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>MarkDown 中使用 LaTeX 数学式
     </h2>
   </header>
@@ -170,6 +268,18 @@ LaTex Math的语法多且杂，我们是没法完全记住这些语法的，能�
   </div>
   <footer class="entry-footer"><span title='2022-10-12 16:25:27 +0800 CST'>October 12, 2022</span></footer>
   <a class="entry-link" aria-label="post link to MarkDown 中使用 LaTeX 数学式" href="https://shiqstone.github.io/post/latex_in_markdown/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2>Flutter_appbar_leading<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p></p>
+  </div>
+  <footer class="entry-footer"><span title='2022-09-02 21:53:41 +0800 CST'>September 2, 2022</span></footer>
+  <a class="entry-link" aria-label="post link to Flutter_appbar_leading" href="https://shiqstone.github.io/post/flutter_appbar_leading/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -213,119 +323,6 @@ hugo version hugo v0.101.0&#43;extended darwin/arm64 BuildDate=unknown Hugo 使�
   </div>
   <footer class="entry-footer"><span title='2022-08-02 13:25:20 +0800 CST'>August 2, 2022</span></footer>
   <a class="entry-link" aria-label="post link to 博客从Hexo迁移到Hugo" href="https://shiqstone.github.io/post/hexo_to_hugo/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>Go语言开发效率的小技巧
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>前言 每门语言都有自己的语法糖，像java的语法糖就有方法变长参数、拆箱与装箱、枚举、for-each等等，Go语言也不例外，其也有自己的语法糖，掌握这些语法糖可以助我们提高开发的效率，所以本文就来介绍一些Go语言的语法糖。
-可变长参数 Go语言允许一个函数把任意数量的值作为参数，Go语言内置了...操作符，在函数的最后一个形参才能使用...操作符，使用它必须注意如下事项：
-可变长参数必须在函数列表的最后一个； 把可变长参数当切片来解析，可变长参数没有没有值时就是nil切片 可变长参数的类型必须相同 func test(a int, b ...int) { return } 既然我们的函数可以接收可变长参数，那么我们在传参的时候也可以传递切片使用...进行解包转换为参数列表，append 方法就是最好的例子：
-var sarr []int sarr = append(sarr, 1) sarr = append(sarr, sarr...) append方法定义如下：
-// slice = append(slice, elem1, elem2) // slice = append(slice, anotherSlice...) func append(slice []Type, elems ...Type) []Type 声明不定长数组 数组是有固定长度的，我们在声明数组时一定要声明长度，因为数组在编译时就要确认好其长度，但是有些时候对于想偷懒的我，就是不想写数组长度，有没有办法让他自己算呢？当然有，使用…操作符声明数组时，你只管填充元素值，其他的交给编译器自己去搞就好了；
-a := [...]int{1, 3, 5} // 数组长度是3，等同于 a := [3]{1, 3, 5} 有时我们想声明一个大数组，但是某些index想设置特别的值也可以使用…操作符搞定：
-a := [...]int{1: 20, 999: 10} // 数组长度是100, 下标1的元素值是20，下标999的元素值是10，其他元素值都是0 init函数 Go语言提供了先于main函数执行的init函数，初始化每个包后会自动执行init函数，每个包中可以有多个init函数，每个包中的源文件中也可以有多个init函数，加载顺序如下：...</p>
-  </div>
-  <footer class="entry-footer"><span title='2022-08-02 00:15:51 +0000 UTC'>August 2, 2022</span></footer>
-  <a class="entry-link" aria-label="post link to Go语言开发效率的小技巧" href="https://shiqstone.github.io/post/tips-for-developing-efficiency-in-go-language/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>在Linux下如何防止定时脚本重复执行
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>场景 好多系统中会用到邮件系统，我们假设有一个 PHP 脚本用来发送邮件。使用 Linux cron 每分钟执行一次 我们暂时不引入队列系统，其实使用队列处理此方式更优。
-我们得到下面的基本配置
-* * * * * php /home/app/email.php 问题分析和解决 异常问题 如果这个邮件服务出现异常，进程僵死怎么办？ 假设由于未知因素， email.php 脚本一直执行，没有退出。极端的情况，进入一个 while 死循环。 这下倒好，原来说好的一分钟执行一次，现在一直死这边了，后面的脚本也不能跑了
-解决办法： 使用 timeout，假设我们设定每个脚本最多执行时间位 200秒，超过 200秒 就自动死掉。
-* * * * * timeout 200 php /home/app/email.php 重复问题 如果这个脚本执行时间超过 60秒，下一分钟又会执行 php email.php，如果避免重复执行？ 这样会出现，有两个进程同时在执行 php email.php，那会不会出现同一个任务被执行了两次？
-解决办法： 使用 flock 进行互斥控制
-用法： flock [选项] &lt;文件|目录&gt; &lt;命令&gt; [&lt;参数&gt;...] flock [选项] &lt;文件|目录&gt; -c &lt;命令&gt; flock [选项] &lt;文件描述符号码&gt; 通过 shell 脚本管理文件锁。
-选项： -s, --shared 获取共享锁 -x, --exclusive 获取排他锁(默认) -u, --unlock 移除锁 -n, --nonblock 失败而非等待 -w, --timeout &lt;秒&gt; 等待限定的时间 -E, --conflict-exit-code &lt;数字&gt; 冲突或超时后的退出代码 -o, --close 运行命令前关闭文件描述符 -c, --command &lt;命令&gt; 通过 shell 运行单个命令字符串 -F, --no-fork 执行命令时不 fork --verbose 增加详尽程度 -h, --help display this help -V, --version display version 使用其中的排他设置...</p>
-  </div>
-  <footer class="entry-footer"><span title='2020-03-13 15:53:34 +0000 UTC'>March 13, 2020</span></footer>
-  <a class="entry-link" aria-label="post link to 在Linux下如何防止定时脚本重复执行" href="https://shiqstone.github.io/post/linux-crontab-avoid-repeat-run/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>centos7 防火墙和端口
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>首先检查某端口是否开启： firewall-cmd --query-port=80/tcp --zone=public #查询80端口是否开启 返回no即未开启，显示yes为已开启
-开启某端口 firewall-cmd --zone=public --add-port=80/tcp --permanent #添加80端口 修改完成后需要重启防火墙服务才能生效
-查看防火墙状态 systemctl status firewalld 有如下提示表示未开启 FirewallD is not running
-开启防火墙，没有任何提示即开启成功 systemctl start firewalld 关闭防火墙 systemctl stop firewalld 重启防火墙 systemctl restart firewalld 相关网站收藏 http://ping.pe http://ping.chinaz.com</p>
-  </div>
-  <footer class="entry-footer"><span title='2020-03-01 17:13:08 +0000 UTC'>March 1, 2020</span></footer>
-  <a class="entry-link" aria-label="post link to centos7 防火墙和端口" href="https://shiqstone.github.io/post/centos7-firewall/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>一次慢查询问题的排查
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>问题发现 某个业务的查询页面打开非常慢，甚至卡死，通过排查日志，定位到是分页查询有慢查询sql，其中一条简单查询耗时长达40多秒 结合前后其他sql耗时都在毫秒级，排除网络问题，在命令行中执行sql也同样很慢
-问题分析 有问题的sql如下
-mysql&gt; select count(*) from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null; &#43;----------&#43; | count(*) | &#43;----------&#43; | 229330 | &#43;----------&#43; 1 row in set (41.34 sec) 首先看了一下全表数据，接近千万级，但是有趣的是耗时只有不到4s，对于千万级的表，勉强可以接收
-mysql&gt; select count(*) from test_tab; &#43;----------&#43; | count(*) | &#43;----------&#43; | 9469766 | &#43;----------&#43; 1 row in set (3.86 sec) 更有意思的是，执行相同条件查询数据记录的sql，结果10ms就返回了
-mysql&gt; select id, label, call_round, dial_start_time, dial_duration, disconnect_reason, update_time from test_tab where update_time&gt;=&#39;2020-01-10&#39; and update_time&lt;&#39;2020-01-11&#39; and label is not null order by update_time desc limit 0, 20; &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; | id | label | call_round | dial_start_time | dial_duration | disconnect_reason | update_time | &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; | 17510408 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:09 | | 17510411 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:01:08 | | 17510421 | E | 8 | 2020-01-10 20:59:43 | 78 | NULL | 2020-01-10 21:00:58 | | 17510418 | F | 0 | NULL | NULL | NULL | 2020-01-10 21:00:54 | | 17510407 | C | 15 | 2020-01-10 20:59:33 | 78 | NULL | 2020-01-10 21:00:48 | | 17510416 | A | 8 | 2020-01-10 20:59:34 | 57 | NULL | 2020-01-10 21:00:28 | | 17510413 | C | 2 | 2020-01-10 21:00:04 | 20 | NULL | 2020-01-10 21:00:21 | | 17510415 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:20 | | 17510412 | F | NULL | NULL | NULL | NULL | 2020-01-10 21:00:18 | | 17510423 | C | 4 | 2020-01-10 20:59:49 | 31 | NULL | 2020-01-10 21:00:17 | | 17510420 | C | 1 | 2020-01-10 20:59:46 | 4 | NULL | 2020-01-10 20:59:47 | | 17510424 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:44 | | 17510410 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:41 | | 17510419 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:38 | | 17510437 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:37 | | 17510441 | F | 0 | NULL | NULL | NULL | 2020-01-10 20:59:35 | | 17510417 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:34 | | 17510414 | F | NULL | NULL | NULL | 1 | 2020-01-10 20:59:32 | | 17510409 | F | NULL | NULL | NULL | 8 | 2020-01-10 20:59:31 | | 17510422 | F | NULL | NULL | NULL | 6 | 2020-01-10 20:59:29 | &#43;----------&#43;-------&#43;------------&#43;---------------------&#43;---------------&#43;-------------------&#43;---------------------&#43; 20 rows in set (0....</p>
-  </div>
-  <footer class="entry-footer"><span title='2020-02-01 11:55:30 +0000 UTC'>February 1, 2020</span></footer>
-  <a class="entry-link" aria-label="post link to 一次慢查询问题的排查" href="https://shiqstone.github.io/post/troubleshooting-a-slow-query/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>尝试使用Go截取视频生成缩略图
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>1 基本命令 使用ffmpeg截取视频生成图片，原始命令为
-ffmpeg -i src.mp4 -y -f mjpeg -ss 3 -t 1 -s 80x44 dist.jpg 2 简单封装 package main import ( &#34;bytes&#34; &#34;fmt&#34; &#34;os/exec&#34; ) func main() { filename := &#34;test.mp4&#34; width := 288 height := 512 output := &#34;output.jpg&#34; cmd := exec.Command(&#34;ffmpeg&#34;, &#34;-i&#34;, filename, &#34;-vframes&#34;, &#34;1&#34;, &#34;-s&#34;, fmt.Sprintf(&#34;%dx%d&#34;, width, height), &#34;-f&#34;, &#34;singlejpeg&#34;, output) var buffer bytes.Buffer cmd.Stdout = &amp;buffer if cmd.Run() != nil { panic(&#34;could not generate frame&#34;) } } 3 查询数据库 增加从mysql数据库读取视频路径...</p>
-  </div>
-  <footer class="entry-footer"><span title='2020-01-31 18:44:26 +0000 UTC'>January 31, 2020</span></footer>
-  <a class="entry-link" aria-label="post link to 尝试使用Go截取视频生成缩略图" href="https://shiqstone.github.io/post/try-golang-snapshot-video-thumb/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>windows程序员常见乱码问题汇总
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p> 名称 示例 特点 产生原因 古文码 鍝堝搱鐪嬪埌瀹堕噷鐫″ぇ瑙� 大都为不认识的古文，夹杂日韩文 以GBK方式读取UTF-8编码的中文 口子码 ����������� 大部分字符为小方块 以UTF-8方式读取GBK编码的中文 符号码 å“ˆå“ˆçœ‹åˆ°å®¶é‡Œç¡å¤§è§‰ 大部分字符为各种符号 以ISO8859-1方式读取UTF-8编码的中文 拼音码 ¿¨·É»úÉÏµÄ 大部分字符为头顶带各种类似声调符号的字母 以ISO8859-1方式读取GBK编码的中文 问句码 幽月要好好学习天天向?? 字符串长度为偶数时正常，长度为奇数时最后几个字符变为问号 以GBK的方式读取UTF-8编码的中文，然后用UTF-8格式再次读取 锟拷码 锟斤拷锟斤拷锟斤拷锟 全中文字符，且大部分文字为“锟斤拷”几个字符 以UTF-8方式读取GBK编码的中文，然后用GBK格式再次读取 </p>
-  </div>
-  <footer class="entry-footer"><span title='2019-08-18 13:14:45 +0000 UTC'>August 18, 2019</span></footer>
-  <a class="entry-link" aria-label="post link to windows程序员常见乱码问题汇总" href="https://shiqstone.github.io/post/gibberish/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2>vue-router&#43;nginx 路径配置方法
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>vue-router 的默认数据hash模式-使用url的hash来模拟一个完整的URL，于是当URL改变时，页面不会重新加载。
-一般情况下，我们不喜欢丑丑的hash，类似于index.html#/matchResult，可以使用路由的history模式。history模式是利用history.pushState API来实现页面跳转。
-但是有个问题，在使用nginx的时候，我们需要添加一些配置。
-直接配置在根路径下 直接配置在根路径下，访问的时候只用输入http://yoursite.com，在nginx的配置如下
-location / { try_files $uri $uri/ /index.html; } 非根路径配置 如果一个域名下有多个项目，那么使用根路径配置就不合适了，我们需要在根路径下指定一层路径，比如说
-A项目
-http://yoursite.com/A B项目
-http://yoursite.com/B nginx的配置
-location ^~/A { alias /XX/A;//此处为A的路径 index index.html; try_files $uri $uri/ /A/index.html; } location ^~/B { alias /XX/B;//此处为B的路径 index index.html; try_files $uri $uri/ /B/index.html; } tip: 注意要用alias不能用root</p>
-  </div>
-  <footer class="entry-footer"><span title='2019-08-11 19:09:48 +0000 UTC'>August 11, 2019</span></footer>
-  <a class="entry-link" aria-label="post link to vue-router&#43;nginx 路径配置方法" href="https://shiqstone.github.io/post/vue-route-nginx/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">

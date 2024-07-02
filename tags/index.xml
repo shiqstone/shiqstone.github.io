@@ -6,7 +6,16 @@
     <description>Recent content in Tags on 他山笨石</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh_CN</language>
-    <lastBuildDate>Tue, 07 May 2024 15:03:30 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 02 Jul 2024 11:23:20 +0800</lastBuildDate><atom:link href="https://shiqstone.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>aws</title>
+      <link>https://shiqstone.github.io/tags/aws/</link>
+      <pubDate>Tue, 02 Jul 2024 11:23:20 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/aws/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>DevEco</title>
       <link>https://shiqstone.github.io/tags/deveco/</link>
@@ -44,15 +53,6 @@
     </item>
     
     <item>
-      <title>aws</title>
-      <link>https://shiqstone.github.io/tags/aws/</link>
-      <pubDate>Sun, 10 Mar 2024 03:22:01 +0800</pubDate>
-      
-      <guid>https://shiqstone.github.io/tags/aws/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>ec2</title>
       <link>https://shiqstone.github.io/tags/ec2/</link>
       <pubDate>Sun, 10 Mar 2024 03:22:01 +0800</pubDate>
@@ -76,6 +76,24 @@
       <pubDate>Wed, 28 Feb 2024 22:20:56 +0800</pubDate>
       
       <guid>https://shiqstone.github.io/tags/stable-diffusion/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Stable Diffusion WebUI</title>
+      <link>https://shiqstone.github.io/tags/stable-diffusion-webui/</link>
+      <pubDate>Wed, 28 Feb 2024 16:15:20 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/stable-diffusion-webui/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Beyond Compare</title>
+      <link>https://shiqstone.github.io/tags/beyond-compare/</link>
+      <pubDate>Fri, 23 Feb 2024 16:22:01 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/beyond-compare/</guid>
       <description></description>
     </item>
     
@@ -130,6 +148,24 @@
       <pubDate>Tue, 21 Feb 2023 16:18:36 +0800</pubDate>
       
       <guid>https://shiqstone.github.io/tags/shell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>v2ray</title>
+      <link>https://shiqstone.github.io/tags/v2ray/</link>
+      <pubDate>Fri, 11 Nov 2022 14:03:08 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/v2ray/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>xray</title>
+      <link>https://shiqstone.github.io/tags/xray/</link>
+      <pubDate>Fri, 11 Nov 2022 14:03:08 +0800</pubDate>
+      
+      <guid>https://shiqstone.github.io/tags/xray/</guid>
       <description></description>
     </item>
     
